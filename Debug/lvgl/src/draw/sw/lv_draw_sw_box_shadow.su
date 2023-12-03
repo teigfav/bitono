@@ -1,0 +1,7 @@
+lv_area.h:125:20:lv_area_copy	16	static
+lv_area.h:138:23:lv_area_get_width	16	static
+lv_area.h:148:23:lv_area_get_height	16	static
+lv_string.h:56:20:lv_memzero	16	static
+lv_draw_sw_box_shadow.c:55:6:lv_draw_sw_box_shadow	328	static
+lv_draw_sw_box_shadow.c:570:35:shadow_draw_corner_buf	144	static
+lv_draw_sw_box_shadow.c:657:35:shadow_blur_corner	88	static

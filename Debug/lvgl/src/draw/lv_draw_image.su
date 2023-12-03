@@ -1,0 +1,7 @@
+lv_color.h:222:26:lv_color_make	24	static
+lv_color.h:304:26:lv_color_black	16	static
+lv_string.h:56:20:lv_memzero	16	static
+lv_draw_image.c:41:6:lv_draw_image_dsc_init	24	static
+lv_draw_image.c:52:6:lv_draw_layer	32	static
+lv_draw_image.c:67:6:lv_draw_image	48	static
+lv_draw_image.c:102:16:lv_image_src_get_type	32	static

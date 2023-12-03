@@ -1,0 +1,2 @@
+TaskGFX.c:15:6:InitGFXTask	48	static
+TaskGFX.c:27:6:StartGFXTask	16	static

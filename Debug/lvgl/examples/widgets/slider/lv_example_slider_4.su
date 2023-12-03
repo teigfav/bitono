@@ -1,0 +1,6 @@
+lv_display.h:378:34:lv_screen_active	8	static
+lv_obj_pos.h:184:20:lv_obj_center	16	static
+lv_slider.h:99:20:lv_slider_set_range	24	static
+lv_slider.h:123:23:lv_slider_get_value	16	static
+lv_example_slider_4.c:10:6:lv_example_slider_4	24	static
+lv_example_slider_4.c:25:13:slider_event_cb	40	static

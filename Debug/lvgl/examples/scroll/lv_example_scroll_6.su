@@ -1,0 +1,6 @@
+lv_area.h:133:26:lv_area_get_height	16	static
+lv_area.h:295:26:lv_pct	16	static
+lv_obj_pos.h:199:20:lv_obj_center	16	static
+lv_disp.h:182:26:lv_scr_act	8	static
+lv_example_scroll_6.c:4:13:scroll_event_cb	88	static
+lv_example_scroll_6.c:51:6:lv_example_scroll_6	24	static

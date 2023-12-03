@@ -1,0 +1,5 @@
+lv_area.h:123:26:lv_area_get_width	16	static
+lv_area.h:133:26:lv_area_get_height	16	static
+tft.c:36:6:tft_init	8	static
+tft.c:60:13:ex_disp_flush	32	static
+tft.c:79:13:disp_flush_complete	16	static

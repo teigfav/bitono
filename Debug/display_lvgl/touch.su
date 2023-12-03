@@ -1,0 +1,3 @@
+touch.c:20:6:lvgl_touchscreen_init	8	static
+touch.c:31:13:lvgl_touchscreen_read	24	static
+touch.c:56:6:HAL_GPIO_EXTI_Callback	16	static

@@ -1,0 +1,13 @@
+lv_string.h:56:20:lv_memzero	16	static
+lv_ll.h:85:20:_lv_ll_clear	16	static
+lv_cache_builtin.c:55:6:_lv_cache_builtin_init	8	static
+lv_cache_builtin.c:70:6:_lv_cache_builtin_deinit	8	static
+lv_cache_builtin.c:79:27:add_cb	40	static
+lv_cache_builtin.c:119:27:find_by_data_cb	32	static
+lv_cache_builtin.c:135:27:find_by_src_cb	24	static
+lv_cache_builtin.c:149:13:invalidate_cb	16	static
+lv_cache_builtin.c:162:21:get_data_cb	24	static
+lv_cache_builtin.c:175:13:release_cb	24	static
+lv_cache_builtin.c:191:13:set_max_size_cb	24	static
+lv_cache_builtin.c:202:13:empty_cb	16	static
+lv_cache_builtin.c:213:13:drop_youngest	24	static

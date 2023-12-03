@@ -1,0 +1,16 @@
+lv_string.h:56:20:lv_memzero	16	static
+lv_cache.c:39:6:_lv_cache_init	8	static
+lv_cache.c:45:6:_lv_cache_deinit	8	static
+lv_cache.c:50:6:lv_cache_set_manager	24	static
+lv_cache.c:69:20:lv_cache_add	40	static
+lv_cache.c:77:20:lv_cache_find_by_data	32	static
+lv_cache.c:85:20:lv_cache_find_by_src	32	static
+lv_cache.c:93:6:lv_cache_invalidate	24	static
+lv_cache.c:101:6:lv_cache_invalidate_by_src	32	static
+lv_cache.c:113:14:lv_cache_get_data	32	static
+lv_cache.c:122:6:lv_cache_release	24	static
+lv_cache.c:130:6:lv_cache_set_max_size	24	static
+lv_cache.c:139:8:lv_cache_get_max_size	4	static
+lv_cache.c:144:6:lv_cache_lock	8	static
+lv_cache.c:150:6:lv_cache_unlock	8	static
+lv_cache.c:156:10:lv_cache_register_data_type	4	static
