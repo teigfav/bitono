@@ -6,16 +6,19 @@
 # Add inputs and outputs from these tool invocations to the build variables 
 C_SRCS += \
 ../display_lvgl/gui.c \
+../display_lvgl/immagini.c \
 ../display_lvgl/tft.c \
 ../display_lvgl/touch.c 
 
 C_DEPS += \
 ./display_lvgl/gui.d \
+./display_lvgl/immagini.d \
 ./display_lvgl/tft.d \
 ./display_lvgl/touch.d 
 
 OBJS += \
 ./display_lvgl/gui.o \
+./display_lvgl/immagini.o \
 ./display_lvgl/tft.o \
 ./display_lvgl/touch.o 
 
@@ -27,7 +30,7 @@ display_lvgl/%.o: ../display_lvgl/%.c display_lvgl/subdir.mk
 clean: clean-display_lvgl
 
 clean-display_lvgl:
-	-$(RM) ./display_lvgl/gui.d ./display_lvgl/gui.o ./display_lvgl/tft.d ./display_lvgl/tft.o ./display_lvgl/touch.d ./display_lvgl/touch.o
+	-$(RM) ./display_lvgl/gui.d ./display_lvgl/gui.o ./display_lvgl/immagini.d ./display_lvgl/immagini.o ./display_lvgl/tft.d ./display_lvgl/tft.o ./display_lvgl/touch.d ./display_lvgl/touch.o
 
 .PHONY: clean-display_lvgl
 

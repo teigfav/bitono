@@ -151,6 +151,7 @@
 "./Middlewares/Third_Party/LwIP/src/netif/ppp/vj.o"
 "./Middlewares/Third_Party/LwIP/system/OS/sys_arch.o"
 "./display_lvgl/gui.o"
+"./display_lvgl/immagini.o"
 "./display_lvgl/tft.o"
 "./display_lvgl/touch.o"
 "./lvgl/examples/anim/lv_example_anim_1.o"
