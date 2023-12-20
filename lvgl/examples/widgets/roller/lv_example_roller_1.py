@@ -1,6 +1,6 @@
 def event_handler(e):
     code = e.get_code()
-    obj = e.get_target()
+    obj = e.get_target_obj()
     if code == lv.EVENT.VALUE_CHANGED:
         option = " "*10
         obj.get_selected_str(option, len(option))
@@ -10,7 +10,7 @@ def event_handler(e):
 # An infinite roller with the name of the months
 #
 
-roller1 = lv.roller(lv.scr_act())
+roller1 = lv.roller(lv.screen_active())
 roller1.set_options("\n".join([
     "January",
     "February",

@@ -1,7 +1,9 @@
-lv_area.h:123:26:lv_area_get_width	16	static
-lv_area.h:133:26:lv_area_get_height	16	static
-lv_color.h:595:26:lv_color_make	16	static
-lv_color.h:696:26:lv_color_white	8	static
-lv_color.h:700:26:lv_color_black	8	static
-lv_draw_rect.c:37:28:lv_draw_rect_dsc_init	24	static
-lv_draw_rect.c:62:6:lv_draw_rect	24	static
+lv_color.h:269:26:lv_color_make	24	static
+lv_color.h:396:26:lv_color_white	16	static
+lv_color.h:405:26:lv_color_black	16	static
+lv_string.h:65:20:lv_memzero	16	static
+lv_draw_rect.c:39:28:lv_draw_rect_dsc_init	24	static
+lv_draw_rect.c:58:6:lv_draw_fill_dsc_init	16	static
+lv_draw_rect.c:65:6:lv_draw_border_dsc_init	16	static
+lv_draw_rect.c:73:6:lv_draw_box_shadow_dsc_init	16	static
+lv_draw_rect.c:80:6:lv_draw_rect	184	static

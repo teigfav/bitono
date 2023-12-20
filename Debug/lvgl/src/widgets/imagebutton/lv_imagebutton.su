@@ -1,0 +1,17 @@
+lv_area.h:126:20:lv_area_copy	16	static
+lv_string.h:65:20:lv_memzero	16	static
+lv_obj_style_gen.h:71:23:lv_obj_get_style_transform_width	24	static
+lv_obj_style_gen.h:77:23:lv_obj_get_style_transform_height	24	static
+lv_imagebutton.c:56:12:lv_imagebutton_create	24	static
+lv_imagebutton.c:68:6:lv_imagebutton_set_src	32	static
+lv_imagebutton.c:82:6:lv_imagebutton_set_state	24	static
+lv_imagebutton.c:106:14:lv_imagebutton_get_src_left	24	static
+lv_imagebutton.c:115:14:lv_imagebutton_get_src_middle	24	static
+lv_imagebutton.c:123:14:lv_imagebutton_get_src_right	24	static
+lv_imagebutton.c:135:13:lv_imagebutton_constructor	24	static
+lv_imagebutton.c:146:13:lv_imagebutton_event	40	static
+lv_imagebutton.c:177:13:draw_main	216	static
+lv_imagebutton.c:256:13:refr_image	32	static
+lv_imagebutton.c:277:31:suggest_state	24	static
+lv_imagebutton.c:308:31:get_state	24	static
+lv_imagebutton.c:329:13:update_src_info	24	static

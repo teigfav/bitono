@@ -1,0 +1,3 @@
+lv_display.h:378:34:lv_screen_active	8	static
+lv_example_buttonmatrix_1.c:4:13:event_handler	32	static
+lv_example_buttonmatrix_1.c:21:6:lv_example_buttonmatrix_1	16	static

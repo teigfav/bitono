@@ -67,8 +67,13 @@ CustomEdh/Init/Init.o: ../CustomEdh/Init/Init.c \
  D:/EDH/Bitono/lvgl_test_work_space/lvgl_test/lvgl/src/misc/lv_assert.h \
  D:/EDH/Bitono/lvgl_test_work_space/lvgl_test/lvgl/src/misc/lv_log.h \
  D:/EDH/Bitono/lvgl_test_work_space/lvgl_test/lvgl/src/misc/lv_types.h \
- D:/EDH/Bitono/lvgl_test_work_space/lvgl_test/lvgl/src/misc/lv_mem.h \
+ d:\edh\bitono\lvgl_test_work_space\lvgl_test\lvgl\src\stdlib\lv_mem.h \
+ d:\edh\bitono\lvgl_test_work_space\lvgl_test\lvgl\src\lv_conf_internal.h \
+ d:\edh\bitono\lvgl_test_work_space\lvgl_test\lvgl\src\misc\lv_types.h \
  D:/EDH/Bitono/lvgl_test_work_space/lvgl_test/lvgl/src/misc/lv_math.h \
+ D:/EDH/Bitono/lvgl_test_work_space/lvgl_test/lvgl/src/misc/lv_palette.h \
+ D:/EDH/Bitono/lvgl_test_work_space/lvgl_test/lvgl/src/misc/lv_color.h \
+ D:/EDH/Bitono/lvgl_test_work_space/lvgl_test/lvgl/src/misc/lv_color_op.h \
  D:/EDH/Bitono/lvgl_test_work_space/lvgl_test/lvgl/src/misc/lv_area.h \
  ../CustomEdh/Tasklvgl/Tasklvgl.h ../display_lvgl/gui.h \
  ../display_lvgl/touch.h
@@ -215,9 +220,19 @@ D:/EDH/Bitono/lvgl_test_work_space/lvgl_test/lvgl/src/misc/lv_log.h:
 
 D:/EDH/Bitono/lvgl_test_work_space/lvgl_test/lvgl/src/misc/lv_types.h:
 
-D:/EDH/Bitono/lvgl_test_work_space/lvgl_test/lvgl/src/misc/lv_mem.h:
+d:\edh\bitono\lvgl_test_work_space\lvgl_test\lvgl\src\stdlib\lv_mem.h:
+
+d:\edh\bitono\lvgl_test_work_space\lvgl_test\lvgl\src\lv_conf_internal.h:
+
+d:\edh\bitono\lvgl_test_work_space\lvgl_test\lvgl\src\misc\lv_types.h:
 
 D:/EDH/Bitono/lvgl_test_work_space/lvgl_test/lvgl/src/misc/lv_math.h:
+
+D:/EDH/Bitono/lvgl_test_work_space/lvgl_test/lvgl/src/misc/lv_palette.h:
+
+D:/EDH/Bitono/lvgl_test_work_space/lvgl_test/lvgl/src/misc/lv_color.h:
+
+D:/EDH/Bitono/lvgl_test_work_space/lvgl_test/lvgl/src/misc/lv_color_op.h:
 
 D:/EDH/Bitono/lvgl_test_work_space/lvgl_test/lvgl/src/misc/lv_area.h:
 

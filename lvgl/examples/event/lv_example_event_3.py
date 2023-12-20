@@ -1,11 +1,13 @@
 def event_cb(e):
 
     # The original target of the event. Can be the buttons or the container
-    target = e.get_target()
-    # print(type(target))
+    target = e.get_target_obj()
+
+    # The current target is always the container as the event is added to it
+    cont = e.get_current_target_obj()
 
     # If container was clicked do nothing
-    if type(target) != type(lv.btn()):
+    if target == cont:
         return
 
     # Make the clicked buttons red
@@ -15,18 +17,18 @@ def event_cb(e):
 # Demonstrate event bubbling
 #
 
-cont = lv.obj(lv.scr_act())
-cont.set_size(320, 200)
+cont = lv.obj(lv.screen_active())
+cont.set_size(290, 200)
 cont.center()
 cont.set_flex_flow(lv.FLEX_FLOW.ROW_WRAP)
 
 for i in range(30):
-    btn = lv.btn(cont)
-    btn.set_size(80, 50)
-    btn.add_flag(lv.obj.FLAG.EVENT_BUBBLE)
+    button = lv.button(cont)
+    button.set_size(70, 50)
+    button.add_flag(lv.obj.FLAG.EVENT_BUBBLE)
 
-    label = lv.label(btn)
-    label.set_text(str(i))
+    label = lv.label(button)
+    label.set_text("{:d}".format(i))
     label.center()
 
 cont.add_event_cb(event_cb, lv.EVENT.CLICKED, None)

@@ -1,0 +1,12 @@
+lv_anim.h:199:20:lv_anim_set_var	16	static
+lv_anim.h:211:20:lv_anim_set_exec_cb	16	static
+lv_anim.h:221:20:lv_anim_set_duration	16	static
+lv_anim.h:250:20:lv_anim_set_values	24	static
+lv_anim.h:326:20:lv_anim_set_playback_duration	16	static
+lv_anim.h:354:20:lv_anim_set_repeat_count	16	static
+lv_color.h:269:26:lv_color_make	24	static
+lv_color.h:405:26:lv_color_black	16	static
+lv_display.h:378:34:lv_screen_active	8	static
+lv_obj_pos.h:184:20:lv_obj_center	16	static
+lv_example_image_4.c:4:13:ofs_y_anim	16	static
+lv_example_image_4.c:12:6:lv_example_image_4	112	static

@@ -4,9 +4,17 @@ lvgl/src/font/lv_font.o: ../lvgl/src/font/lv_font.c \
  D:/EDH/Bitono/lvgl_test_work_space/lvgl_test/lv_conf.h \
  ../lvgl/src/font/lv_symbol_def.h ../lvgl/src/font/../misc/lv_area.h \
  ../lvgl/src/font/../misc/../lv_conf_internal.h \
+ ../lvgl/src/font/../misc/lv_types.h ../lvgl/src/font/../misc/lv_text.h \
+ ../lvgl/src/font/../misc/lv_area.h \
+ ../lvgl/src/font/../misc/../font/lv_font.h \
+ ../lvgl/src/font/../misc/../stdlib/lv_sprintf.h \
  ../lvgl/src/font/../misc/lv_utils.h ../lvgl/src/font/../misc/lv_log.h \
- ../lvgl/src/font/../misc/lv_types.h ../lvgl/src/font/../misc/lv_assert.h \
- ../lvgl/src/font/../misc/lv_log.h ../lvgl/src/font/../misc/lv_mem.h
+ ../lvgl/src/font/../misc/lv_assert.h ../lvgl/src/font/../misc/lv_log.h \
+ ../lvgl/src/font/../misc/../stdlib/lv_mem.h \
+ ../lvgl/src/font/../misc/../stdlib/../lv_conf_internal.h \
+ ../lvgl/src/font/../misc/../stdlib/../misc/lv_types.h \
+ ../lvgl/src/font/../stdlib/lv_string.h \
+ ../lvgl/src/font/../stdlib/../lv_conf_internal.h
 
 ../lvgl/src/font/lv_font.h:
 
@@ -22,14 +30,30 @@ D:/EDH/Bitono/lvgl_test_work_space/lvgl_test/lv_conf.h:
 
 ../lvgl/src/font/../misc/../lv_conf_internal.h:
 
+../lvgl/src/font/../misc/lv_types.h:
+
+../lvgl/src/font/../misc/lv_text.h:
+
+../lvgl/src/font/../misc/lv_area.h:
+
+../lvgl/src/font/../misc/../font/lv_font.h:
+
+../lvgl/src/font/../misc/../stdlib/lv_sprintf.h:
+
 ../lvgl/src/font/../misc/lv_utils.h:
 
 ../lvgl/src/font/../misc/lv_log.h:
-
-../lvgl/src/font/../misc/lv_types.h:
 
 ../lvgl/src/font/../misc/lv_assert.h:
 
 ../lvgl/src/font/../misc/lv_log.h:
 
-../lvgl/src/font/../misc/lv_mem.h:
+../lvgl/src/font/../misc/../stdlib/lv_mem.h:
+
+../lvgl/src/font/../misc/../stdlib/../lv_conf_internal.h:
+
+../lvgl/src/font/../misc/../stdlib/../misc/lv_types.h:
+
+../lvgl/src/font/../stdlib/lv_string.h:
+
+../lvgl/src/font/../stdlib/../lv_conf_internal.h:

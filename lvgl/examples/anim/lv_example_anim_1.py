@@ -2,7 +2,7 @@ def anim_x_cb(label, v):
     label.set_x(v)
 
 def sw_event_cb(e,label):
-    sw = e.get_target()
+    sw = e.get_target_obj()
 
     if sw.has_state(lv.STATE.CHECKED):
         a = lv.anim_t()
@@ -27,12 +27,12 @@ def sw_event_cb(e,label):
 # Start animation on an event
 #
 
-label = lv.label(lv.scr_act())
+label = lv.label(lv.screen_active())
 label.set_text("Hello animations!")
 label.set_pos(100, 10)
 
 
-sw = lv.switch(lv.scr_act())
+sw = lv.switch(lv.screen_active())
 sw.center()
 sw.add_state(lv.STATE.CHECKED)
 sw.add_event_cb(lambda e: sw_event_cb(e,label), lv.EVENT.VALUE_CHANGED, None)

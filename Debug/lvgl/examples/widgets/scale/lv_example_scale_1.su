@@ -1,0 +1,4 @@
+lv_area.h:352:23:lv_pct	16	static
+lv_display.h:378:34:lv_screen_active	8	static
+lv_obj_pos.h:184:20:lv_obj_center	16	static
+lv_example_scale_1.c:7:6:lv_example_scale_1	16	static

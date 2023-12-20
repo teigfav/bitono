@@ -15,20 +15,20 @@
 
 static volatile uint8_t touch_irq = 0;
 
-static void lvgl_touchscreen_read (lv_indev_drv_t *indev, lv_indev_data_t *data);
+static void lvgl_touchscreen_read (lv_indev_t *indev, lv_indev_data_t *data);
 
 void lvgl_touchscreen_init (void)
 {
-  static lv_indev_drv_t indev_drv;
+  static lv_indev_t* indev_drv;
   /* basic LVGL driver initialization */
-  lv_indev_drv_init(&indev_drv);
+  lv_disp_drv_init(&indev_drv);
   indev_drv.type = LV_INDEV_TYPE_POINTER;
   indev_drv.read_cb = lvgl_touchscreen_read;
   /* register the driver in LVGL */
   lv_indev_drv_register(&indev_drv);
 }
 
-static void lvgl_touchscreen_read (lv_indev_drv_t  *indev, lv_indev_data_t *data)
+static void lvgl_touchscreen_read (lv_indev_t  *indev, lv_indev_data_t *data)
 {
 	  static lv_coord_t last_x = 0;
 	  static lv_coord_t last_y = 0;

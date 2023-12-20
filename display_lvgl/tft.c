@@ -25,39 +25,34 @@ typedef uint32_t uintpixel_t;
 //static __IO uintpixel_t * my_fb = (__IO uintpixel_t*) (LCD_LAYER_0_ADDRESS);
 //lv_disp_draw_buf_t* my_fb_sdram;
 
-static lv_disp_drv_t disp_drv;
-static lv_disp_draw_buf_t disp_buf_1;
-static lv_disp_t *our_disp = NULL;
+//static lv_disp_t disp_drv;
+//static lv_disp_draw_buf_t disp_buf_1;
+//static lv_disp_t *our_disp = NULL;
 
-static void ex_disp_flush(lv_disp_drv_t *drv, const lv_area_t *area, lv_color_t * color_p);
+//void flush_cb(struct _lv_disp_t *disp_drv, const lv_area_t *area, lv_color_t * color_p);
 static void disp_flush_complete (DMA2D_HandleTypeDef*);
+
+
+
 
 
 void tft_init(void)
 {
+typedef void lv_disp_flush_cb_t(struct _lv_disp_t * disp, const lv_area_t * area, lv_color_t * px_map);
+void lv_disp_set_flush_cb(lv_disp_t * disp, lv_disp_flush_cb_t flush_cb);
 osMutexWait(mutex_lvgl_id, osWaitForever);
 lv_init();
 osMutexRelease(mutex_lvgl_id);
+lv_disp_t *disp_drv=lv_disp_create(TFT_HOR_RES,TFT_VER_RES);
 static lv_color_t buf1_1[TFT_HOR_RES * 10];
 osMutexWait(mutex_lvgl_id, osWaitForever);
-lv_disp_draw_buf_init(&disp_buf_1, buf1_1, NULL, TFT_HOR_RES * 10);   /*Initialize the display buffer*/
+lv_disp_set_draw_buffers(disp_drv, buf1_1, NULL, TFT_HOR_RES * 10, LV_DISP_RENDER_MODE_PARTIAL);   /*Initialize the display buffer*/
 osMutexRelease(mutex_lvgl_id);
-
-osMutexWait(mutex_lvgl_id, osWaitForever);
-lv_disp_drv_init(&disp_drv);
-osMutexRelease(mutex_lvgl_id);
-disp_drv.hor_res = TFT_HOR_RES;
-disp_drv.ver_res = TFT_VER_RES;
-disp_drv.flush_cb = ex_disp_flush;
-disp_drv.draw_buf = &disp_buf_1;
-disp_drv.full_refresh = 0;
+lv_disp_set_flush_cb(disp_drv, flush_cb); /*Set a flush callback to draw to the display*/
 hdma2d.XferCpltCallback = disp_flush_complete;
-osMutexWait(mutex_lvgl_id, osWaitForever);
-our_disp = lv_disp_drv_register(&disp_drv);
-osMutexRelease(mutex_lvgl_id);
 }
 
-static void ex_disp_flush(lv_disp_drv_t *drv, const lv_area_t *area, lv_color_t * color_p)
+void flush_cb(struct _lv_disp_t *disp_drv, const lv_area_t *area, lv_color_t * color_p)
 {
   lv_coord_t width = lv_area_get_width(area);
   lv_coord_t height = lv_area_get_height(area);
@@ -79,6 +74,6 @@ static void ex_disp_flush(lv_disp_drv_t *drv, const lv_area_t *area, lv_color_t 
 static void disp_flush_complete (DMA2D_HandleTypeDef *hdma2d)
 {
 osMutexWait(mutex_lvgl_id, osWaitForever);
-  lv_disp_flush_ready(&disp_drv);
+  lv_disp_flush_ready(disp_drv);
   osMutexRelease(mutex_lvgl_id);
 }

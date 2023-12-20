@@ -7,17 +7,20 @@
 C_SRCS += \
 ../lvgl/examples/get_started/lv_example_get_started_1.c \
 ../lvgl/examples/get_started/lv_example_get_started_2.c \
-../lvgl/examples/get_started/lv_example_get_started_3.c 
+../lvgl/examples/get_started/lv_example_get_started_3.c \
+../lvgl/examples/get_started/lv_example_get_started_4.c 
 
 C_DEPS += \
 ./lvgl/examples/get_started/lv_example_get_started_1.d \
 ./lvgl/examples/get_started/lv_example_get_started_2.d \
-./lvgl/examples/get_started/lv_example_get_started_3.d 
+./lvgl/examples/get_started/lv_example_get_started_3.d \
+./lvgl/examples/get_started/lv_example_get_started_4.d 
 
 OBJS += \
 ./lvgl/examples/get_started/lv_example_get_started_1.o \
 ./lvgl/examples/get_started/lv_example_get_started_2.o \
-./lvgl/examples/get_started/lv_example_get_started_3.o 
+./lvgl/examples/get_started/lv_example_get_started_3.o \
+./lvgl/examples/get_started/lv_example_get_started_4.o 
 
 
 # Each subdirectory must supply rules for building sources it contributes
@@ -27,7 +30,7 @@ lvgl/examples/get_started/%.o: ../lvgl/examples/get_started/%.c lvgl/examples/ge
 clean: clean-lvgl-2f-examples-2f-get_started
 
 clean-lvgl-2f-examples-2f-get_started:
-	-$(RM) ./lvgl/examples/get_started/lv_example_get_started_1.d ./lvgl/examples/get_started/lv_example_get_started_1.o ./lvgl/examples/get_started/lv_example_get_started_2.d ./lvgl/examples/get_started/lv_example_get_started_2.o ./lvgl/examples/get_started/lv_example_get_started_3.d ./lvgl/examples/get_started/lv_example_get_started_3.o
+	-$(RM) ./lvgl/examples/get_started/lv_example_get_started_1.d ./lvgl/examples/get_started/lv_example_get_started_1.o ./lvgl/examples/get_started/lv_example_get_started_2.d ./lvgl/examples/get_started/lv_example_get_started_2.o ./lvgl/examples/get_started/lv_example_get_started_3.d ./lvgl/examples/get_started/lv_example_get_started_3.o ./lvgl/examples/get_started/lv_example_get_started_4.d ./lvgl/examples/get_started/lv_example_get_started_4.o
 
 .PHONY: clean-lvgl-2f-examples-2f-get_started
 

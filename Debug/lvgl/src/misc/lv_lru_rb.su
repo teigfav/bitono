@@ -1,0 +1,16 @@
+lv_ll.h:85:20:_lv_ll_clear	16	static
+lv_string.h:65:20:lv_memzero	16	static
+lv_lru_rb.c:92:15:lv_lru_rb_create	32	static
+lv_lru_rb.c:128:6:lv_lru_rb_destroy	16	static
+lv_lru_rb.c:141:8:lv_lru_rb_get_or_create	56	static
+lv_lru_rb.c:186:6:lv_lru_rb_drop	32	static
+lv_lru_rb.c:211:6:lv_lru_rb_drop_all	24	static
+lv_lru_rb.c:231:6:lv_lru_rb_set_max_size	24	static
+lv_lru_rb.c:237:8:lv_lru_rb_get_max_size	16	static
+lv_lru_rb.c:243:8:lv_lru_rb_get_size	16	static
+lv_lru_rb.c:249:8:lv_lru_rb_get_free_size	24	static
+lv_lru_rb.c:254:6:lv_lru_rb_set_compare_cb	24	static
+lv_lru_rb.c:260:6:lv_lru_rb_set_create_cb	24	static
+lv_lru_rb.c:266:6:lv_lru_rb_set_free_cb	24	static
+lv_lru_rb.c:275:15:alloc_new_node	40	static
+lv_lru_rb.c:311:23:get_lru_node	16	static

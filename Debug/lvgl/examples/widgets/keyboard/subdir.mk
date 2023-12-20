@@ -5,13 +5,16 @@
 
 # Add inputs and outputs from these tool invocations to the build variables 
 C_SRCS += \
-../lvgl/examples/widgets/keyboard/lv_example_keyboard_1.c 
+../lvgl/examples/widgets/keyboard/lv_example_keyboard_1.c \
+../lvgl/examples/widgets/keyboard/lv_example_keyboard_2.c 
 
 C_DEPS += \
-./lvgl/examples/widgets/keyboard/lv_example_keyboard_1.d 
+./lvgl/examples/widgets/keyboard/lv_example_keyboard_1.d \
+./lvgl/examples/widgets/keyboard/lv_example_keyboard_2.d 
 
 OBJS += \
-./lvgl/examples/widgets/keyboard/lv_example_keyboard_1.o 
+./lvgl/examples/widgets/keyboard/lv_example_keyboard_1.o \
+./lvgl/examples/widgets/keyboard/lv_example_keyboard_2.o 
 
 
 # Each subdirectory must supply rules for building sources it contributes
@@ -21,7 +24,7 @@ lvgl/examples/widgets/keyboard/%.o: ../lvgl/examples/widgets/keyboard/%.c lvgl/e
 clean: clean-lvgl-2f-examples-2f-widgets-2f-keyboard
 
 clean-lvgl-2f-examples-2f-widgets-2f-keyboard:
-	-$(RM) ./lvgl/examples/widgets/keyboard/lv_example_keyboard_1.d ./lvgl/examples/widgets/keyboard/lv_example_keyboard_1.o
+	-$(RM) ./lvgl/examples/widgets/keyboard/lv_example_keyboard_1.d ./lvgl/examples/widgets/keyboard/lv_example_keyboard_1.o ./lvgl/examples/widgets/keyboard/lv_example_keyboard_2.d ./lvgl/examples/widgets/keyboard/lv_example_keyboard_2.o
 
 .PHONY: clean-lvgl-2f-examples-2f-widgets-2f-keyboard
 

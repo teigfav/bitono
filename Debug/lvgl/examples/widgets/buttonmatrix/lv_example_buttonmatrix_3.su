@@ -1,0 +1,6 @@
+lv_style.h:557:20:lv_style_set_pad_all	16	static
+lv_style.h:577:20:lv_style_set_pad_gap	16	static
+lv_display.h:378:34:lv_screen_active	8	static
+lv_obj_pos.h:184:20:lv_obj_center	16	static
+lv_example_buttonmatrix_3.c:4:13:event_cb	32	static
+lv_example_buttonmatrix_3.c:27:6:lv_example_buttonmatrix_3	16	static

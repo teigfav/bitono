@@ -1,0 +1,10 @@
+lv_color.h:269:26:lv_color_make	24	static
+lv_color.h:396:26:lv_color_white	16	static
+lv_style.h:557:20:lv_style_set_pad_all	16	static
+lv_theme_simple.c:72:13:style_init	88	static
+lv_theme_simple.c:140:6:lv_theme_simple_is_inited	16	static
+lv_theme_simple.c:147:14:lv_theme_simple_get	8	static
+lv_theme_simple.c:156:6:lv_theme_simple_deinit	24	static
+lv_theme_simple.c:172:14:lv_theme_simple_init	24	static
+lv_theme_simple.c:200:13:theme_apply	24	static
+lv_theme_simple.c:429:13:style_init_reset	16	static

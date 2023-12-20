@@ -7,17 +7,20 @@
 C_SRCS += \
 ../lvgl/examples/widgets/slider/lv_example_slider_1.c \
 ../lvgl/examples/widgets/slider/lv_example_slider_2.c \
-../lvgl/examples/widgets/slider/lv_example_slider_3.c 
+../lvgl/examples/widgets/slider/lv_example_slider_3.c \
+../lvgl/examples/widgets/slider/lv_example_slider_4.c 
 
 C_DEPS += \
 ./lvgl/examples/widgets/slider/lv_example_slider_1.d \
 ./lvgl/examples/widgets/slider/lv_example_slider_2.d \
-./lvgl/examples/widgets/slider/lv_example_slider_3.d 
+./lvgl/examples/widgets/slider/lv_example_slider_3.d \
+./lvgl/examples/widgets/slider/lv_example_slider_4.d 
 
 OBJS += \
 ./lvgl/examples/widgets/slider/lv_example_slider_1.o \
 ./lvgl/examples/widgets/slider/lv_example_slider_2.o \
-./lvgl/examples/widgets/slider/lv_example_slider_3.o 
+./lvgl/examples/widgets/slider/lv_example_slider_3.o \
+./lvgl/examples/widgets/slider/lv_example_slider_4.o 
 
 
 # Each subdirectory must supply rules for building sources it contributes
@@ -27,7 +30,7 @@ lvgl/examples/widgets/slider/%.o: ../lvgl/examples/widgets/slider/%.c lvgl/examp
 clean: clean-lvgl-2f-examples-2f-widgets-2f-slider
 
 clean-lvgl-2f-examples-2f-widgets-2f-slider:
-	-$(RM) ./lvgl/examples/widgets/slider/lv_example_slider_1.d ./lvgl/examples/widgets/slider/lv_example_slider_1.o ./lvgl/examples/widgets/slider/lv_example_slider_2.d ./lvgl/examples/widgets/slider/lv_example_slider_2.o ./lvgl/examples/widgets/slider/lv_example_slider_3.d ./lvgl/examples/widgets/slider/lv_example_slider_3.o
+	-$(RM) ./lvgl/examples/widgets/slider/lv_example_slider_1.d ./lvgl/examples/widgets/slider/lv_example_slider_1.o ./lvgl/examples/widgets/slider/lv_example_slider_2.d ./lvgl/examples/widgets/slider/lv_example_slider_2.o ./lvgl/examples/widgets/slider/lv_example_slider_3.d ./lvgl/examples/widgets/slider/lv_example_slider_3.o ./lvgl/examples/widgets/slider/lv_example_slider_4.d ./lvgl/examples/widgets/slider/lv_example_slider_4.o
 
 .PHONY: clean-lvgl-2f-examples-2f-widgets-2f-slider
 

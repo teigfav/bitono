@@ -1,7 +1,7 @@
-lv_obj_style.h:231:20:lv_obj_set_style_size	24	static
-lv_disp.h:182:26:lv_scr_act	8	static
-lv_slider.h:106:20:lv_slider_set_range	24	static
-lv_slider.h:130:23:lv_slider_get_value	16	static
-lv_example_chart_5.c:49:13:slider_x_event_cb	24	static
-lv_example_chart_5.c:56:13:slider_y_event_cb	24	static
-lv_example_chart_5.c:68:6:lv_example_chart_5	40	static
+lv_display.h:378:34:lv_screen_active	8	static
+lv_obj_pos.h:184:20:lv_obj_center	16	static
+lv_obj_style.h:233:20:lv_obj_set_style_pad_all	24	static
+lv_example_chart_5.c:12:6:lv_example_chart_5	24	static
+lv_example_chart_5.c:35:13:draw_event_cb	24	static
+lv_example_chart_5.c:50:13:add_faded_area	248	static
+lv_example_chart_5.c:103:13:hook_division_lines	40	static

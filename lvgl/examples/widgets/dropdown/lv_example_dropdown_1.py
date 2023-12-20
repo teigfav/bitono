@@ -1,6 +1,6 @@
 def event_handler(e):
     code = e.get_code()
-    obj = e.get_target()
+    obj = e.get_target_obj()
     if code == lv.EVENT.VALUE_CHANGED:
         option = " "*10 # should be large enough to store the option
         obj.get_selected_str(option, len(option))
@@ -8,7 +8,7 @@ def event_handler(e):
         print("Option: \"%s\"" % option.strip())
 
 # Create a normal drop down list
-dd = lv.dropdown(lv.scr_act())
+dd = lv.dropdown(lv.screen_active())
 dd.set_options("\n".join([
     "Apple",
     "Banana",

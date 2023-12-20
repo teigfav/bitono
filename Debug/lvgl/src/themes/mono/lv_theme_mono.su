@@ -1,0 +1,13 @@
+lv_color.h:269:26:lv_color_make	24	static
+lv_color.h:396:26:lv_color_white	16	static
+lv_color.h:405:26:lv_color_black	16	static
+lv_style.h:551:20:lv_style_set_size	24	static
+lv_style.h:557:20:lv_style_set_pad_all	16	static
+lv_style.h:577:20:lv_style_set_pad_gap	16	static
+lv_display.h:572:23:lv_display_dpx	16	static
+lv_theme_mono.c:82:13:style_init	104	static
+lv_theme_mono.c:179:6:lv_theme_mono_is_inited	16	static
+lv_theme_mono.c:186:6:lv_theme_mono_deinit	24	static
+lv_theme_mono.c:202:14:lv_theme_mono_init	32	static
+lv_theme_mono.c:228:13:theme_apply	24	static
+lv_theme_mono.c:524:13:style_init_reset	16	static

@@ -6,9 +6,10 @@
 /*********************
  *      INCLUDES
  *********************/
-#include "lv_anim_timeline.h"
-#include "lv_mem.h"
 #include "lv_assert.h"
+#include "lv_anim_timeline.h"
+#include "../stdlib/lv_mem.h"
+#include "../stdlib/lv_string.h"
 
 /*********************
  *      DEFINES
@@ -17,19 +18,6 @@
 /**********************
  *      TYPEDEFS
  **********************/
-
-/*Data of anim_timeline_dsc*/
-typedef struct {
-    lv_anim_t anim;
-    uint32_t start_time;
-} lv_anim_timeline_dsc_t;
-
-/*Data of anim_timeline*/
-struct _lv_anim_timeline_t {
-    lv_anim_timeline_dsc_t * anim_dsc;  /**< Dynamically allocated anim dsc array*/
-    uint32_t anim_dsc_cnt;              /**< The length of anim dsc array*/
-    bool reverse;                       /**< Reverse playback*/
-};
 
 /**********************
  *  STATIC PROTOTYPES
@@ -50,23 +38,19 @@ static void lv_anim_timeline_virtual_exec_cb(void * var, int32_t v);
 
 lv_anim_timeline_t * lv_anim_timeline_create(void)
 {
-    lv_anim_timeline_t * at = (lv_anim_timeline_t *)lv_mem_alloc(sizeof(lv_anim_timeline_t));
-
+    lv_anim_timeline_t * at = lv_malloc_zeroed(sizeof(lv_anim_timeline_t));
     LV_ASSERT_MALLOC(at);
-
-    if(at) lv_memset_00(at, sizeof(lv_anim_timeline_t));
-
     return at;
 }
 
-void lv_anim_timeline_del(lv_anim_timeline_t * at)
+void lv_anim_timeline_delete(lv_anim_timeline_t * at)
 {
     LV_ASSERT_NULL(at);
 
     lv_anim_timeline_stop(at);
 
-    lv_mem_free(at->anim_dsc);
-    lv_mem_free(at);
+    lv_free(at->anim_dsc);
+    lv_free(at);
 }
 
 void lv_anim_timeline_add(lv_anim_timeline_t * at, uint32_t start_time, lv_anim_t * a)
@@ -74,7 +58,7 @@ void lv_anim_timeline_add(lv_anim_timeline_t * at, uint32_t start_time, lv_anim_
     LV_ASSERT_NULL(at);
 
     at->anim_dsc_cnt++;
-    at->anim_dsc = lv_mem_realloc(at->anim_dsc, at->anim_dsc_cnt * sizeof(lv_anim_timeline_dsc_t));
+    at->anim_dsc = lv_realloc(at->anim_dsc, at->anim_dsc_cnt * sizeof(lv_anim_timeline_dsc_t));
 
     LV_ASSERT_MALLOC(at->anim_dsc);
 
@@ -82,7 +66,7 @@ void lv_anim_timeline_add(lv_anim_timeline_t * at, uint32_t start_time, lv_anim_
     at->anim_dsc[at->anim_dsc_cnt - 1].start_time = start_time;
 
     /*Add default var and virtual exec_cb, used to delete animation.*/
-    if(a->var == NULL && a->exec_cb == NULL) {
+    if(a->var == NULL && a->exec_cb == NULL && a->custom_exec_cb == NULL) {
         at->anim_dsc[at->anim_dsc_cnt - 1].anim.var = at;
         at->anim_dsc[at->anim_dsc_cnt - 1].anim.exec_cb = lv_anim_timeline_virtual_exec_cb;
     }
@@ -103,7 +87,7 @@ uint32_t lv_anim_timeline_start(lv_anim_timeline_t * at)
             int32_t temp = a.start_value;
             a.start_value = a.end_value;
             a.end_value = temp;
-            lv_anim_set_delay(&a, playtime - (start_time + a.time));
+            lv_anim_set_delay(&a, playtime - (start_time + a.duration));
         }
         else {
             lv_anim_set_delay(&a, start_time);
@@ -121,7 +105,8 @@ void lv_anim_timeline_stop(lv_anim_timeline_t * at)
 
     for(uint32_t i = 0; i < at->anim_dsc_cnt; i++) {
         lv_anim_t * a = &(at->anim_dsc[i].anim);
-        lv_anim_del(a->var, a->exec_cb);
+        if(a->exec_cb) lv_anim_delete(a->var, a->exec_cb);
+        else lv_anim_delete(a->var, NULL);
     }
 }
 
@@ -141,25 +126,28 @@ void lv_anim_timeline_set_progress(lv_anim_timeline_t * at, uint16_t progress)
     for(uint32_t i = 0; i < at->anim_dsc_cnt; i++) {
         lv_anim_t * a = &(at->anim_dsc[i].anim);
 
-        if(a->exec_cb == NULL) {
+        if(a->exec_cb == NULL && a->custom_exec_cb == NULL) {
             continue;
         }
 
         uint32_t start_time = at->anim_dsc[i].start_time;
         int32_t value = 0;
-
-        if(act_time < start_time) {
+        if(act_time < start_time && a->early_apply) {
             value = a->start_value;
+            if(a->exec_cb) a->exec_cb(a->var, value);
+            if(a->custom_exec_cb) a->custom_exec_cb(a, value);
         }
-        else if(act_time < (start_time + a->time)) {
+        else if(act_time >= start_time && act_time <= (start_time + a->duration)) {
             a->act_time = act_time - start_time;
             value = a->path_cb(a);
+            if(a->exec_cb) a->exec_cb(a->var, value);
+            if(a->custom_exec_cb) a->custom_exec_cb(a, value);
         }
-        else {
+        else if(act_time > start_time + a->duration) {
             value = a->end_value;
+            if(a->exec_cb) a->exec_cb(a->var, value);
+            if(a->custom_exec_cb) a->custom_exec_cb(a, value);
         }
-
-        a->exec_cb(a->var, value);
     }
 }
 

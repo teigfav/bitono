@@ -1,7 +1,6 @@
-lv_color.h:595:26:lv_color_make	16	static
-lv_color.h:696:26:lv_color_white	8	static
-lv_color.h:700:26:lv_color_black	8	static
-lv_obj_pos.h:199:20:lv_obj_center	16	static
-lv_disp.h:182:26:lv_scr_act	8	static
-lv_example_chart_4.c:5:13:event_cb	144	static
-lv_example_chart_4.c:62:6:lv_example_chart_4	24	static
+lv_color.h:253:26:lv_color_hex	24	static
+lv_color_op.h:49:48:lv_color_mix	32	static
+lv_display.h:378:34:lv_screen_active	8	static
+lv_obj_pos.h:184:20:lv_obj_center	16	static
+lv_example_chart_4.c:5:13:draw_event_cb	64	static
+lv_example_chart_4.c:25:6:lv_example_chart_4	24	static
