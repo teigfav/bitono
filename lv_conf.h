@@ -39,7 +39,7 @@
 #define LV_COLOR_MIX_ROUND_OFS (LV_COLOR_DEPTH == 32 ? 0: 128)
 
 /*Images pixels with this color will not be drawn if they are  chroma keyed)*/
-#define LV_COLOR_CHROMA_KEY    lv_color_hex(0x00ff00)         /*pure green*/
+#define LV_COLOR_CHROMA_KEY    lv_color_hex(0x000000)         /*black*/
 
 /*=========================
    MEMORY SETTINGS
@@ -348,14 +348,14 @@ e.g. "stm32f769xx.h" or "stm32f429xx.h"*/
 #define LV_FONT_MONTSERRAT_48    0
 
 /*Demonstrate special features*/
-#define LV_FONT_MONTSERRAT_12_SUBPX      0
+#define LV_FONT_MONTSERRAT_12_SUBPX      1
 #define LV_FONT_MONTSERRAT_28_COMPRESSED 0  /*bpp = 3*/
 #define LV_FONT_DEJAVU_16_PERSIAN_HEBREW 0  /*Hebrew, Arabic, Persian letters and all their forms*/
 #define LV_FONT_SIMSUN_16_CJK            0  /*1000 most common CJK radicals*/
 
 /*Pixel perfect monospace fonts*/
 #define LV_FONT_UNSCII_8        0
-#define LV_FONT_UNSCII_16       0
+#define LV_FONT_UNSCII_16       1
 
 /*Optionally declare custom fonts here.
  *You can use these fonts as default font too and they will be available globally.

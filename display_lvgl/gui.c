@@ -78,13 +78,16 @@ void gui_define(void)
 {
 	   uint8_t dec_GHz = 7;
 	   uint8_t un_GHz = 1;
-	   uint64_t f1=71000000000;
+	   uint64_t f1=71111111111;
 	   uint64_t f2 = 72000000000;
 	   lv_obj_t* act_scr = lv_scr_act();
 	   lv_obj_t* label;
 	   lv_obj_t* label_f1;
 	   lv_obj_t* label_f2;
 	   lv_obj_t* label_f3;
+	   lv_obj_t* label_f1_val;
+	   lv_obj_t* label_f2_val;
+	   lv_obj_t* label_f3_val;
 	   lv_obj_t* cont;
 	   lv_obj_t* switch_f1;
 	   lv_obj_t* switch_f2;
@@ -111,31 +114,53 @@ void gui_define(void)
 	   lv_obj_set_size(menuDemo, 480, 272);
 	   lv_obj_set_style_bg_color(menuDemo, lv_color_hex(0xD3D3D3), 0);
 
+	   	static lv_style_t style_text_fixed;
+	   		lv_style_init(&style_text_fixed);
+	   		lv_style_set_text_font(&style_text_fixed, &lv_font_unscii_16);
 
 
 	   //Crete threetonepage
 	   lv_obj_t* threetone_page = lv_menu_page_create(menuDemo, (char*)"                         Three tones");
 	   lv_obj_set_scrollbar_mode(threetone_page, LV_SCROLLBAR_MODE_OFF);
 	   lv_obj_clear_flag(threetone_page,LV_OBJ_FLAG_SCROLLABLE);
+
 	   label_f1 = lv_label_create(threetone_page);
 	   lv_obj_set_parent(label_f1, threetone_page);
-	   lv_label_set_text_fmt(label_f1, "Freq 1: %lld",f1);
+	   lv_label_set_text(label_f1, "Freq 1");
 	   lv_obj_add_flag(label_f1, LV_OBJ_FLAG_IGNORE_LAYOUT);
 	   lv_obj_set_pos(label_f1, 50, 25);
+	   lv_obj_add_style(label_f1, &style_text_fixed, 0);
+
+	   label_f1_val = lv_label_create(threetone_page);
+	   lv_obj_set_parent(label_f1_val, threetone_page);
+	   lv_label_set_text_fmt(label_f1_val, "%lld", f1);
+	   lv_obj_add_flag(label_f1_val, LV_OBJ_FLAG_IGNORE_LAYOUT);
+	   lv_obj_set_pos(label_f1_val, 140, 25);
+	   lv_obj_add_style(label_f1_val, &style_text_fixed, 0);
+
 	   switch_f1 = lv_switch_create(threetone_page);
 	   lv_obj_add_flag(switch_f1, LV_OBJ_FLAG_IGNORE_LAYOUT);
-	   lv_obj_set_size(switch_f1, 30, 15);
+	   lv_obj_set_size(switch_f1, 35, 15);
 	   lv_obj_set_pos(switch_f1, 10, 25);
 
 	   label_f2 = lv_label_create(threetone_page);
 	   lv_obj_set_parent(label_f2, threetone_page);
-	   lv_label_set_text_fmt(label_f2, "Freq 2: %lld", f2);
+	   lv_label_set_text(label_f2, "Freq 2");
 	   lv_obj_add_flag(label_f2, LV_OBJ_FLAG_IGNORE_LAYOUT);
-	   lv_obj_set_pos(label_f2, 50, 50);
+	   lv_obj_set_pos(label_f2, 50, 60);
+	   lv_obj_add_style(label_f2, &style_text_fixed, 0);
+
+	   label_f2_val = lv_label_create(threetone_page);
+	   lv_obj_set_parent(label_f2_val, threetone_page);
+	   lv_label_set_text_fmt(label_f2_val, "%lld", f2);
+	   lv_obj_add_flag(label_f2_val, LV_OBJ_FLAG_IGNORE_LAYOUT);
+	   lv_obj_set_pos(label_f2_val, 140, 60);
+	   lv_obj_add_style(label_f2_val, &style_text_fixed, 0);
+
 	   switch_f2 = lv_switch_create(threetone_page);
 	   lv_obj_add_flag(switch_f2, LV_OBJ_FLAG_IGNORE_LAYOUT);
-	   lv_obj_set_size(switch_f2, 30, 15);
-	   lv_obj_set_pos(switch_f2, 10, 50);
+	   lv_obj_set_size(switch_f2, 32, 15);
+	   lv_obj_set_pos(switch_f2, 10, 60);
 
 	   roller_container = lv_menu_cont_create(threetone_page);
 	   lv_obj_add_flag(roller_container, LV_OBJ_FLAG_IGNORE_LAYOUT);
@@ -154,11 +179,14 @@ void gui_define(void)
 	   lv_roller_set_visible_row_count(roller_1G, 2);
 	   lv_obj_set_width(roller_1G, 35);
 
-//	    LV_IMG_DECLARE(wheel_130x130);
-//	    lv_obj_t* img1 = lv_img_create(threetone_page);
-//	    lv_img_set_src(img1, &wheel_130x130);
-//	    lv_obj_align(img1, LV_ALIGN_CENTER, 0, -100);
-//	    lv_obj_set_size(img1, 130, 130);
+	    LV_IMG_DECLARE(wheel_100x100);
+	    lv_obj_t* img1 = lv_img_create(threetone_page);
+	    lv_img_set_src(img1, &wheel_100x100);
+	    lv_obj_add_flag(img1, LV_OBJ_FLAG_IGNORE_LAYOUT);
+	    lv_obj_set_pos(img1, 200, 120);
+	    //lv_obj_align(img1, LV_ALIGN_CENTER, 0, -100);
+	    //lv_obj_set_size(img1, 130, 130);
+	    //lv_img_set_zoom(img1, 128);
 
 	   //metodo per creare un pulsante attivo ma non visibile
 //	   but_1 = lv_button_create(threetone_page);
