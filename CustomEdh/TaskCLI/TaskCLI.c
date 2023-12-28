@@ -182,6 +182,15 @@ void StartCLITask(void *argument)
 	      };
 	  embeddedCliAddBinding(cli, on_read_sint );
 
+	  CliCommandBinding on_dump_sdram={
+	              "sdram_read",
+	              "Read SDRAM : [offset] [lenght]",
+	              true,
+	              NULL,
+	              onDumpsdram
+	      };
+	  embeddedCliAddBinding(cli,on_dump_sdram);
+
 	cli->onCommand = onCommand;
 	cli->writeChar = writeChar;
   /* Infinite loop */
@@ -511,4 +520,26 @@ void onReadSint(EmbeddedCli *cli, char *args, void *context)
 		{
 		print_k("Error: No queue access\r\n");
 		}
+}
+void onDumpsdram(EmbeddedCli *cli, char *args, void *context)
+{
+	uint32_t offset=0;
+	uint32_t n_byte=0;
+	uint8_t vect[4]={0};
+	osStatus_t status;
+	if(embeddedCliGetTokenCount(args)==2)
+	{
+		offset=strtoul(embeddedCliGetToken(args,1),NULL,0);
+		n_byte=strtoul(embeddedCliGetToken(args,2),NULL,0);
+
+		for(uint32_t i=0;i<n_byte;i=i+4)
+		{
+			memcpy(&vect[0],offset+i,4);
+			print_k("%04X : %02X %02X %02X %02X\r\n",offset+(uint32_t)i,vect[0],vect[1],vect[2],vect[3]);
+		}
+	}
+	else
+	{
+		print_k("Error: Wrong number of parameters\r\n");
+	}
 }

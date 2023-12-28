@@ -1,3 +1,3 @@
 lv_log.c:52:6:lv_log_register_print_cb	16	static
-lv_log.c:66:6:_lv_log_add	608	static
-lv_log.c:115:6:lv_log	536	static
+lv_log.c:66:6:_lv_log_add	56	static
+lv_log.c:115:6:lv_log	16	static

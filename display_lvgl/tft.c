@@ -59,6 +59,7 @@ osMutexRelease(mutex_lvgl_id);
 
 static void ex_disp_flush(lv_disp_drv_t *drv, const lv_area_t *area, lv_color_t * color_p)
 {
+	osMutexWait(mutex_lvgl_id, osWaitForever);
   lv_coord_t width = lv_area_get_width(area);
   lv_coord_t height = lv_area_get_height(area);
 
@@ -74,6 +75,7 @@ static void ex_disp_flush(lv_disp_drv_t *drv, const lv_area_t *area, lv_color_t 
   DMA2D->IFCR = 0x3FU;
   DMA2D->CR |= DMA2D_CR_TCIE;
   DMA2D->CR |= DMA2D_CR_START;
+  osMutexRelease(mutex_lvgl_id);
 }
 
 static void disp_flush_complete (DMA2D_HandleTypeDef *hdma2d)

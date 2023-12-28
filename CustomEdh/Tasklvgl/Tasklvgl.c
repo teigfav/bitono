@@ -11,6 +11,7 @@
 #include "Tasklvgl.h"
 #include "lvgl/lvgl.h"
 #include "tft.h"
+#include "ER-TPC050A2-2_GSL1680F_H.h"
 
 osThreadId lvgl_tickHandle;
 osThreadId lvgl_timerHandle;
@@ -47,7 +48,7 @@ void StartTickTask(void *argument)
   for(;;)
   {
     lv_tick_inc(10);
-    osDelay(10);
+    osDelay(20);
   }
 }
 
@@ -55,9 +56,9 @@ void StartTimerTask(void *argument)
 {
   for(;;)
   {
-	osMutexWait(mutex_lvgl_id, osWaitForever);
+//	osMutexWait(mutex_lvgl_id, osWaitForever);
 	lv_timer_handler();
-	osMutexRelease(mutex_lvgl_id);
-	osDelay(20);
+//	osMutexRelease(mutex_lvgl_id);
+	osDelay(30);
   }
 }

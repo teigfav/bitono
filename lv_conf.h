@@ -49,7 +49,7 @@
 #define LV_MEM_CUSTOM      0
 #if LV_MEM_CUSTOM == 0
 /*Size of the memory available for `lv_mem_alloc()` in bytes (>= 2kB)*/
-#  define LV_MEM_SIZE    (20U * 1024U)          /*[bytes]*/
+#  define LV_MEM_SIZE    (40U * 1024U)          /*[bytes]*/
 
 /*Set an address for the memory pool instead of allocating it as a normal array. Can be in external SRAM too.*/
 #  define LV_MEM_ADR          0     /*0: unused*/
@@ -208,7 +208,7 @@ e.g. "stm32f769xx.h" or "stm32f429xx.h"*/
 
 /*1: Print the log with 'printf';
  *0: User need to register a callback with `lv_log_register_print_cb()`*/
-#  define LV_LOG_PRINTF   0
+#  define LV_LOG_PRINTF   1
 
 /*Enable/disable LV_LOG_TRACE in modules that produces a huge number of logs*/
 #  define LV_LOG_TRACE_MEM            1
@@ -326,11 +326,11 @@ e.g. "stm32f769xx.h" or "stm32f429xx.h"*/
 /*Montserrat fonts with ASCII range and some symbols using bpp = 4
  *https://fonts.google.com/specimen/Montserrat*/
 #define LV_FONT_MONTSERRAT_8     0
-#define LV_FONT_MONTSERRAT_10    0
+#define LV_FONT_MONTSERRAT_10    1
 #define LV_FONT_MONTSERRAT_12    1
 #define LV_FONT_MONTSERRAT_14    1
 #define LV_FONT_MONTSERRAT_16    1
-#define LV_FONT_MONTSERRAT_18    0
+#define LV_FONT_MONTSERRAT_18    1
 #define LV_FONT_MONTSERRAT_20    0
 #define LV_FONT_MONTSERRAT_22    0
 #define LV_FONT_MONTSERRAT_24    0

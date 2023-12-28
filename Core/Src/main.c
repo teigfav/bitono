@@ -109,8 +109,8 @@ extern EmbeddedCli *cli;
 #define PUTCHAR_PROTOTYPE int fputc(int ch, FILE *f)
 #endif /* __GNUC__ */
 
-uint8_t* framebuffer=(uint8_t*)0x70000000;
-uint8_t* flashframebuffer=(uint8_t*)0x90000000;
+//uint8_t* framebuffer=(uint8_t*)0x70000000;
+//uint8_t* flashframebuffer=(uint8_t*)0x90000000;
 //extern char image_aad[];
 /* USER CODE END PFP */
 
@@ -178,17 +178,17 @@ int main(void)
   HAL_GPIO_WritePin(LCD_DISP_GPIO_Port,LCD_DISP_Pin,GPIO_PIN_SET);
   //memset(framebuffer,0xFF,480*272*24/8);
 
-  for (int i=0;i<480*272;i++)
-  {
+//  for (int i=0;i<480*272;i++)
+//  {
 //	  *framebuffer =0x00;  //blue
 //	  framebuffer++;
 //	  *framebuffer =0xFF;   //green
 //	  framebuffer++;
 //	  *framebuffer =0x00;  //red
 //	  framebuffer++;
-//	  printf("address %x   data  %x\r\n",flashframebuffer,*flashframebuffer );
-//	  flashframebuffer++;
-  }
+//	  //printf("address %x   data  %x\r\n",flashframebuffer,*flashframebuffer );
+//	  framebuffer++;
+//  }
   /* USER CODE END 2 */
 
   /* Init scheduler */

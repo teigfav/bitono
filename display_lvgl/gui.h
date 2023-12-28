@@ -10,6 +10,7 @@
 
 
 void gui_define(void);
+void gui_start(void);
 
 
 #endif /* GUI_H_ */

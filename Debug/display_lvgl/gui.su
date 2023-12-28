@@ -1,3 +1,7 @@
 lv_color.h:600:26:lv_color_hex	24	static
 lv_disp.h:182:26:lv_scr_act	8	static
-gui.c:77:6:gui_define	128	static
+gui.c:43:13:event_handler_threetone_page	88	static
+gui.c:120:13:textarea_event_handler	32	static
+gui.c:126:13:btnm_event_handler	32	static
+gui.c:569:6:my_timer	24	static
+gui.c:578:6:gui_define	104	static
