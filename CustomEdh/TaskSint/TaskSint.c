@@ -14,6 +14,7 @@
 #include "CY15B064Q.h"
 #include "string.h"
 #include "stdlib.h"
+#include "gui.h"
 
 osThreadId_t SintTaskHandle;
 
@@ -26,6 +27,7 @@ const osMessageQueueAttr_t Queue_Sint_attributes = {
 /* Definitions for SPI3Mutex */
 osMutexId_t SPI2MutexHandle;
 extern osMutexId_t SPI3MutexHandle;
+extern struct fwd_ram_pwr_ctrl fwd_ram_pwr_ctrl;
 void StartSintTask(void *argument);
 
 const osMutexAttr_t SPI2Mutex_attributes = {
@@ -75,6 +77,7 @@ void StartSintTask(void *argument)
 	osDelay(10);
 	LoadSintParam();
 	bool first=false;
+	init_freq_gui();
 
   for(;;)
   {
@@ -86,18 +89,47 @@ void StartSintTask(void *argument)
 		  {
 			  if(messaggio.sint==Sint1)
 			  {
-			  sint_fram_parameters.sint_par.freq_1=messaggio.value;
-			  adf4371_pll_set_freq(&adf4372_dev,sint_fram_parameters.sint_par.freq_1,Sint1);
+
+				  if (messaggio.value<=fwd_ram_pwr_ctrl.fwd_pwr_ctrl[0].fmax && messaggio.value>=fwd_ram_pwr_ctrl.fwd_pwr_ctrl[0].fmin)
+				  {
+					LOG_DBG("Set f1\r\n");
+				  sint_fram_parameters.sint_par.freq_1=messaggio.value;
+				  adf4371_pll_set_freq(&adf4372_dev,sint_fram_parameters.sint_par.freq_1,Sint1);
+				  if(messaggio.source!=gui) init_freq_gui(); //serve per evitare che si alluppi con la gui che manda il messaggio e questo aggiorna le freq nella gui etc...
+				  }
+				  else
+				  {
+					  LOG_DBG("Frequency out of calibrated range\r\n");
+				  }
 			  }
 		  else if (messaggio.sint==Sint2)
 			  {
+
+				  if (messaggio.value<=fwd_ram_pwr_ctrl.fwd_pwr_ctrl[1].fmax && messaggio.value>=fwd_ram_pwr_ctrl.fwd_pwr_ctrl[1].fmin)
+				  {
+					  LOG_DBG("Set f2\r\n");
 				  sint_fram_parameters.sint_par.freq_2=messaggio.value;
 				  adf4371_pll_set_freq(&adf4372_dev,sint_fram_parameters.sint_par.freq_2,Sint2);
+				  if(messaggio.source!=gui) init_freq_gui();
+				  }
+				  else
+				  {
+					  LOG_DBG("Frequency out of calibrated range\r\n");
+				  }
 			  }
 		  else if(messaggio.sint==Sint3)
 			  {
+				  if (messaggio.value<=fwd_ram_pwr_ctrl.fwd_pwr_ctrl[2].fmax && messaggio.value>=fwd_ram_pwr_ctrl.fwd_pwr_ctrl[2].fmin)
+				  {
+					  LOG_DBG("Set f3\r\n");
 				  sint_fram_parameters.sint_par.freq_3=messaggio.value;
 				  adf4371_pll_set_freq(&adf4372_dev,sint_fram_parameters.sint_par.freq_3,Sint3);
+				  if(messaggio.source!=gui) init_freq_gui();
+				  }
+				  else
+				  {
+					  LOG_DBG("Frequency out of calibrated range\r\n");
+				  }
 			  }
 		  }
 		  else if(messaggio.op==on_f)
@@ -267,11 +299,11 @@ void LoadSintParam(void)
 	{
 		LOG_DBG("Load default Sint parameters \r\n");
 		sint_fram_parameters.sint_par.modo=indep;
-		sint_fram_parameters.sint_par.freq_1=14000000000;
-		sint_fram_parameters.sint_par.freq_2=14000000000;
+		sint_fram_parameters.sint_par.freq_1=72000000000;
+		sint_fram_parameters.sint_par.freq_2=73000000000;
 		sint_fram_parameters.sint_par.freq_3=14000000000;
 		sint_fram_parameters.sint_par.deltatone=1000000000;
-		sint_fram_parameters.sint_par.f1_sweep_max=2000000000;
+		sint_fram_parameters.sint_par.f1_sweep_max=8500000000;
 		sint_fram_parameters.sint_par.sweep_time=2;
 		sint_fram_parameters.sint_par.sint1_on_off=1;
 		sint_fram_parameters.sint_par.sint2_on_off=1;

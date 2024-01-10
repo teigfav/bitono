@@ -36,6 +36,7 @@ void Initialization(void)
 	InitSintTask();
 	InitlvglTask();
 
+
 }
 
 void InitGPIO(void)

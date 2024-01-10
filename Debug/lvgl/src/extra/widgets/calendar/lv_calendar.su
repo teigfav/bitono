@@ -2,7 +2,7 @@ lv_area.h:295:26:lv_pct	16	static
 lv_calendar.c:60:12:lv_calendar_create	24	static
 lv_calendar.c:72:6:lv_calendar_set_day_names	24	static
 lv_calendar.c:84:6:lv_calendar_set_today_date	32	static
-lv_calendar.c:96:6:lv_calendar_set_highlighted_dates	48	static
+lv_calendar.c:96:6:lv_calendar_set_highlighted_dates	32	static
 lv_calendar.c:109:6:lv_calendar_set_showed_date	56	static
 lv_calendar.c:172:12:lv_calendar_get_btnmatrix	24	static
 lv_calendar.c:179:28:lv_calendar_get_today_date	24	static

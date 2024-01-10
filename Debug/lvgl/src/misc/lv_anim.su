@@ -1,6 +1,6 @@
 lv_anim.c:57:6:_lv_anim_core_init	8	static
 lv_anim.c:65:6:lv_anim_init	16	static
-lv_anim.c:76:13:lv_anim_start	40	static
+lv_anim.c:76:13:lv_anim_start	24	static
 lv_anim.c:117:10:lv_anim_get_playtime	24	static
 lv_anim.c:138:6:lv_anim_del	32	static
 lv_anim.c:163:6:lv_anim_del_all	8	static

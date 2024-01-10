@@ -440,6 +440,7 @@ int32_t adf4371_pll_set_freq(struct adf4371_dev *dev,uint64_t frequenza,enum Sin
 {
 	uint8_t buf[10];
 	uint32_t cp_bleed;
+	frequenza=(uint64_t)(frequenza/6);
 switch (dev->channel)
 	{
 		case ADF4371_CH_RF16:

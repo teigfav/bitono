@@ -36,7 +36,7 @@ lv_obj_pos.c:267:6:lv_obj_set_layout	16	static
 lv_obj_pos.c:276:6:lv_obj_is_layout_positioned	24	static
 lv_obj_pos.c:288:6:lv_obj_mark_layout_as_dirty	24	static
 lv_obj_pos.c:301:6:lv_obj_update_layout	24	static
-lv_obj_pos.c:323:10:lv_layout_register	32	static
+lv_obj_pos.c:323:10:lv_layout_register	16	static
 lv_obj_pos.c:334:6:lv_obj_set_align	16	static
 lv_obj_pos.c:339:6:lv_obj_align	24	static
 lv_obj_pos.c:345:6:lv_obj_align_to	56	static

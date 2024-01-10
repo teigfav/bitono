@@ -1,6 +1,6 @@
 lv_color.h:375:24:lv_color_to32	24	static
 lv_color.h:439:48:lv_color_mix	24	static
-lv_color.h:531:42:lv_color_mix_with_alpha	32	static
+lv_color.h:531:42:lv_color_mix_with_alpha	24	static
 lv_color.h:587:23:lv_color_brightness	24	static
 lv_color.h:595:26:lv_color_make	16	static
 lv_color.h:600:26:lv_color_hex	24	static
@@ -8,8 +8,8 @@ lv_color.h:696:26:lv_color_white	8	static
 lv_obj_style.h:92:20:lv_obj_remove_style_all	16	static
 lv_hal_disp.c:84:6:lv_disp_drv_init	24	static
 lv_hal_disp.c:150:6:lv_disp_draw_buf_init	24	static
-lv_hal_disp.c:166:13:lv_disp_drv_register	56	static
-lv_hal_disp.c:250:6:lv_disp_drv_update	40	static
+lv_hal_disp.c:166:13:lv_disp_drv_register	48	static
+lv_hal_disp.c:250:6:lv_disp_drv_update	32	static
 lv_hal_disp.c:291:6:lv_disp_remove	24	static
 lv_hal_disp.c:332:6:lv_disp_set_default	16	static
 lv_hal_disp.c:341:13:lv_disp_get_default	4	static

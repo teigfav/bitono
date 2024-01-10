@@ -48,7 +48,7 @@ void StartTickTask(void *argument)
   for(;;)
   {
     lv_tick_inc(10);
-    osDelay(20);
+    osDelay(5);
   }
 }
 
@@ -59,6 +59,6 @@ void StartTimerTask(void *argument)
 //	osMutexWait(mutex_lvgl_id, osWaitForever);
 	lv_timer_handler();
 //	osMutexRelease(mutex_lvgl_id);
-	osDelay(30);
+	osDelay(20);
   }
 }

@@ -11,6 +11,6 @@
 
 void gui_define(void);
 void gui_start(void);
-
+void init_freq_gui (void);
 
 #endif /* GUI_H_ */

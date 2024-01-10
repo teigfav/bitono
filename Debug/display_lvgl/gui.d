@@ -306,7 +306,8 @@ display_lvgl/gui.o: ../display_lvgl/gui.c \
  ../Drivers/STM32H7xx_HAL_Driver/Inc/stm32h7xx_hal_tim_ex.h \
  ../Drivers/STM32H7xx_HAL_Driver/Inc/stm32h7xx_hal_uart.h \
  ../Drivers/STM32H7xx_HAL_Driver/Inc/stm32h7xx_hal_uart_ex.h \
- ../display_lvgl/gui.h
+ ../display_lvgl/gui.h ../display_lvgl/gui_structures_def.h \
+ ../CustomEdh/Init/type.h ../CustomEdh/TaskSint/TaskSint.h
 
 ../Middlewares/Third_Party/FreeRTOS/Source/CMSIS_RTOS_V2/cmsis_os.h:
 
@@ -923,3 +924,9 @@ D:/EDH/Bitono/lvgl_test_work_space/lvgl_test/lvgl/examples/libs/ffmpeg/lv_exampl
 ../Drivers/STM32H7xx_HAL_Driver/Inc/stm32h7xx_hal_uart_ex.h:
 
 ../display_lvgl/gui.h:
+
+../display_lvgl/gui_structures_def.h:
+
+../CustomEdh/Init/type.h:
+
+../CustomEdh/TaskSint/TaskSint.h:

@@ -120,7 +120,7 @@ void StartCLITask(void *argument)
 	  embeddedCliAddBinding(cli,on_set_pwrctrl);
 
 	  CliCommandBinding on_save_pwr_table={
-	              "pwr_save",
+	              "pwrctrl_save",
 	              "Save power control table",
 	              false,
 	              NULL,
@@ -129,7 +129,7 @@ void StartCLITask(void *argument)
 	  embeddedCliAddBinding(cli, on_save_pwr_table );
 
 	  CliCommandBinding on_load_pwr_table={
-	              "pwr_load",
+	              "pwrctrl_load",
 	              "Load power control table",
 	              false,
 	              NULL,
@@ -166,7 +166,7 @@ void StartCLITask(void *argument)
 
 	  CliCommandBinding on_set_sint={
 	              "sint_set",
-	              "set the sint freq and mode : <op> <mode> <value>",
+	              "set the sint freq and mode : <op:0-8> <mode:0-2> <sint:0-2> <value:Hz>",
 	              true,
 	              NULL,
 				  onSetSint
@@ -485,6 +485,7 @@ void onSetSint(EmbeddedCli *cli, char *args, void *context)
 		msg.op=atoi(embeddedCliGetToken(args,1));
 		if(msg.op==write_reg && embeddedCliGetTokenCount(args)==4)
 		{
+			msg.source=remote;
 			msg.sint=atoi(embeddedCliGetToken(args,2));
 			msg.addr=(uint16_t)strtoul(embeddedCliGetToken(args,3),NULL,0);
 			msg.data=(uint8_t)strtoul(embeddedCliGetToken(args,4),NULL,0);
@@ -492,6 +493,7 @@ void onSetSint(EmbeddedCli *cli, char *args, void *context)
 		}
 		else if(msg.op!=write_reg && embeddedCliGetTokenCount(args)==4)
 		{
+			msg.source=remote;
 			msg.mode=atoi(embeddedCliGetToken(args,2));
 			msg.sint=atoi(embeddedCliGetToken(args,3));
 			msg.value=(uint64_t)strtod(embeddedCliGetToken(args,4),NULL);
@@ -512,6 +514,7 @@ void onReadSint(EmbeddedCli *cli, char *args, void *context)
 {
 	struct sint_msg_t msg;
 	osStatus_t status;
+	msg.source=remote;
 	msg.op=read_sint;
 	msg.mode=indep; //don't care
 	msg.value=0; //don't care

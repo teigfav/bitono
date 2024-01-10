@@ -17,12 +17,12 @@ lv_indev.c:258:12:lv_indev_get_scroll_obj	16	static
 lv_indev.c:265:6:lv_indev_get_vect	16	static
 lv_indev.c:278:6:lv_indev_wait_release	16	static
 lv_indev.c:284:12:lv_indev_get_obj_act	4	static
-lv_indev.c:289:14:lv_indev_get_read_timer	24	static
+lv_indev.c:289:14:lv_indev_get_read_timer	16	static
 lv_indev.c:300:12:lv_indev_search_obj	40	static
-lv_indev.c:340:13:indev_pointer_proc	40	static
+lv_indev.c:340:13:indev_pointer_proc	24	static
 lv_indev.c:396:13:indev_keypad_proc	32	static
 lv_indev.c:547:13:indev_encoder_proc	40	static
-lv_indev.c:768:13:indev_button_proc	32	static
+lv_indev.c:768:13:indev_button_proc	24	static
 lv_indev.c:817:13:indev_proc_press	32	static
 lv_indev.c:950:13:indev_proc_release	32	static
 lv_indev.c:1026:13:indev_proc_reset_query_handler	16	static

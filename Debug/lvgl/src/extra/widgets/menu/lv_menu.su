@@ -1,10 +1,10 @@
 lv_menu.c:112:12:lv_menu_create	24	static
-lv_menu.c:120:12:lv_menu_page_create	40	static
+lv_menu.c:120:12:lv_menu_page_create	24	static
 lv_menu.c:140:12:lv_menu_cont_create	24	static
 lv_menu.c:148:12:lv_menu_section_create	24	static
 lv_menu.c:156:12:lv_menu_separator_create	24	static
 lv_menu.c:164:6:lv_menu_refr	32	static
-lv_menu.c:192:6:lv_menu_set_page	48	static
+lv_menu.c:192:6:lv_menu_set_page	32	static
 lv_menu.c:277:6:lv_menu_set_sidebar_page	40	static
 lv_menu.c:340:6:lv_menu_set_mode_header	24	static
 lv_menu.c:353:6:lv_menu_set_mode_root_back_btn	24	static

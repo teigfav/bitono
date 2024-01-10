@@ -32,7 +32,7 @@ lv_obj_style.c:270:6:lv_obj_set_local_style_prop	32	static
 lv_obj_style.c:278:6:lv_obj_set_local_style_prop_meta	32	static
 lv_obj_style.c:287:16:lv_obj_get_local_style_prop	32	static
 lv_obj_style.c:301:6:lv_obj_remove_local_style_prop	32	static
-lv_obj_style.c:325:6:_lv_obj_style_create_transition	128	static
+lv_obj_style.c:325:6:_lv_obj_style_create_transition	112	static
 lv_obj_style.c:382:18:_lv_obj_style_apply_color_filter	32	static
 lv_obj_style.c:393:23:_lv_obj_style_state_compare	40	static
 lv_obj_style.c:455:6:lv_obj_fade_in	96	static
@@ -41,7 +41,7 @@ lv_obj_style.c:480:12:lv_obj_style_get_selector_state	16	static
 lv_obj_style.c:485:11:lv_obj_style_get_selector_part	16	static
 lv_obj_style.c:491:17:lv_obj_calculate_style_text_align	32	static
 lv_obj_style.c:499:10:lv_obj_get_style_opa_recursive	24	static
-lv_obj_style.c:544:21:get_local_style	48	static
+lv_obj_style.c:544:21:get_local_style	32	static
 lv_obj_style.c:580:26:get_trans_style	32	static
 lv_obj_style.c:606:23:get_prop_core	72	static
 lv_obj_style.c:678:13:report_style_change_core	24	static

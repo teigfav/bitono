@@ -23,7 +23,7 @@ lv_obj_style_gen.h:499:20:lv_obj_get_style_clip_corner	24	static
 lv_obj_style_gen.h:505:24:lv_obj_get_style_opa	24	static
 lv_obj_style_gen.h:559:24:lv_obj_get_style_layout	24	static
 lv_obj.c:93:6:lv_is_initialized	4	static
-lv_obj.c:98:6:lv_init	48	static
+lv_obj.c:98:6:lv_init	32	static
 lv_obj.c:197:6:lv_deinit	8	static
 lv_obj.c:213:12:lv_obj_create	24	static
 lv_obj.c:229:6:lv_obj_add_flag	48	static
@@ -35,7 +35,7 @@ lv_obj.c:325:6:lv_obj_has_flag_any	16	static
 lv_obj.c:332:12:lv_obj_get_state	16	static
 lv_obj.c:339:6:lv_obj_has_state	16	static
 lv_obj.c:346:8:lv_obj_get_group	16	static
-lv_obj.c:358:6:lv_obj_allocate_spec_attr	32	static
+lv_obj.c:358:6:lv_obj_allocate_spec_attr	16	static
 lv_obj.c:376:6:lv_obj_check_type	16	static
 lv_obj.c:382:6:lv_obj_has_class	24	static
 lv_obj.c:393:24:lv_obj_get_class	16	static

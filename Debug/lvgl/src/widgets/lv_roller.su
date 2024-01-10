@@ -13,11 +13,11 @@ lv_obj_style_gen.h:469:26:lv_obj_get_style_text_letter_space	24	static
 lv_obj_style_gen.h:475:26:lv_obj_get_style_text_line_space	24	static
 lv_obj_style_gen.h:535:24:lv_obj_get_style_anim_time	24	static
 lv_roller.c:78:12:lv_roller_create	24	static
-lv_roller.c:96:6:lv_roller_set_options	64	static
+lv_roller.c:96:6:lv_roller_set_options	48	static
 lv_roller.c:152:6:lv_roller_set_selected	32	static
 lv_roller.c:191:6:lv_roller_set_visible_row_count	24	static
 lv_roller.c:210:10:lv_roller_get_selected	24	static
-lv_roller.c:230:6:lv_roller_get_selected_str	64	static
+lv_roller.c:230:6:lv_roller_get_selected_str	56	static
 lv_roller.c:263:14:lv_roller_get_options	16	static
 lv_roller.c:276:10:lv_roller_get_option_cnt	24	static
 lv_roller.c:294:13:lv_roller_constructor	24	static

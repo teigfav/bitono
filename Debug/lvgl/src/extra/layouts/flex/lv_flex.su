@@ -35,7 +35,7 @@ lv_flex.c:182:6:lv_obj_set_style_flex_cross_place	32	static
 lv_flex.c:190:6:lv_obj_set_style_flex_track_place	32	static
 lv_flex.c:198:6:lv_obj_set_style_flex_grow	32	static
 lv_flex.c:210:13:flex_update	152	static
-lv_flex.c:318:16:find_track_end	72	static
+lv_flex.c:318:16:find_track_end	56	static
 lv_flex.c:406:13:children_repos	112	static
 lv_flex.c:549:13:place_content	16	static
 lv_flex.c:589:19:get_next_item	24	static

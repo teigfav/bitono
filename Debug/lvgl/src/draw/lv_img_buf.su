@@ -6,7 +6,7 @@ lv_img_buf.c:41:12:lv_img_buf_get_px_color	72	static
 lv_img_buf.c:100:10:lv_img_buf_get_px_alpha	80	static
 lv_img_buf.c:155:6:lv_img_buf_set_px_alpha	64	static
 lv_img_buf.c:206:6:lv_img_buf_set_px_color	72	static
-lv_img_buf.c:265:6:lv_img_buf_set_palette	32	static
+lv_img_buf.c:265:6:lv_img_buf_set_palette	24	static
 lv_img_buf.c:279:16:lv_img_buf_alloc	24	static
 lv_img_buf.c:311:6:lv_img_buf_free	16	static
 lv_img_buf.c:321:10:lv_img_buf_get_img_size	16	static

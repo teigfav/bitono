@@ -27,7 +27,7 @@ lv_btnmatrix.c:374:13:lv_btnmatrix_constructor	24	static
 lv_btnmatrix.c:392:13:lv_btnmatrix_destructor	24	static
 lv_btnmatrix.c:404:13:lv_btnmatrix_event	120	static
 lv_btnmatrix.c:688:13:draw_main	352	static
-lv_btnmatrix.c:857:13:allocate_btn_areas_and_controls	40	static
+lv_btnmatrix.c:857:13:allocate_btn_areas_and_controls	24	static
 lv_btnmatrix.c:902:16:get_button_width	24	static
 lv_btnmatrix.c:908:13:button_is_hidden	16	static
 lv_btnmatrix.c:913:13:button_is_checked	16	static

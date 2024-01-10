@@ -24,6 +24,7 @@
 #define MAX_FREQ_CALIB 16
 #define MAX_FLAT_POWER 10
 
+
 #define NUM_PWRCTRL 3
 
 #define BIAS_FRAM_ADDR 0
@@ -52,6 +53,11 @@ typedef enum {
 	sweepsingle						//tono uno in sweep
 } sint_mode_t ;
 
+typedef enum {
+	remote,			//messaggio scritto in coda da usb o eth
+	gui				//messaggio scritto in coda da gui
+} source_t ;
+
 //l'idea è che l'unico sweep utile sia quello del singolo tono, supponiamo la catena numero 1. In questo caso i limiti di sweep saranno i parametri freq1 e f1_sweep_max
 //quando messo in tracking freq1 indica il tono 1 mentre freq2 indicherà il delta del tono 2 dal tono 1. Vedere come far sweeppare il delta.
 typedef struct {
@@ -74,6 +80,7 @@ struct sint_msg_t{
 	uint16_t addr;
 	uint8_t data;
 	uint8_t sint;
+	source_t source;
 };
 // tutto da rivedere.......
 struct sint_fram_parameters{

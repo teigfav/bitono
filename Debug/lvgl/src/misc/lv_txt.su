@@ -8,7 +8,7 @@ lv_txt.c:343:12:lv_txt_get_width	48	static
 lv_txt.c:382:6:_lv_txt_is_cmd	24	static
 lv_txt.c:413:6:_lv_txt_ins	40	static
 lv_txt.c:434:6:_lv_txt_cut	32	static
-lv_txt.c:450:8:_lv_txt_set_text_vfmt	48	static
+lv_txt.c:450:8:_lv_txt_set_text_vfmt	32	static
 lv_txt.c:493:6:_lv_txt_encoded_letter_next_2	24	static
 lv_txt.c:509:16:lv_txt_utf8_size	16	static
 lv_txt.c:527:17:lv_txt_unicode_to_utf8	24	static

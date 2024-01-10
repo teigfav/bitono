@@ -9,10 +9,10 @@ lv_draw_sw_blend.c:97:6:lv_draw_sw_blend	24	static
 lv_draw_sw_blend.c:110:28:lv_draw_sw_blend_basic	96	static
 lv_draw_sw_blend.c:214:13:fill_set_px	80	static
 lv_draw_sw_blend.c:247:35:fill_normal	88	static
-lv_draw_sw_blend.c:539:13:fill_blended	72	static
+lv_draw_sw_blend.c:539:13:fill_blended	64	static
 lv_draw_sw_blend.c:610:13:map_set_px	80	static
 lv_draw_sw_blend.c:646:35:map_normal	64	static
-lv_draw_sw_blend.c:886:13:map_blended	72	static
+lv_draw_sw_blend.c:886:13:map_blended	64	static
 lv_draw_sw_blend.c:958:26:color_blend_true_color_additive	24	static
 lv_draw_sw_blend.c:1011:26:color_blend_true_color_subtractive	24	static
 lv_draw_sw_blend.c:1037:26:color_blend_true_color_multiply	16	static

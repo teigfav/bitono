@@ -30,8 +30,8 @@ lv_arc.c:303:9:lv_arc_get_value	16	static
 lv_arc.c:309:9:lv_arc_get_min_value	16	static
 lv_arc.c:315:9:lv_arc_get_max_value	16	static
 lv_arc.c:321:15:lv_arc_get_mode	16	static
-lv_arc.c:332:6:lv_arc_align_obj_to_angle	72	static
-lv_arc.c:353:6:lv_arc_rotate_obj_to_angle	64	static
+lv_arc.c:332:6:lv_arc_align_obj_to_angle	64	static
+lv_arc.c:353:6:lv_arc_rotate_obj_to_angle	56	static
 lv_arc.c:385:13:lv_arc_constructor	24	static
 lv_arc.c:417:13:lv_arc_event	176	static
 lv_arc.c:647:13:lv_arc_draw	216	static

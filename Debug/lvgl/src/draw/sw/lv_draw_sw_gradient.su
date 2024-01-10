@@ -7,9 +7,9 @@ lv_draw_sw_gradient.c:110:17:find_oldest_item_life	24	static
 lv_draw_sw_gradient.c:117:13:free_item	32	static
 lv_draw_sw_gradient.c:140:17:kill_oldest_item	24	static
 lv_draw_sw_gradient.c:151:17:find_item	24	static
-lv_draw_sw_gradient.c:158:20:allocate_item	56	static
+lv_draw_sw_gradient.c:158:20:allocate_item	40	static
 lv_draw_sw_gradient.c:235:6:lv_gradient_free_cache	8	static
-lv_draw_sw_gradient.c:242:6:lv_gradient_set_cache_size	32	static
-lv_draw_sw_gradient.c:251:13:lv_gradient_get	48	static
-lv_draw_sw_gradient.c:296:39:lv_gradient_calculate	64	static
+lv_draw_sw_gradient.c:242:6:lv_gradient_set_cache_size	16	static
+lv_draw_sw_gradient.c:251:13:lv_gradient_get	40	static
+lv_draw_sw_gradient.c:296:39:lv_gradient_calculate	56	static
 lv_draw_sw_gradient.c:341:6:lv_gradient_cleanup	16	static

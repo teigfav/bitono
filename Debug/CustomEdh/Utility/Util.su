@@ -5,9 +5,9 @@ Util.c:126:6:config_for_dac_SPI3	8	static
 Util.c:170:6:read_pwr_table	32	static
 Util.c:241:6:set_pwr	208	static
 Util.c:397:6:write_pwr_table	32	static
-Util.c:440:10:volt_to_DAC	56	static
-Util.c:457:8:DAC_to_volt	40	static
-Util.c:472:8:DAC_to_amp	48	static
-Util.c:479:6:save_pwr_table	16	static
-Util.c:496:6:Load_pwr_table	48	static
-Util.c:544:10:interpolation	56	static
+Util.c:444:10:volt_to_DAC	56	static
+Util.c:461:8:DAC_to_volt	40	static
+Util.c:476:8:DAC_to_amp	48	static
+Util.c:483:6:save_pwr_table	16	static
+Util.c:500:6:Load_pwr_table	48	static
+Util.c:557:10:interpolation	56	static

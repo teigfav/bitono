@@ -12,7 +12,7 @@ lv_obj_style_gen.h:481:31:lv_obj_get_style_text_decor	24	static
 lv_obj_style_gen.h:487:31:lv_obj_get_style_text_align	24	static
 lv_obj_style_gen.h:553:31:lv_obj_get_style_blend_mode	24	static
 lv_span.c:89:12:lv_spangroup_create	24	static
-lv_span.c:96:13:lv_spangroup_new_span	40	static
+lv_span.c:96:13:lv_spangroup_new_span	24	static
 lv_span.c:117:6:lv_spangroup_del_span	24	static
 lv_span.c:145:6:lv_span_set_text	24	static
 lv_span.c:163:6:lv_span_set_text_static	16	static
@@ -37,7 +37,7 @@ lv_span.c:515:13:lv_spangroup_destructor	24	static
 lv_span.c:531:13:lv_spangroup_event	40	static
 lv_span.c:588:13:draw_main	24	static
 lv_span.c:599:13:lv_txt_get_snippet	40	static
-lv_span.c:620:13:lv_snippet_push	24	static
+lv_span.c:620:13:lv_snippet_push	16	static
 lv_span.c:631:17:lv_get_snippet_cnt	4	static
 lv_span.c:636:23:lv_get_snippet	16	static
 lv_span.c:641:13:lv_snippet_clear	4	static
@@ -47,7 +47,7 @@ lv_span.c:674:19:lv_span_get_style_text_color	24	static
 lv_span.c:684:17:lv_span_get_style_text_opa	24	static
 lv_span.c:698:24:lv_span_get_style_text_blend_mode	24	static
 lv_span.c:712:16:lv_span_get_style_text_decor	32	static
-lv_span.c:726:20:span_text_check	24	static
+lv_span.c:726:20:span_text_check	16	static
 lv_span.c:734:19:convert_indent_pct	24	static
 lv_span.c:757:13:lv_draw_span	288	static
 lv_span.c:1033:13:refresh_self_size	24	static

@@ -229,7 +229,7 @@ void read_pwr_table(uint8_t type,uint8_t chain)
 	{
 		print_k("fmax =%lf\r\n",fwd_ram_pwr_ctrl.fwd_pwr_ctrl[chain].fmax);
 	}
-}
+ }
 
 /**
   * @brief  restituisce il valore da impostare nele DAC per avre una certa potenza. La potenza verrà interpolata tra due valori vicini
@@ -396,10 +396,10 @@ void set_pwr(uint8_t chain,double power,double freq)
   */
 void write_pwr_table(uint8_t type,uint8_t chain, uint8_t index,double value,uint8_t freq)
 {
-	if(type<6 && chain < NUM_PWRCTRL && index < MAX_PWR_TABLE_SIZE && value<4095 && freq<MAX_FREQ_CALIB)
+	if(type<6 && chain < NUM_PWRCTRL && index < MAX_PWR_TABLE_SIZE && freq<MAX_FREQ_CALIB)
 	{
 		LOG_DBG("write table\r\n");
-		if (type==data)
+		if (type==data && value<4095 )
 		{
 			fwd_ram_pwr_ctrl.fwd_pwr_ctrl[chain].ctrl[index][freq]=(uint16_t)value;
 		}
@@ -422,6 +422,10 @@ void write_pwr_table(uint8_t type,uint8_t chain, uint8_t index,double value,uint
 		else if (type==fmassima)
 		{
 			fwd_ram_pwr_ctrl.fwd_pwr_ctrl[chain].fmax=value;
+		}
+		else
+		{
+			LOG_DBG("error : write pwr table function parameters errors\r\n");
 		}
 	}
 	else
@@ -534,8 +538,17 @@ void Load_pwr_table(void)
 			fwd_ram_pwr_ctrl.fwd_pwr_ctrl[i].pmax=20;
 			fwd_ram_pwr_ctrl.fwd_pwr_ctrl[i].pmin=-19;
 			fwd_ram_pwr_ctrl.fwd_pwr_ctrl[i].threshold=2;
-			fwd_ram_pwr_ctrl.fwd_pwr_ctrl[i].fmax=86000000000;
-			fwd_ram_pwr_ctrl.fwd_pwr_ctrl[i].fmin=71000000000;
+			if (i<2)
+			{
+				fwd_ram_pwr_ctrl.fwd_pwr_ctrl[i].fmax=86000000000;
+				fwd_ram_pwr_ctrl.fwd_pwr_ctrl[i].fmin=71000000000;
+			}
+			else
+			{
+				fwd_ram_pwr_ctrl.fwd_pwr_ctrl[i].fmax=15000000000;
+				fwd_ram_pwr_ctrl.fwd_pwr_ctrl[i].fmin=12000000000;
+			}
+
 			}
 		save_pwr_table();
 	}

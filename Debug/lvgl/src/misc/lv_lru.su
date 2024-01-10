@@ -1,5 +1,5 @@
-lv_lru.c:73:12:lv_lru_create	40	static
-lv_lru.c:103:6:lv_lru_del	48	static
+lv_lru.c:73:12:lv_lru_create	32	static
+lv_lru.c:103:6:lv_lru_del	32	static
 lv_lru.c:139:14:lv_lru_set	48	static
 lv_lru.c:192:14:lv_lru_get	40	static
 lv_lru.c:215:14:lv_lru_remove	40	static
