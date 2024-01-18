@@ -1,0 +1,3 @@
+ad5592r.c:29:9:DAC_setup	16	static
+ad5592r.c:225:9:dac_write	32	static
+ad5592r.c:288:9:adc_read	24	static

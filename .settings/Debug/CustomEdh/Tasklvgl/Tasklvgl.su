@@ -1,0 +1,3 @@
+Tasklvgl.c:25:6:InitlvglTask	80	static
+Tasklvgl.c:45:6:StartTickTask	16	static
+Tasklvgl.c:55:6:StartTimerTask	16	static

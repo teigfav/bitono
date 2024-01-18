@@ -1,0 +1,11 @@
+lv_array.c:38:6:lv_array_init	40	static
+lv_array.c:48:6:lv_array_destroy	16	static
+lv_array.c:56:6:lv_array_copy	16	static
+lv_array.c:67:6:lv_array_clear	16	static
+lv_array.c:72:6:lv_array_resize	24	static
+lv_array.c:88:6:lv_array_append	40	static
+lv_array.c:102:11:lv_array_get	32	static
+lv_array.c:112:10:lv_array_length	16	static
+lv_array.c:117:10:lv_array_capacity	16	static
+lv_array.c:122:6:lv_array_is_full	16	static
+lv_array.c:127:6:lv_array_is_empty	16	static

@@ -1,0 +1,3 @@
+lv_display.h:378:34:lv_screen_active	8	static
+lv_obj_pos.h:184:20:lv_obj_center	16	static
+lv_example_canvas_8.c:46:6:lv_example_canvas_8	16	static

@@ -1,0 +1,12 @@
+lv_string.h:56:20:lv_memzero	16	static
+lv_binfont_loader.c:81:13:lv_binfont_load	48	static
+lv_binfont_loader.c:121:6:lv_font_free	40	static
+lv_binfont_loader.c:188:23:init_bit_iterator	24	static
+lv_binfont_loader.c:197:21:read_bits	32	static
+lv_binfont_loader.c:219:12:read_bits_signed	32	static
+lv_binfont_loader.c:228:12:read_label	40	static
+lv_binfont_loader.c:245:13:load_cmaps_tables	64	static
+lv_binfont_loader.c:312:16:load_cmaps	48	static
+lv_binfont_loader.c:341:16:load_glyph	104	static
+lv_binfont_loader.c:486:13:lvgl_load_font	128	static
+lv_binfont_loader.c:591:9:load_kern	88	static

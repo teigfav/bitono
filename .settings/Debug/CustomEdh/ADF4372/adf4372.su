@@ -1,0 +1,8 @@
+adf4372.c:255:13:adf4371_pll_fract_n_compute	40	static
+adf4372.c:291:9:adf4371_write	24	static
+adf4372.c:330:9:adf4371_read	24	static
+adf4372.c:373:9:adf4371_update	32	static
+adf4372.c:393:16:adf4371_write_bulk	32	static
+adf4372.c:431:6:adf4371_pll_init	16	static
+adf4372.c:439:9:adf4371_pll_set_freq	80	static
+adf4372.c:494:9:adf4371_setup	32	static

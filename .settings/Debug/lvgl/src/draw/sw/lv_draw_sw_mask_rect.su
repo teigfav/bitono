@@ -1,0 +1,2 @@
+lv_area.h:138:23:lv_area_get_width	16	static
+lv_draw_sw_mask_rect.c:44:6:lv_draw_sw_mask_rect	128	static
