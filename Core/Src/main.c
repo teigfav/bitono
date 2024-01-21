@@ -80,6 +80,8 @@ const osThreadAttr_t defaultTask_attributes = {
 
 extern uint8_t debounce;
 char car;
+char fw_version[]="EDH-xxxxxxxxxxxxxx.00.00.001"; //build.major.minor
+char hw_version[]="CTRL_Bitono.00.00.001   RF_Board_bitono.00.00.001"; //build.major.minor
 /* USER CODE END PV */
 
 /* Private function prototypes -----------------------------------------------*/
@@ -171,6 +173,7 @@ int main(void)
   MX_DMA2D_Init();
   /* USER CODE BEGIN 2 */
   Initialization();
+  //
   HAL_UART_Receive_IT(&huart1,(uint8_t*)&car,1);
   //HAL_LTDC_SetAddress(&hltdc, (uint32_t)flashframebuffer, LTDC_LAYER_1);
   //HAL_LTDC_SetAddress(&hltdc, (uint32_t)&image_aad[0], LTDC_LAYER_1);

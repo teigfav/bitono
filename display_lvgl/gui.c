@@ -232,7 +232,7 @@ static void event_handler_threetone_page(lv_event_t* e)
 		status=osMessageQueuePut(QueueSintHandle,&msg,0,0);
 		if(status!=osOK)
 		{
-			print_k("Error: No queue access\r\n");
+			print_k("Error: No queue access");
 		}
 
     }
@@ -412,7 +412,7 @@ static void event_handler_powers_page(lv_event_t* e)
 			status=osMessageQueuePut(QueueSintHandle,&msg,0,0);
 			if(status!=osOK)
 			{
-				print_k("Error: No queue access\r\n");
+				print_k("Error: No queue access");
 			}
 		}
 		else if(target==switch_button[1])
@@ -436,7 +436,7 @@ static void event_handler_powers_page(lv_event_t* e)
 			status=osMessageQueuePut(QueueSintHandle,&msg,0,0);
 			if(status!=osOK)
 			{
-				print_k("Error: No queue access\r\n");
+				print_k("Error: No queue access");
 			}
 		}
 		else if(target==switch_button[2])
@@ -460,7 +460,7 @@ static void event_handler_powers_page(lv_event_t* e)
 			status=osMessageQueuePut(QueueSintHandle,&msg,0,0);
 			if(status!=osOK)
 			{
-				print_k("Error: No queue access\r\n");
+				print_k("Error: No queue access");
 			}
 		}
 		else if(target==tastiera_power.but_dummy)  //serve solo per aggiornare potenza e switch conun evento generato manualmente in init_power_gui()

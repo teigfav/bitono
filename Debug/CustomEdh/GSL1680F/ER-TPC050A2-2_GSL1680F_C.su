@@ -6,5 +6,5 @@ ER-TPC050A2-2_GSL1680F_C.c:5238:13:reset_chip	16	static
 ER-TPC050A2-2_GSL1680F_C.c:5260:13:gsl_load_fw	32	static
 ER-TPC050A2-2_GSL1680F_C.c:5301:13:startup_chip	16	static
 ER-TPC050A2-2_GSL1680F_C.c:5323:6:check_mem_data	8	static
-ER-TPC050A2-2_GSL1680F_C.c:5345:6:dataread	16	static
-ER-TPC050A2-2_GSL1680F_C.c:5360:6:get_stato	16	static
+ER-TPC050A2-2_GSL1680F_C.c:5344:6:dataread	16	static
+ER-TPC050A2-2_GSL1680F_C.c:5359:6:get_stato	16	static

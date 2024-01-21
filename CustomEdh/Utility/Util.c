@@ -21,6 +21,7 @@
 #include "lwip/api.h"
 #include "lwip/sys.h"
 #include "string.h"
+#include "embedded_cli.h"
 
 #define VREFDAC 2.5
 
@@ -30,12 +31,19 @@ extern osMutexId_t SPI3MutexHandle;
 struct fwd_ram_pwr_ctrl fwd_ram_pwr_ctrl;
 extern struct netconn *newconn;
 extern struct netconn *conn;
+extern EmbeddedCli *cli;
 
 void LOG_DBG(char *format, ...) {
    va_list args;
    uint32_t time_ms=osKernelGetTickCount();
    uint32_t h,sec,min,ms;
-
+   char stringa[200];
+   char timestamp[200];
+//   stringa[0]='p';
+//   stringa[1]='i';
+//   memcpy(stringa,'pippo',5);
+   memset(timestamp,0,200);
+   memset(stringa,0,200);
    h=time_ms/3600000;
    min=(time_ms-(h*3600000))/60000;
    sec=(time_ms-(h*3600000)-(min*60000))/1000;
@@ -45,7 +53,11 @@ void LOG_DBG(char *format, ...) {
    va_start(args, format);
 //   if(osMutexAcquire(PrintMutexHandle,osWaitForever)==osOK)
 //      {
-      vprintf(format, args);
+//      vprintf(format, args);
+   	  snprintf(timestamp,40,"[%ld:%ld:%ld:%.3ld] ",h,min,sec,ms);   //con printf non esce mai sulla rete
+   	  vsprintf(stringa,format, args);
+   	  strcat(timestamp,stringa);
+      embeddedCliPrint(cli, timestamp);
 //      osMutexRelease(PrintMutexHandle);
 //      }
 
@@ -68,7 +80,8 @@ void print_k(char *format, ...) {
    	   {
    	   netconn_write(newconn, msg_ETH, len, NETCONN_COPY);  //serve per scrivere su tcpip
    	   }
-   	   vprintf(format, args);
+   	  // vprintf(format, args);
+   	   embeddedCliPrint(cli, msg_ETH);
 //      osMutexRelease(PrintMutexHandle);
 //      }
 
@@ -175,7 +188,7 @@ void read_pwr_table(uint8_t type,uint8_t chain)
 //	uint16_t m,m1;
 //	uint8_t start_index,stop_index;
 	int k=0;
-	//print_k("Power=%fl m=%d  stop_index=%d  res=%d\r\n",power,m,stop_index,res);
+	//print_k("Power=%fl m=%d  stop_index=%d  res=%d",power,m,stop_index,res);
 
 	if (type==data)
 	{
@@ -187,47 +200,48 @@ void read_pwr_table(uint8_t type,uint8_t chain)
 //		m1=(fwd_ram_pwr_ctrl.fwd_pwr_ctrl[chain].ctrl[stop_index][1]-fwd_ram_pwr_ctrl.fwd_pwr_ctrl[chain].ctrl[start_index][1])/(0.5);
 //		res1=fwd_ram_pwr_ctrl.fwd_pwr_ctrl[chain].ctrl[start_index][1]+(uint16_t)((power-(start_index*0.5-40))*m1);
 //		print_k("value_att=%04X  value_pa=%04X\r\n",res,res1);
-		print_k("Index Pwr     F0    F1     F2     F3     F4     F5     F6     F7     F8     F9     F10    F11    F12    F13    F14    F15\r\n");
+		printf("Index Pwr     F0    F1     F2     F3     F4     F5     F6     F7     F8     F9     F10    F11    F12    F13    F14    F15\r\n");
 		for(int j=0;j<MAX_PWR_TABLE_SIZE;j++)
 			{
-			print_k(" %02d   ",j);
+			printf(" %02d   ",j);
 			if((fwd_ram_pwr_ctrl.fwd_pwr_ctrl[chain].pmax-j)==(fwd_ram_pwr_ctrl.fwd_pwr_ctrl[chain].threshold-1))
 			{
-				print_k("     ");
+				printf("     ");
 			}
 			else
 			{
-				print_k("%3.0f  ",fwd_ram_pwr_ctrl.fwd_pwr_ctrl[chain].pmax-k);
+				printf("%3.0f  ",fwd_ram_pwr_ctrl.fwd_pwr_ctrl[chain].pmax-k);
 				k++;
 			}
 			for(int i=0;i<MAX_FREQ_CALIB;i++)
 				{
-				print_k("0X%04X ",fwd_ram_pwr_ctrl.fwd_pwr_ctrl[chain].ctrl[j][i]);
+				printf("0X%04X ",fwd_ram_pwr_ctrl.fwd_pwr_ctrl[chain].ctrl[j][i]);
 				}
-			print_k("\r\n");
+			printf("\r\n");
 			}
+		print_k("");
 
 	}
 	else if (type==pmax)
 	{
-		print_k("pmax =%lf\r\n",fwd_ram_pwr_ctrl.fwd_pwr_ctrl[chain].pmax);
-		print_k("size of double %d\r\n",sizeof(double));
+		print_k("pmax =%lf",fwd_ram_pwr_ctrl.fwd_pwr_ctrl[chain].pmax);
+		print_k("size of double %d",sizeof(double));
 	}
 	else if (type==pmin)
 	{
-		print_k("pmin =%lf\r\n",fwd_ram_pwr_ctrl.fwd_pwr_ctrl[chain].pmin);
+		print_k("pmin =%lf",fwd_ram_pwr_ctrl.fwd_pwr_ctrl[chain].pmin);
 	}
 	else if (type==threshold)
 	{
-		print_k("threshold =%lf\r\n",fwd_ram_pwr_ctrl.fwd_pwr_ctrl[chain].threshold);
+		print_k("threshold =%lf",fwd_ram_pwr_ctrl.fwd_pwr_ctrl[chain].threshold);
 	}
 	else if (type==fminima)
 	{
-		print_k("fmin =%lf\r\n",fwd_ram_pwr_ctrl.fwd_pwr_ctrl[chain].fmin);
+		print_k("fmin =%lf",fwd_ram_pwr_ctrl.fwd_pwr_ctrl[chain].fmin);
 	}
 	else if (type==fmassima)
 	{
-		print_k("fmax =%lf\r\n",fwd_ram_pwr_ctrl.fwd_pwr_ctrl[chain].fmax);
+		print_k("fmax =%lf",fwd_ram_pwr_ctrl.fwd_pwr_ctrl[chain].fmax);
 	}
  }
 
@@ -276,7 +290,7 @@ void set_pwr(uint8_t chain,double power,double freq)
 	f2=fmin+(ftmp+1)*freq_step;
 	}
 
-	print_k("freq=%lf  f1=%lf  f2=%lf  freq_start_index=%d   freq_stop_index=%d\r\n", freq,f1,f2,freq_start_index,freq_stop_index);
+	LOG_DBG("freq=%lf  f1=%lf  f2=%lf  freq_start_index=%d   freq_stop_index=%d", freq,f1,f2,freq_start_index,freq_stop_index);
 
 	// --------------calcolo indici potenza--------------
 
@@ -341,8 +355,8 @@ void set_pwr(uint8_t chain,double power,double freq)
 			res_PA=interpolation(freq,f1,f2,res_1,res_3);	//interpola tra le due frequenze
 		}
 		}
-	print_k("Power=%.2f p1=%.2f p2=%.2f start_index=%d stop_index=%d threshold_index=%d pmin_index=%d \r\n",power,p1,p2,start_index,stop_index,threshold_index,pmin_index);
-	print_k("res_0=0X%04X res_1=0X%04X res_2=0X%04X res_3=0X%04X res_att=0X%04X res_PA=0X%04X\r\n",res_0,res_1,res_2,res_3,res_att,res_PA);
+	LOG_DBG("Power=%.2f p1=%.2f p2=%.2f start_index=%d stop_index=%d threshold_index=%d pmin_index=%d",power,p1,p2,start_index,stop_index,threshold_index,pmin_index);
+	LOG_DBG("res_0=0X%04X res_1=0X%04X res_2=0X%04X res_3=0X%04X res_att=0X%04X res_PA=0X%04X",res_0,res_1,res_2,res_3,res_att,res_PA);
 	msg.op=setpower;
 	msg.tipo=0;
 	msg.min=0; //don't care
@@ -376,12 +390,12 @@ void set_pwr(uint8_t chain,double power,double freq)
 
 		if(status!=osOK)
 		{
-			print_k("Error: No queue access\r\n");
+			print_k("Error: No queue access");
 		}
 	}
 	else
 	{
-		print_k("Error: power out of range [%.2f  ->  %.2f]  or freq out of range [%f  ->  %f]\r\n",fwd_ram_pwr_ctrl.fwd_pwr_ctrl[chain].pmin,fwd_ram_pwr_ctrl.fwd_pwr_ctrl[chain].pmax,fwd_ram_pwr_ctrl.fwd_pwr_ctrl[chain].fmin,fwd_ram_pwr_ctrl.fwd_pwr_ctrl[chain].fmax);
+		print_k("Error: power out of range [%.2f  ->  %.2f]  or freq out of range [%f  ->  %f]",fwd_ram_pwr_ctrl.fwd_pwr_ctrl[chain].pmin,fwd_ram_pwr_ctrl.fwd_pwr_ctrl[chain].pmax,fwd_ram_pwr_ctrl.fwd_pwr_ctrl[chain].fmin,fwd_ram_pwr_ctrl.fwd_pwr_ctrl[chain].fmax);
 	}
 }
 
@@ -398,7 +412,7 @@ void write_pwr_table(uint8_t type,uint8_t chain, uint8_t index,double value,uint
 {
 	if(type<6 && chain < NUM_PWRCTRL && index < MAX_PWR_TABLE_SIZE && freq<MAX_FREQ_CALIB)
 	{
-		LOG_DBG("write table\r\n");
+		LOG_DBG("write table");
 		if (type==data && value<4095 )
 		{
 			fwd_ram_pwr_ctrl.fwd_pwr_ctrl[chain].ctrl[index][freq]=(uint16_t)value;
@@ -425,12 +439,12 @@ void write_pwr_table(uint8_t type,uint8_t chain, uint8_t index,double value,uint
 		}
 		else
 		{
-			LOG_DBG("error : write pwr table function parameters errors\r\n");
+			LOG_DBG("error : write pwr table function parameters errors");
 		}
 	}
 	else
 	{
-		LOG_DBG("error : write pwr table function parameters errors\r\n");
+		LOG_DBG("error : write pwr table function parameters errors");
 	}
 }
 
@@ -487,7 +501,7 @@ void save_pwr_table(void)
 	config_for_save_SPI3();
 	uint32_t base_addr=0;
 	base_addr=BIAS_FRAM_ADDR+sizeof(struct bias_parameters);
-	LOG_DBG("Save Pwr table \r\n");
+	LOG_DBG("Save Pwr table");
 	fwd_ram_pwr_ctrl.start_marker=0x1234567887654321;
 	fwd_ram_pwr_ctrl.end_marker=0x8765432112345678;
 //	WriteByteFram(PWR_TABLE_FRAM_ADDR,(uint8_t*)&fwd_ram_pwr_ctrl, sizeof(fwd_ram_pwr_ctrl));
@@ -505,11 +519,11 @@ void Load_pwr_table(void)
 	osStatus_t status;
 	status=osMutexAcquire(SPI3MutexHandle,osWaitForever);
 	config_for_save_SPI3();
-	LOG_DBG("Load Pwr Table\r\n");
+	LOG_DBG("Load Pwr Table");
 //	base_addr=PWR_TABLE_FRAM_ADDR;
 	base_addr=BIAS_FRAM_ADDR+sizeof(struct bias_parameters);
 	paddr=base_addr;
-	print_k("Pwr Param table base addrerss 0x%04lX\r\n",base_addr);
+	LOG_DBG("Pwr Param table base addrerss 0x%04lX",base_addr);
 	pfram=(uint8_t*)&fwd_ram_pwr_ctrl;
 	while(paddr<base_addr+sizeof(fwd_ram_pwr_ctrl))
 	{
@@ -523,7 +537,7 @@ void Load_pwr_table(void)
 //	ReadByteFram(BIAS_FRAM_ADDR,(uint8_t*)&fram_bias, (uint32_t)sizeof(fram_bias));
 	if (fwd_ram_pwr_ctrl.start_marker!=0x1234567887654321 || fwd_ram_pwr_ctrl.end_marker!=0x8765432112345678)
 	{
-		LOG_DBG("Set default Pwr table \r\n");
+		LOG_DBG("Set default Pwr table");
 		fwd_ram_pwr_ctrl.start_marker=0x1234567887654321;
 		fwd_ram_pwr_ctrl.end_marker=0x8765432112345678;
 		for (int i=0;i<NUM_PWRCTRL;i++)

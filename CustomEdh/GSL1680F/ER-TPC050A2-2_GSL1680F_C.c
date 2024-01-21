@@ -5195,7 +5195,7 @@ int gsl_ts_write(int addr, uint8_t *pdata, int datalen)
 //	ret=HAL_I2C_Master_Transmit(&hi2c4,GSL1680_ADDR,pdata,datalen, HAL_MAX_DELAY);
 //	if(ret<0)
 //		{
-//		print_k("gsl_ts_write error!\n");
+//		print_k("gsl_ts_write error!");
 //		}
 	ret=HAL_I2C_Mem_Write(&hi2c4,GSL1680_ADDR,addr,I2C_MEMADD_SIZE_8BIT,pdata,datalen,HAL_MAX_DELAY);
 	return ret;
@@ -5211,7 +5211,7 @@ int gsl_ts_read(int addr, uint8_t *pdata, unsigned int datalen)
 	ret=HAL_I2C_Master_Receive(&hi2c4, GSL1680_ADDR, pdata, datalen, HAL_MAX_DELAY);
 	if (ret < 0)
 		{
-		print_k("gsl_ts_read error!\n");
+		LOG_DBG("gsl_ts_read error!");
 		}
 //	ret=HAL_I2C_Mem_Read(&hi2c4,GSL1680_ADDR,addr,I2C_MEMADD_SIZE_8BIT,pdata,datalen,HAL_MAX_DELAY);
 	return ret;
@@ -5265,20 +5265,20 @@ static void gsl_load_fw(void)
 	//uint32_t source_len;
 	struct fw_data *ptr_fw;
 
-	print_k("=============gsl_load_fw start==============\r\n");
+	LOG_DBG("=============gsl_load_fw start==============");
 
 
 	ptr_fw = &GSLX680_FW[0];
 	size_t source_len = sizeof(GSLX680_FW)/sizeof(struct fw_data);
 	//source_len = sizeof(GSLX680_FW)/sizeof(GSLX680_FW[0]);
-	print_k("firmware size=%08X\r\n",source_len);
+	LOG_DBG("firmware size=%08X",source_len);
 	for (source_line = 0; source_line < source_len; source_line++)
 	{
 		/* init page trans, set the page val */
 //		if (0xf0 == ptr_fw[source_line].offset)
 //		{
 //			buf[0] = (char)(ptr_fw[source_line].val & 0x000000ff);
-//			//print_k("send =%02X\r\n",buf[0]);
+//			//print_k("send =%02X",buf[0]);
 //			gsl_ts_write(0xf0, buf, 1);
 //		}
 //		else
@@ -5288,13 +5288,13 @@ static void gsl_load_fw(void)
 			buf[1] = (char)((ptr_fw[source_line].val & 0x0000ff00) >> 8);
 			buf[2] = (char)((ptr_fw[source_line].val & 0x00ff0000) >> 16);
 			buf[3] = (char)((ptr_fw[source_line].val & 0xff000000) >> 24);
-			//print_k("reg =%02X send= %02X %02X %02X %02X\r\n",reg,buf[0],buf[1],buf[2],buf[3]);
+			//print_k("reg =%02X send= %02X %02X %02X %02X",reg,buf[0],buf[1],buf[2],buf[3]);
 
 			gsl_ts_write(reg, buf, 4);
 //		}
 	}
 
-	print_k("=============gsl_load_fw end==============\r\n");
+	LOG_DBG("=============gsl_load_fw end==============");
 
 }
 
@@ -5328,18 +5328,17 @@ void check_mem_data(void)
 	osDelay(50);
 	HAL_GPIO_WritePin(V1_switch_GPIO_Port, V1_switch_Pin, GPIO_PIN_SET);
 	osDelay(30);
-	print_k("Clear reg\r\n");
-	printf("Clear reg\r\n");
+	LOG_DBG("Clear Touch reg");
 	clr_reg();
-	print_k("Reset chip\r\n");
+	LOG_DBG("Reset Touch chip");
 	reset_chip();
-	print_k("GSL1680 Load FW\r\n");
+	LOG_DBG("GSL1680 Load FW");
 	gsl_load_fw();
-	print_k("Reset chip 2\r\n");
+	LOG_DBG("Reset Touch chip 2nd");
 	reset_chip();
-	print_k("startup chip\r\n");
+	LOG_DBG("Startup Touch chip");
 	startup_chip();
-	print_k("Boot complete\r\n");
+	LOG_DBG("Boot Touch complete");
 }
 
 void dataread(void)
@@ -5352,7 +5351,7 @@ void dataread(void)
 		coordinate.touch=touch_data[0];
 		coordinate.x = (((uint16_t)touch_data[5]<<8) | (uint16_t)touch_data[4] ) & 0x0FFF; // 12 bits of X coord
 		coordinate.y = (((uint16_t)touch_data[7]<<8) | (uint16_t)touch_data[6] ) & 0x0FFF;
-		//print_k("Number of touch %d  Touch  x=%d    y=%d\r\n",touch_data[0],coordinate.x,coordinate.y);
+		//print_k("Number of touch %d  Touch  x=%d    y=%d",touch_data[0],coordinate.x,coordinate.y);
 //	}
 
 //}

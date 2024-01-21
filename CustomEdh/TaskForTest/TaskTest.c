@@ -40,10 +40,10 @@ void StartTestTask(void *argument)
   /* Infinite loop */
   for(;;)
   {
-//    print_k("Test Task running\r\n");
+//    print_k("Test Task running");
     //gsl_ts_read(0xB0, read_buf, 4);
 	 // dataread();
-    //LOG_DBG("data read %02X %02X %02X %02X\r\n",read_buf[0],read_buf[1],read_buf[2],read_buf[3]);
+    //LOG_DBG("data read %02X %02X %02X %02X",read_buf[0],read_buf[1],read_buf[2],read_buf[3]);
     osDelay(10);
   }
   /* USER CODE END 5 */

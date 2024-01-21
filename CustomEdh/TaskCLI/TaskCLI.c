@@ -27,6 +27,8 @@ extern osMessageQueueId_t QueueSintHandle;
 extern osMutexId_t SPI3MutexHandle;
 extern struct netconn *newconn;
 extern struct netconn *conn;
+char fw_version[];
+char hw_version[];
 char ETH_data[200]={0};
 char *pETH_data=&ETH_data[0];
 EmbeddedCli *cli;
@@ -191,6 +193,15 @@ void StartCLITask(void *argument)
 	      };
 	  embeddedCliAddBinding(cli,on_dump_sdram);
 
+	  CliCommandBinding on_read_version={
+	              "version",
+	              "Read Hardware and Firmware Version",
+	              true,
+	              NULL,
+	              onReadVersion
+	      };
+	  embeddedCliAddBinding(cli,on_read_version);
+
 	cli->onCommand = onCommand;
 	cli->writeChar = writeChar;
   /* Infinite loop */
@@ -225,9 +236,9 @@ HAL_UART_Transmit(&huart1,(uint8_t*)&c,1,100);
 
 void onCommand(EmbeddedCli *embeddedCli, CliCommand *command)
 {
-	print_k("Received command:");
-	print_k("command name %s",command->name);
-	print_k("\n");
+//	print_k("Received command:");
+//	print_k("command name %s",command->name);
+//	print_k("\n");
     embeddedCliTokenizeArgs(command->args);
     for (int i = 1; i <= embeddedCliGetTokenCount(command->args); ++i)
     {
@@ -235,7 +246,7 @@ void onCommand(EmbeddedCli *embeddedCli, CliCommand *command)
     	print_k("%d",i);
     	print_k(": ");
     	print_k("arg: %s",embeddedCliGetToken(command->args, i));
-    	print_k("\n");
+    	//print_k("\n");
     }
 }
 
@@ -263,12 +274,12 @@ void onBiasWrite(EmbeddedCli *cli, char *args, void *context)
 				status=osMessageQueuePut(QueueBiasHandle,&msg,0,0);
 				if(status!=osOK)
 				{
-					print_k("Error: No queue access\r\n");
+					print_k("Error: No queue access");
 				}
 			}
 			else
 			{
-				print_k("Error: Parameters out of range\r\n");
+				print_k("Error: Parameters out of range");
 			}
 
 		}
@@ -282,12 +293,12 @@ void onBiasWrite(EmbeddedCli *cli, char *args, void *context)
 			status=osMessageQueuePut(QueueBiasHandle,&msg,0,0);
 			if(status!=osOK)
 				{
-				print_k("Error: No queue access\r\n");
+				print_k("Error: No queue access");
 				}
 			}
 			else
 			{
-				print_k("Error: Parameters out of range 0-63\r\n");
+				print_k("Error: Parameters out of range 0-63");
 			}
 		}
 	}
@@ -302,12 +313,12 @@ void onBiasWrite(EmbeddedCli *cli, char *args, void *context)
 		status=osMessageQueuePut(QueueBiasHandle,&msg,0,0);
 		if(status!=osOK)
 			{
-			print_k("Error: No queue access\r\n");
+			print_k("Error: No queue access");
 			}
 	}
 	else
 	{
-		print_k("Error: Wrong number of parameters\r\n");
+		print_k("Error: Wrong number of parameters");
 	}
 }
 
@@ -315,22 +326,26 @@ void onBiasRead(EmbeddedCli *cli, char *args, void *context)
 {
 	osStatus_t status;
 	struct bias msg;
+	//print_k("T");
 	if(embeddedCliGetTokenCount(args)==1)
 	{
 		msg.op=read;
 		msg.index=atoi(embeddedCliGetToken(args,1));
 		if(msg.index<=MAX_BIAS_INDEX)
 		{
-		status=osMessageQueuePut(QueueBiasHandle,&msg,0,0);
+//		print_k("P %u %u",msg.op,msg.index);
+		status=osMessageQueuePut(QueueBiasHandle,&msg,0,10);
+		  if(osMessageQueueGetCount( QueueBiasHandle ))
+			  //LOG_DBG("NP %u",osMessageQueueGetCount( QueueBiasHandle ));
 			if(status!=osOK)
 			{
-				print_k("Error: No queue access\r\n");
+				print_k("Error: No queue access");
 			}
 		}
 	}
 	else
 	{
-		print_k("Error: Wrong number of parameters\r\n");
+		print_k("Error: Wrong number of parameters");
 	}
 }
 void onDumpFram(EmbeddedCli *cli, char *args, void *context)
@@ -350,7 +365,7 @@ void onDumpFram(EmbeddedCli *cli, char *args, void *context)
 		for(uint32_t i=0;i<n_byte;i=i+4)
 		{
 			ReadByteFram(offset+(uint16_t) i,&vect[0],4);
-			print_k("%04X : %02X %02X %02X %02X\r\n",offset+(uint16_t)i,vect[0],vect[1],vect[2],vect[3]);
+			print_k("%04X : %02X %02X %02X %02X",offset+(uint16_t)i,vect[0],vect[1],vect[2],vect[3]);
 		}
 		config_for_dac_SPI3();
 		status=osMutexRelease(SPI3MutexHandle);
@@ -358,7 +373,7 @@ void onDumpFram(EmbeddedCli *cli, char *args, void *context)
 	}
 	else
 	{
-		print_k("Error: Wrong number of parameters\r\n");
+		print_k("Error: Wrong number of parameters");
 	}
 }
 void onWriteFram(EmbeddedCli *cli, char *args, void *context)
@@ -381,7 +396,7 @@ void onWriteFram(EmbeddedCli *cli, char *args, void *context)
 	}
 	else
 	{
-		print_k("Error: Wrong number of parameters\r\n");
+		print_k("Error: Wrong number of parameters");
 	}
 }
 
@@ -403,13 +418,13 @@ void onWritePwrCtrl(EmbeddedCli *cli, char *args, void *context)
 		}
 		else
 		{
-			print_k("Error: Wrong parameters value\r\n");
+			print_k("Error: Wrong parameters value");
 		}
 
 	}
 	else
 	{
-		print_k("Error: Wrong number of parameters\r\n");
+		print_k("Error: Wrong number of parameters");
 	}
 
 }
@@ -428,13 +443,13 @@ void onReadPwrCtrl(EmbeddedCli *cli, char *args, void *context)
 		}
 		else
 		{
-			print_k("Error: Wrong parameters value\r\n");
+			print_k("Error: Wrong parameters value");
 		}
 
 	}
 	else
 	{
-		print_k("Error: Wrong number of parameters\r\n");
+		print_k("Error: Wrong number of parameters");
 	}
 
 }
@@ -456,12 +471,12 @@ void onSetPwr(EmbeddedCli *cli, char *args, void *context)
 			}
 		else
 			{
-			print_k("Error: Wrong parameters value\r\n");
+			print_k("Error: Wrong parameters value");
 			}
 	}
 	else
 	{
-		print_k("Error: Wrong number of parameters\r\n");
+		print_k("Error: Wrong number of parameters");
 	}
 
 }
@@ -515,12 +530,12 @@ void onSetSint(EmbeddedCli *cli, char *args, void *context)
 		}
 		else
 		{
-			print_k("Error: Wrong number of parameters\r\n");
+			print_k("Error: Wrong number of parameters");
 		}
 	}
 	if(status!=osOK)
 	{
-		print_k("Error: No queue access\r\n");
+		print_k("Error: No queue access");
 	}
 }
 
@@ -535,7 +550,7 @@ void onReadSint(EmbeddedCli *cli, char *args, void *context)
 	status=osMessageQueuePut(QueueSintHandle,&msg,0,0);
 	if(status!=osOK)
 		{
-		print_k("Error: No queue access\r\n");
+		print_k("Error: No queue access");
 		}
 }
 void onDumpsdram(EmbeddedCli *cli, char *args, void *context)
@@ -552,11 +567,16 @@ void onDumpsdram(EmbeddedCli *cli, char *args, void *context)
 		for(uint32_t i=0;i<n_byte;i=i+4)
 		{
 			memcpy(&vect[0],offset+i,4);
-			print_k("%04X : %02X %02X %02X %02X\r\n",offset+(uint32_t)i,vect[0],vect[1],vect[2],vect[3]);
+			print_k("%04X : %02X %02X %02X %02X",offset+(uint32_t)i,vect[0],vect[1],vect[2],vect[3]);
 		}
 	}
 	else
 	{
-		print_k("Error: Wrong number of parameters\r\n");
+		print_k("Error: Wrong number of parameters");
 	}
+}
+void onReadVersion(EmbeddedCli *cli, char *args, void *context)
+{
+	print_k("FW : %s",fw_version);
+	print_k("HW : %s",hw_version);
 }

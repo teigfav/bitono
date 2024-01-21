@@ -32,9 +32,10 @@ void Initialization(void)
 	InitBiasTask();
 	InitTestTask();
 	InitCLITask();
-	InitGFXTask();
+	//InitGFXTask();
 	InitSintTask();
 	InitlvglTask();
+
 
 
 }

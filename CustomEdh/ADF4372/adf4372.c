@@ -292,7 +292,7 @@ int32_t adf4371_write(uint16_t reg, uint8_t val, enum Sint_number sint)
 {
 	uint8_t buf[3];
 	uint16_t cmd;
-	//print_k("PLL write reg\r\n");
+	//print_k("PLL write reg");
 	cmd = ADF4371_WRITE | ADF4371_ADDR(reg);
 	buf[0] = cmd >> 8;
 	buf[1] = cmd & 0xFF;
@@ -311,7 +311,7 @@ int32_t adf4371_write(uint16_t reg, uint8_t val, enum Sint_number sint)
 	}
 	else
 	{
-		print_k("Error : wrong sint number\r\n");
+		print_k("Error : wrong sint number");
 	}
 	HAL_SPI_Transmit(&hspi2, buf, NO_OS_ARRAY_SIZE(buf), 10);
 	HAL_GPIO_WritePin(CS1_GPIO_Port,CS1_Pin,GPIO_PIN_SET);
@@ -351,7 +351,7 @@ int32_t adf4371_read(uint16_t reg,uint8_t *val,enum Sint_number sint)
 	}
 	else
 	{
-		print_k("Error : wrong sint number\r\n");
+		print_k("Error : wrong sint number");
 	}
 	HAL_SPI_Receive(&hspi2, buf, NO_OS_ARRAY_SIZE(buf),10);
 	HAL_GPIO_WritePin(CS1_GPIO_Port,CS1_Pin,GPIO_PIN_SET);
@@ -415,7 +415,7 @@ static int32_t adf4371_write_bulk(uint16_t reg,uint8_t *val,uint8_t size,enum Si
 		}
 		else
 		{
-			print_k("Error : wrong sint number\r\n");
+			print_k("Error : wrong sint number");
 		}
 	HAL_SPI_Transmit(&hspi2, buf, size+2, 10);
 	HAL_GPIO_WritePin(CS1_GPIO_Port,CS1_Pin,GPIO_PIN_SET);
@@ -430,7 +430,7 @@ static int32_t adf4371_write_bulk(uint16_t reg,uint8_t *val,uint8_t size,enum Si
  */
 void adf4371_pll_init(enum Sint_number sint)
 {
-//print_k("PLL init\r\n");
+//print_k("PLL init");
 adf4371_write(ADF4371_REG(0x00),0x18,sint);
 adf4371_write(ADF4371_REG(0x01),0x00,sint);
 
@@ -456,7 +456,7 @@ switch (dev->channel)
 	}
 
 adf4371_pll_fract_n_compute(frequenza,dev->fpfd,&dev->integer,&dev->fract1,&dev->fract2,&dev->mod2);
-//LOG_DBG("fpfd %lu  integer %lu  fract1  %lu  fract2  %lu   mod2  %lu\n\r",dev->fpfd,dev->integer,dev->fract1,dev->fract2,dev->mod2);
+//LOG_DBG("fpfd %lu  integer %lu  fract1  %lu  fract2  %lu   mod2  %lu",dev->fpfd,dev->integer,dev->fract1,dev->fract2,dev->mod2);
 
 	buf[0] = dev->integer >> 8;
 	buf[1] = 0x40; /* REG12 default */
@@ -488,7 +488,7 @@ adf4371_pll_fract_n_compute(frequenza,dev->fpfd,&dev->integer,&dev->fract1,&dev-
 			adf4371_write(ADF4371_REG(0x2B), 0x00,sint);
 		}
 	adf4371_write(ADF4371_REG(0x10), dev->integer & 0xFF,sint);
-//	print_k("buffer %x %x %x %x %x %x\n\r",buf[0],buf[1],buf[2],buf[3],buf[4],buf[5]);
+//	print_k("buffer %x %x %x %x %x %x",buf[0],buf[1],buf[2],buf[3],buf[4],buf[5]);
 	return 0;
 }
 int32_t adf4371_setup(struct adf4371_dev *dev,enum Sint_number sint)

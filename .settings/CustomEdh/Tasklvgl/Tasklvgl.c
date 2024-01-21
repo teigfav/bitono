@@ -44,7 +44,7 @@ void InitlvglTask(void)
 
 void StartTickTask(void *argument)
 {
-	GSL1680_Init();
+	//GSL1680_Init();
   for(;;)
   {
     lv_tick_inc(10);

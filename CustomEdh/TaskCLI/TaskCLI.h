@@ -17,8 +17,9 @@
 #define CLI_RX_BUFFER_SIZE 16
 #define CLI_CMD_BUFFER_SIZE 64
 #define CLI_HISTORY_SIZE 32
-#define CLI_BINDING_COUNT 21
+#define CLI_BINDING_COUNT 22
 
+void InitCLITask(void);
 
 void InitCLITask(void);
 
@@ -65,5 +66,7 @@ void onSetSint(EmbeddedCli *cli, char *args, void *context);
 void onReadSint(EmbeddedCli *cli, char *args, void *context);
 
 void onDumpsdram(EmbeddedCli *cli, char *args, void *context);
+
+void onReadVersion(EmbeddedCli *cli, char *args, void *context);
 
 #endif /* TASKCLI_TASKCLI_H_ */

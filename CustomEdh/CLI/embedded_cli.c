@@ -2,6 +2,7 @@
 #include <string.h>
 
 #include "embedded_cli.h"
+#include "Util.h"
 
 #define CLI_TOKEN_NPOS 0xffff
 

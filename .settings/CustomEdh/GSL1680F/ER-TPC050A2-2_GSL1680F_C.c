@@ -5265,7 +5265,7 @@ static void gsl_load_fw(void)
 	//uint32_t source_len;
 	struct fw_data *ptr_fw;
 
-	print_k("=============gsl_load_fw start==============\r\n");
+	LOG_DBG("=============gsl_load_fw start==============\r\n");
 
 
 	ptr_fw = &GSLX680_FW[0];
@@ -5294,7 +5294,7 @@ static void gsl_load_fw(void)
 //		}
 	}
 
-	print_k("=============gsl_load_fw end==============\r\n");
+	LOG_DBG("=============gsl_load_fw end==============\r\n");
 
 }
 

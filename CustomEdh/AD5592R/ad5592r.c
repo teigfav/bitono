@@ -35,14 +35,14 @@ int32_t DAC_setup (void)
     buf[0]=buf[0] | 0x05;
     buf[1]=0xAC;    //reset
     status=osMutexAcquire(SPI3MutexHandle,osWaitForever);
-    print_k("DAC : %02X  %02X\r\n",buf[0],buf[1]);
+    LOG_DBG("DAC : %02X  %02X",buf[0],buf[1]);
     HAL_GPIO_WritePin(DtoACS1_GPIO_Port,DtoACS1_Pin,GPIO_PIN_RESET);
 	ret=HAL_SPI_Transmit(&hspi3, buf, NO_OS_ARRAY_SIZE(buf), 10);
 	HAL_GPIO_WritePin(DtoACS1_GPIO_Port,DtoACS1_Pin,GPIO_PIN_SET);
 	//status=osMutexRelease(SPI3MutexHandle);
 	if(ret!=HAL_OK)
 	{
-		LOG_DBG("AD5592 SPI error\r\n");
+		LOG_DBG("AD5592 SPI error");
 		return HAL_ERROR;
 	}
     osDelay(10);
@@ -50,14 +50,14 @@ int32_t DAC_setup (void)
     buf[0]=buf[0] & 0x7F;
     buf[1]=0xF0;    //  I/O 7,6,5,4 -> DAC
     //status=osMutexAcquire(SPI3MutexHandle,osWaitForever);
-    print_k("DAC : %02X  %02X\r\n",buf[0],buf[1]);
+    LOG_DBG("DAC : %02X  %02X",buf[0],buf[1]);
     HAL_GPIO_WritePin(DtoACS1_GPIO_Port,DtoACS1_Pin,GPIO_PIN_RESET);
     ret=HAL_SPI_Transmit(&hspi3, buf, NO_OS_ARRAY_SIZE(buf), 10);
 	HAL_GPIO_WritePin(DtoACS1_GPIO_Port,DtoACS1_Pin,GPIO_PIN_SET);
 	//status=osMutexRelease(SPI3MutexHandle);
 	if(ret!=HAL_OK)
 	{
-		LOG_DBG("AD5592 SPI error\r\n");
+		LOG_DBG("AD5592 SPI error");
 		return HAL_ERROR;
 	}
     osDelay(1);
@@ -65,30 +65,30 @@ int32_t DAC_setup (void)
     buf[0]=buf[0] & 0x7F;
     buf[1]=0x0F;    //  I/O 0,1,2,3 -> ADC
     //status=osMutexAcquire(SPI3MutexHandle,osWaitForever);
-    print_k("DAC : %02X  %02X\r\n",buf[0],buf[1]);
+    LOG_DBG("DAC : %02X  %02X",buf[0],buf[1]);
     HAL_GPIO_WritePin(DtoACS1_GPIO_Port,DtoACS1_Pin,GPIO_PIN_RESET);
     ret=HAL_SPI_Transmit(&hspi3, buf, NO_OS_ARRAY_SIZE(buf), 10);
 	HAL_GPIO_WritePin(DtoACS1_GPIO_Port,DtoACS1_Pin,GPIO_PIN_SET);
 	//status=osMutexRelease(SPI3MutexHandle);
 	if(ret!=HAL_OK)
 	{
-		LOG_DBG("AD5592 SPI error\r\n");
+		LOG_DBG("AD5592 SPI error");
 		return HAL_ERROR;
 	}
-    osDelay(1);
+	osDelay(1);
     buf[0]=(PD_REF_CTRL<<3);
     buf[0]=buf[0] | 0x02; 	// SET internal reference
     buf[0]=buf[0] & 0x7A;
     buf[1]=0x00;			// all channel are operating, no power down
     //status=osMutexAcquire(SPI3MutexHandle,osWaitForever);
-    print_k("DAC : %02X  %02X\r\n",buf[0],buf[1]);
+    LOG_DBG("DAC : %02X  %02X",buf[0],buf[1]);
     HAL_GPIO_WritePin(DtoACS1_GPIO_Port,DtoACS1_Pin,GPIO_PIN_RESET);
     ret=HAL_SPI_Transmit(&hspi3, buf, NO_OS_ARRAY_SIZE(buf), 100);
 	HAL_GPIO_WritePin(DtoACS1_GPIO_Port,DtoACS1_Pin,GPIO_PIN_SET);
 	//status=osMutexRelease(SPI3MutexHandle);
 	if(ret!=HAL_OK)
 	{
-		LOG_DBG("AD5592 SPI error\r\n");
+		LOG_DBG("AD5592 SPI error");
 		return HAL_ERROR;
 	}
 
@@ -98,14 +98,14 @@ int32_t DAC_setup (void)
 	buf[0]=buf[0] | 0x05;
 	buf[1]=0xAC;    //reset
 	//status=osMutexAcquire(SPI3MutexHandle,osWaitForever);
-	print_k("DAC : %02X  %02X\r\n",buf[0],buf[1]);
+	LOG_DBG("DAC : %02X  %02X",buf[0],buf[1]);
 	HAL_GPIO_WritePin(DtoACS2_GPIO_Port,DtoACS2_Pin,GPIO_PIN_RESET);
 	ret=HAL_SPI_Transmit(&hspi3, buf, NO_OS_ARRAY_SIZE(buf), 10);
 	HAL_GPIO_WritePin(DtoACS2_GPIO_Port,DtoACS2_Pin,GPIO_PIN_SET);
 	//status=osMutexRelease(SPI3MutexHandle);
 	if(ret!=HAL_OK)
 	{
-		LOG_DBG("AD5592 SPI error\r\n");
+		LOG_DBG("AD5592 SPI error");
 		return HAL_ERROR;
 	}
 	osDelay(10);
@@ -113,14 +113,14 @@ int32_t DAC_setup (void)
 	buf[0]=buf[0] & 0x7F;
 	buf[1]=0xE0;    //  I/O 7,6,5 -> DAC
 	//status=osMutexAcquire(SPI3MutexHandle,osWaitForever);
-	print_k("DAC : %02X  %02X\r\n",buf[0],buf[1]);
+	LOG_DBG("DAC : %02X  %02X",buf[0],buf[1]);
 	HAL_GPIO_WritePin(DtoACS2_GPIO_Port,DtoACS2_Pin,GPIO_PIN_RESET);
 	ret=HAL_SPI_Transmit(&hspi3, buf, NO_OS_ARRAY_SIZE(buf), 10);
 	HAL_GPIO_WritePin(DtoACS2_GPIO_Port,DtoACS2_Pin,GPIO_PIN_SET);
 	//status=osMutexRelease(SPI3MutexHandle);
 	if(ret!=HAL_OK)
 	{
-		LOG_DBG("AD5592 SPI error\r\n");
+		LOG_DBG("AD5592 SPI error");
 		return HAL_ERROR;
 	}
 	osDelay(1);
@@ -128,14 +128,14 @@ int32_t DAC_setup (void)
 	buf[0]=buf[0] & 0x7F;
 	buf[1]=0x1F;    //  I/O 0,1,2,3,4 -> ADC
 	//status=osMutexAcquire(SPI3MutexHandle,osWaitForever);
-	print_k("DAC : %02X  %02X\r\n",buf[0],buf[1]);
+	LOG_DBG("DAC : %02X  %02X",buf[0],buf[1]);
 	HAL_GPIO_WritePin(DtoACS2_GPIO_Port,DtoACS2_Pin,GPIO_PIN_RESET);
 	ret=HAL_SPI_Transmit(&hspi3, buf, NO_OS_ARRAY_SIZE(buf), 10);
 	HAL_GPIO_WritePin(DtoACS2_GPIO_Port,DtoACS2_Pin,GPIO_PIN_SET);
 	//status=osMutexRelease(SPI3MutexHandle);
 	if(ret!=HAL_OK)
 	{
-		LOG_DBG("AD5592 SPI error\r\n");
+		LOG_DBG("AD5592 SPI error");
 		return HAL_ERROR;
 	}
 	osDelay(1);
@@ -144,14 +144,14 @@ int32_t DAC_setup (void)
 	buf[0]=buf[0] & 0x7A;
 	buf[1]=0x00;			// all channel are operating, no power down
 	//status=osMutexAcquire(SPI3MutexHandle,osWaitForever);
-	print_k("DAC : %02X  %02X\r\n",buf[0],buf[1]);
+	LOG_DBG("DAC : %02X  %02X",buf[0],buf[1]);
 	HAL_GPIO_WritePin(DtoACS2_GPIO_Port,DtoACS2_Pin,GPIO_PIN_RESET);
 	ret=HAL_SPI_Transmit(&hspi3, buf, NO_OS_ARRAY_SIZE(buf), 10);
 	HAL_GPIO_WritePin(DtoACS2_GPIO_Port,DtoACS2_Pin,GPIO_PIN_SET);
 	//status=osMutexRelease(SPI3MutexHandle);
 	if(ret!=HAL_OK)
 	{
-		LOG_DBG("AD5592 SPI error\r\n");
+		LOG_DBG("AD5592 SPI error");
 		return HAL_ERROR;
 	}
 
@@ -161,14 +161,14 @@ int32_t DAC_setup (void)
 	buf[0]=buf[0] | 0x05;
 	buf[1]=0xAC;    //reset
 	//status=osMutexAcquire(SPI3MutexHandle,osWaitForever);
-	print_k("DAC : %02X  %02X\r\n",buf[0],buf[1]);
+	LOG_DBG("DAC : %02X  %02X",buf[0],buf[1]);
 	HAL_GPIO_WritePin(DtoACS3_GPIO_Port,DtoACS3_Pin,GPIO_PIN_RESET);
 	ret=HAL_SPI_Transmit(&hspi3, buf, NO_OS_ARRAY_SIZE(buf), 10);
 	HAL_GPIO_WritePin(DtoACS3_GPIO_Port,DtoACS3_Pin,GPIO_PIN_SET);
 	//status=osMutexRelease(SPI3MutexHandle);
 	if(ret!=HAL_OK)
 	{
-		LOG_DBG("AD5592 SPI error\r\n");
+		LOG_DBG("AD5592 SPI error");
 		return HAL_ERROR;
 	}
 	osDelay(10);
@@ -176,14 +176,14 @@ int32_t DAC_setup (void)
 	buf[0]=buf[0] & 0x7F;
 	buf[1]=0xE0;    //  I/O 7,6,5 -> DAC
 	//status=osMutexAcquire(SPI3MutexHandle,osWaitForever);
-	print_k("DAC : %02X  %02X\r\n",buf[0],buf[1]);
+	LOG_DBG("DAC : %02X  %02X",buf[0],buf[1]);
 	HAL_GPIO_WritePin(DtoACS3_GPIO_Port,DtoACS3_Pin,GPIO_PIN_RESET);
 	ret=HAL_SPI_Transmit(&hspi3, buf, NO_OS_ARRAY_SIZE(buf), 10);
 	HAL_GPIO_WritePin(DtoACS3_GPIO_Port,DtoACS3_Pin,GPIO_PIN_SET);
 	//status=osMutexRelease(SPI3MutexHandle);
 	if(ret!=HAL_OK)
 	{
-		LOG_DBG("AD5592 SPI error\r\n");
+		LOG_DBG("AD5592 SPI error");
 		return HAL_ERROR;
 	}
 	osDelay(1);
@@ -191,14 +191,14 @@ int32_t DAC_setup (void)
 	buf[0]=buf[0] & 0x7F;
 	buf[1]=0x1F;    //  I/O 0,1,2,3,4 -> ADC
 	//status=osMutexAcquire(SPI3MutexHandle,osWaitForever);
-	print_k("DAC : %02X  %02X\r\n",buf[0],buf[1]);
+	LOG_DBG("DAC : %02X  %02X",buf[0],buf[1]);
 	HAL_GPIO_WritePin(DtoACS3_GPIO_Port,DtoACS3_Pin,GPIO_PIN_RESET);
 	ret=HAL_SPI_Transmit(&hspi3, buf, NO_OS_ARRAY_SIZE(buf), 10);
 	HAL_GPIO_WritePin(DtoACS3_GPIO_Port,DtoACS3_Pin,GPIO_PIN_SET);
 	//status=osMutexRelease(SPI3MutexHandle);
 	if(ret!=HAL_OK)
 	{
-		LOG_DBG("AD5592 SPI error\r\n");
+		LOG_DBG("AD5592 SPI error");
 		return HAL_ERROR;
 	}
 	osDelay(1);
@@ -207,14 +207,14 @@ int32_t DAC_setup (void)
 	buf[0]=buf[0] & 0x7A;
 	buf[1]=0x00;			// all channel are operating, no power down
 	//status=osMutexAcquire(SPI3MutexHandle,osWaitForever);
-	print_k("DAC : %02X  %02X\r\n",buf[0],buf[1]);
+	LOG_DBG("DAC : %02X  %02X",buf[0],buf[1]);
 	HAL_GPIO_WritePin(DtoACS3_GPIO_Port,DtoACS3_Pin,GPIO_PIN_RESET);
 	ret=HAL_SPI_Transmit(&hspi3, buf, NO_OS_ARRAY_SIZE(buf), 10);
 	HAL_GPIO_WritePin(DtoACS3_GPIO_Port,DtoACS3_Pin,GPIO_PIN_SET);
 	status=osMutexRelease(SPI3MutexHandle);
 	if(ret!=HAL_OK)
 	{
-		LOG_DBG("AD5592 SPI erro\r\n");
+		LOG_DBG("AD5592 SPI erro");
 		return HAL_ERROR;
 	}
 	//settare tutti i DAC al massimo per avere i gate al minimo.  Verificare se vala anche per i PA.
@@ -235,12 +235,12 @@ int32_t dac_write(dac_t ic,uint32_t reg, uint32_t value)
     switch (ic)
     {
     case IC27:
-    	print_k("DAC IC27 : %02X  %02X\r\n",buf[0],buf[1]);
+    	LOG_DBG("DAC IC27 : %02X  %02X",buf[0],buf[1]);
     	//status=osMutexAcquire(SPI3MutexHandle,osWaitForever);
     	HAL_GPIO_WritePin(DtoACS1_GPIO_Port,DtoACS1_Pin,GPIO_PIN_RESET);
     	if(HAL_SPI_Transmit(&hspi3, buf, NO_OS_ARRAY_SIZE(buf), 10)!=HAL_OK)
     	{
-    		LOG_DBG("AD5592 SPI error\r\n");
+    		LOG_DBG("AD5592 SPI error");
     		HAL_GPIO_WritePin(DtoACS1_GPIO_Port,DtoACS1_Pin,GPIO_PIN_SET);
     		status=osMutexRelease(SPI3MutexHandle);
     		return HAL_ERROR;
@@ -249,12 +249,12 @@ int32_t dac_write(dac_t ic,uint32_t reg, uint32_t value)
     	//status=osMutexRelease(SPI3MutexHandle);
         break;
     case IC28:
-    	print_k("DAC IC28 : %02X  %02X\r\n",buf[0],buf[1]);
+    	LOG_DBG("DAC IC28 : %02X  %02X",buf[0],buf[1]);
     	//status=osMutexAcquire(SPI3MutexHandle,osWaitForever);
     	HAL_GPIO_WritePin(DtoACS2_GPIO_Port,DtoACS2_Pin,GPIO_PIN_RESET);
     	if(HAL_SPI_Transmit(&hspi3, buf, NO_OS_ARRAY_SIZE(buf), 10)!=HAL_OK)
     	{
-    		LOG_DBG("AD5592 SPI error\r\n");
+    		LOG_DBG("AD5592 SPI error");
     		HAL_GPIO_WritePin(DtoACS1_GPIO_Port,DtoACS1_Pin,GPIO_PIN_SET);
     		status=osMutexRelease(SPI3MutexHandle);
     		return HAL_ERROR;
@@ -264,12 +264,12 @@ int32_t dac_write(dac_t ic,uint32_t reg, uint32_t value)
         break;
 
     case IC31:
-    	print_k("DAC IC31 : %02X  %02X\r\n",buf[0],buf[1]);
+    	LOG_DBG("DAC IC31 : %02X  %02X",buf[0],buf[1]);
     	//status=osMutexAcquire(SPI3MutexHandle,osWaitForever);
     	HAL_GPIO_WritePin(DtoACS3_GPIO_Port,DtoACS3_Pin,GPIO_PIN_RESET);
     	if(HAL_SPI_Transmit(&hspi3, buf, NO_OS_ARRAY_SIZE(buf), 10)!=HAL_OK)
     	{
-    		LOG_DBG("AD5592 SPI error\r\n");
+    		LOG_DBG("AD5592 SPI error");
     		HAL_GPIO_WritePin(DtoACS1_GPIO_Port,DtoACS1_Pin,GPIO_PIN_SET);
     		status=osMutexRelease(SPI3MutexHandle);
     		return HAL_ERROR;
@@ -278,7 +278,7 @@ int32_t dac_write(dac_t ic,uint32_t reg, uint32_t value)
     	//status=osMutexRelease(SPI3MutexHandle);
         break;
     default:
-    	LOG_DBG("Wrong IC number \r\n");
+    	LOG_DBG("Wrong IC number");
     	return -1;
     	break;
     }
@@ -298,7 +298,7 @@ int32_t adc_read(dac_t ic,uint32_t reg)
 		HAL_GPIO_WritePin(DtoACS1_GPIO_Port,DtoACS1_Pin,GPIO_PIN_RESET);
 		if(HAL_SPI_Transmit(&hspi3, buf, NO_OS_ARRAY_SIZE(buf), 10)!=HAL_OK)
 		{
-			LOG_DBG("AD5592 SPI error\r\n");
+			LOG_DBG("AD5592 SPI error");
 			result= HAL_ERROR;
 		}
 		HAL_GPIO_WritePin(DtoACS1_GPIO_Port,DtoACS1_Pin,GPIO_PIN_SET);
@@ -308,7 +308,7 @@ int32_t adc_read(dac_t ic,uint32_t reg)
 		HAL_GPIO_WritePin(DtoACS1_GPIO_Port,DtoACS1_Pin,GPIO_PIN_RESET);
 		if(HAL_SPI_Transmit(&hspi3, buf, NO_OS_ARRAY_SIZE(buf), 10)!=HAL_OK)
 		{
-			LOG_DBG("AD5592 SPI error\r\n");
+			LOG_DBG("AD5592 SPI error");
 			result=  HAL_ERROR;
 		}
 		HAL_GPIO_WritePin(DtoACS1_GPIO_Port,DtoACS1_Pin,GPIO_PIN_SET);
@@ -318,7 +318,7 @@ int32_t adc_read(dac_t ic,uint32_t reg)
 		HAL_GPIO_WritePin(DtoACS1_GPIO_Port,DtoACS1_Pin,GPIO_PIN_RESET);
 		if(HAL_SPI_Receive(&hspi3, &buf[0], NO_OS_ARRAY_SIZE(buf), 10)!=HAL_OK)
 		{
-			LOG_DBG("AD5592 SPI error\r\n");
+			LOG_DBG("AD5592 SPI error");
 			result= HAL_ERROR;
 		}
 		HAL_GPIO_WritePin(DtoACS1_GPIO_Port,DtoACS1_Pin,GPIO_PIN_SET);
@@ -331,7 +331,7 @@ int32_t adc_read(dac_t ic,uint32_t reg)
 		HAL_GPIO_WritePin(DtoACS2_GPIO_Port,DtoACS2_Pin,GPIO_PIN_RESET);
 		if(HAL_SPI_Transmit(&hspi3, buf, NO_OS_ARRAY_SIZE(buf), 10)!=HAL_OK)
 		{
-			LOG_DBG("AD5592 SPI error\r\n");
+			LOG_DBG("AD5592 SPI error");
 			result= HAL_ERROR;
 		}
 		HAL_GPIO_WritePin(DtoACS2_GPIO_Port,DtoACS2_Pin,GPIO_PIN_SET);
@@ -341,7 +341,7 @@ int32_t adc_read(dac_t ic,uint32_t reg)
 		HAL_GPIO_WritePin(DtoACS2_GPIO_Port,DtoACS2_Pin,GPIO_PIN_RESET);
 		if(HAL_SPI_Transmit(&hspi3, buf, NO_OS_ARRAY_SIZE(buf), 10)!=HAL_OK)
 		{
-			LOG_DBG("AD5592 SPI error\r\n");
+			LOG_DBG("AD5592 SPI error");
 			result=  HAL_ERROR;
 		}
 		HAL_GPIO_WritePin(DtoACS2_GPIO_Port,DtoACS2_Pin,GPIO_PIN_SET);
@@ -351,7 +351,7 @@ int32_t adc_read(dac_t ic,uint32_t reg)
 		HAL_GPIO_WritePin(DtoACS2_GPIO_Port,DtoACS2_Pin,GPIO_PIN_RESET);
 		if(HAL_SPI_Receive(&hspi3, &buf[0], NO_OS_ARRAY_SIZE(buf), 10)!=HAL_OK)
 		{
-			LOG_DBG("AD5592 SPI error\r\n");
+			LOG_DBG("AD5592 SPI error");
 			result= HAL_ERROR;
 		}
 		HAL_GPIO_WritePin(DtoACS2_GPIO_Port,DtoACS2_Pin,GPIO_PIN_SET);
@@ -364,7 +364,7 @@ int32_t adc_read(dac_t ic,uint32_t reg)
 		HAL_GPIO_WritePin(DtoACS3_GPIO_Port,DtoACS3_Pin,GPIO_PIN_RESET);
 		if(HAL_SPI_Transmit(&hspi3, buf, NO_OS_ARRAY_SIZE(buf), 10)!=HAL_OK)
 		{
-			LOG_DBG("AD5592 SPI error\r\n");
+			LOG_DBG("AD5592 SPI error");
 			result=  HAL_ERROR;
 		}
 		HAL_GPIO_WritePin(DtoACS3_GPIO_Port,DtoACS3_Pin,GPIO_PIN_SET);
@@ -374,7 +374,7 @@ int32_t adc_read(dac_t ic,uint32_t reg)
 		HAL_GPIO_WritePin(DtoACS3_GPIO_Port,DtoACS3_Pin,GPIO_PIN_RESET);
 		if(HAL_SPI_Transmit(&hspi3, buf, NO_OS_ARRAY_SIZE(buf), 10)!=HAL_OK)
 		{
-			LOG_DBG("AD5592 SPI error\r\n");
+			LOG_DBG("AD5592 SPI error");
 			result= HAL_ERROR;
 		}
 		HAL_GPIO_WritePin(DtoACS3_GPIO_Port,DtoACS3_Pin,GPIO_PIN_SET);
@@ -384,7 +384,7 @@ int32_t adc_read(dac_t ic,uint32_t reg)
 		HAL_GPIO_WritePin(DtoACS3_GPIO_Port,DtoACS3_Pin,GPIO_PIN_RESET);
 		if(HAL_SPI_Receive(&hspi3, &buf[0], NO_OS_ARRAY_SIZE(buf), 10)!=HAL_OK)
 		{
-			LOG_DBG("AD5592 SPI error\r\n");
+			LOG_DBG("AD5592 SPI error");
 			result= HAL_ERROR;
 		}
 		HAL_GPIO_WritePin(DtoACS3_GPIO_Port,DtoACS3_Pin,GPIO_PIN_SET);

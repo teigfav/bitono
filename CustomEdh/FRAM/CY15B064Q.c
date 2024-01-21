@@ -16,7 +16,7 @@ void ReadByteFram(uint16_t offset,uint8_t * data, uint32_t num_bytes)
 	uint16_t tmp_offset;
 	osStatus_t status;
 	//status=osMutexAcquire(SPI3MutexHandle,osWaitForever);
-	//print_k("Read data FRAM %p\r\n",data);
+	//print_k("Read data FRAM %p",data);
 	if(offset+num_bytes<=FRAM_SIZE)
 	{
 	HAL_GPIO_WritePin(FRAM_CS_GPIO_Port,FRAM_CS_Pin,GPIO_PIN_SET);

@@ -13,6 +13,8 @@
 #include "string.h"
 #include "CY15B064Q.h"
 #include <stdbool.h>
+#include "stm32h7xx_hal.h"
+
 
 
 #define DAC_CONFIG  0b0101
@@ -89,23 +91,25 @@ void StartBiasTask(void *argument)
 	osStatus_t status;
 	struct bias messaggio;
 	uint32_t ADC=0;
-	osDelay(2000);
+	char car;
+	osDelay(200);  //era 2000
 	LoadBiasParam();
 	osDelay(1);
-	Load_pwr_table();
+	//Load_pwr_table();
 	osDelay(1);
 	DAC_setup();
-
 	bool first=false;	//serve per caricare i DAC all'accensione, poi diventa true
-
   /* Infinite loop */
   for(;;)
   {
+//	  if(osMessageQueueGetCount( QueueBiasHandle ))
+//		  LOG_DBG("NR1 %u",osMessageQueueGetCount( QueueBiasHandle ));
 	  status=osMessageQueueGet(QueueBiasHandle,&messaggio,NULL,0);
-	  //print_k("size of double %d\r\n",sizeof(double));
+	  //print_k("size of double %d",sizeof(double));
 	  //uint32_t a=bias.polarizzazione[0].valore;
 	  if (status==osOK)
 	  {
+//		  print_k("R %u %u  NR2 %u\r\n",messaggio.op,messaggio.index,osMessageQueueGetCount( QueueBiasHandle ));
 		  if (messaggio.op==write || messaggio.op==setpower)
 		  {
 			  if(messaggio.op==write)
@@ -117,7 +121,7 @@ void StartBiasTask(void *argument)
 				  ram_bias.polarizzazione[messaggio.index].valore=messaggio.valore;
 			  }
 
-		  LOG_DBG("OP=%d  Bias number=%d   Bias type=%d   bias value=0X%04X    bias max=0X%04X    bias min=0X%04X\r\n",ram_bias.polarizzazione[messaggio.index].op,ram_bias.polarizzazione[messaggio.index].index, ram_bias.polarizzazione[messaggio.index].tipo, ram_bias.polarizzazione[messaggio.index].valore, ram_bias.polarizzazione[messaggio.index].max, ram_bias.polarizzazione[messaggio.index].min);
+		  LOG_DBG("OP=%d  Bias number=%d   Bias type=%d   bias value=0X%04X    bias max=0X%04X    bias min=0X%04X",ram_bias.polarizzazione[messaggio.index].op,ram_bias.polarizzazione[messaggio.index].index, ram_bias.polarizzazione[messaggio.index].tipo, ram_bias.polarizzazione[messaggio.index].valore, ram_bias.polarizzazione[messaggio.index].max, ram_bias.polarizzazione[messaggio.index].min);
 		  if(ram_bias.polarizzazione[messaggio.index].valore>=ram_bias.polarizzazione[messaggio.index].min && ram_bias.polarizzazione[messaggio.index].valore<=ram_bias.polarizzazione[messaggio.index].max)
 		  {
 				status=osMutexAcquire(SPI3MutexHandle,osWaitForever);
@@ -163,7 +167,7 @@ void StartBiasTask(void *argument)
 		  }
 		  else
 		  {
-			  print_k("bias value out of range\r\n");
+			  print_k("bias value out of range");
 		  }
 
 		  }
@@ -209,28 +213,29 @@ void StartBiasTask(void *argument)
 				  break;
 			  }
 			  status=osMutexRelease(SPI3MutexHandle);
-			  print_k("\r\nBias OP= %d\r\n",ram_bias.polarizzazione[messaggio.index].op);
-			  print_k("Bias Index= %d\r\n",ram_bias.polarizzazione[messaggio.index].index);
-			  print_k("Bias Type= %d\r\n",ram_bias.polarizzazione[messaggio.index].tipo);
-//			  print_k("Bias Set Value= %3.2f  (0x%04lX)\r\n",DAC_to_volt(ram_bias.polarizzazione[messaggio.index].valore,13,10),ram_bias.polarizzazione[messaggio.index].valore); // esempio per tornare alla vgate
-			  print_k("Bias Set Value= 0x%04lX\r\n",ram_bias.polarizzazione[messaggio.index].valore);
-			  print_k("Bias Max Value= 0x%04lX\r\n",ram_bias.polarizzazione[messaggio.index].max);
-			  print_k("Bias Min Value= 0x%04lX\r\n",ram_bias.polarizzazione[messaggio.index].min);
+			  print_k("\r\nBias OP= %d",ram_bias.polarizzazione[messaggio.index].op);
+			  print_k("Bias Index= %d",ram_bias.polarizzazione[messaggio.index].index);
+			  print_k("Bias Type= %d",ram_bias.polarizzazione[messaggio.index].tipo);
+//			  print_k("Bias Set Value= %3.2f  (0x%04lX)",DAC_to_volt(ram_bias.polarizzazione[messaggio.index].valore,13,10),ram_bias.polarizzazione[messaggio.index].valore); // esempio per tornare alla vgate
+			  print_k("Bias Set Value= 0x%04lX",ram_bias.polarizzazione[messaggio.index].valore);
+			  print_k("Bias Max Value= 0x%04lX",ram_bias.polarizzazione[messaggio.index].max);
+			  print_k("Bias Min Value= 0x%04lX",ram_bias.polarizzazione[messaggio.index].min);
 			  if(messaggio.index<8)
 			  {
 				  //print_k("Bias Current value= %3.2f  (0x%04lX)\r\n",DAC_to_amp(ADC,0.1,4.7,0),ADC);
-				  print_k("Bias Current value= 0x%04lX\r\n",ADC);
+				  print_k("Bias Current value= 0x%04lX",ADC);
 			  }
 			  else if (messaggio.index==8 || messaggio.index==9 || messaggio.index==10)  //controllo attenuatori per cui nessuna lettura di corrente
 			  {
-				  print_k("Bias Current value= NA\r\n");
+				  print_k("Bias Current value= NA");
 			  }
 		  }
 	  }
+
 	  if(!first)
 		  {
 		  	  status=osMutexAcquire(SPI3MutexHandle,osWaitForever);
-		  	print_k("First DAC writing\r\n");
+		  	  LOG_DBG("First DAC writing");
 			  dac_write(IC27,DAC_6,ram_bias.polarizzazione[0].valore);
 			  dac_write(IC27,DAC_7,ram_bias.polarizzazione[1].valore);
 			  dac_write(IC28,DAC_5,ram_bias.polarizzazione[2].valore);
@@ -242,9 +247,10 @@ void StartBiasTask(void *argument)
 			  dac_write(IC27,DAC_4,ram_bias.polarizzazione[8].valore);
 			  dac_write(IC27,DAC_5,ram_bias.polarizzazione[9].valore);
 			  status=osMutexRelease(SPI3MutexHandle);
+			  Load_pwr_table();
 			  first=true;
 		  }
-    osDelay(500);
+    osDelay(10);
   }
   /* USER CODE END 5 */
 }
@@ -256,11 +262,11 @@ void LoadBiasParam(void)
 	osStatus_t status;
 	status=osMutexAcquire(SPI3MutexHandle,osWaitForever);
 	config_for_save_SPI3();
-	LOG_DBG("Load Bias parameters\r\n");
+	LOG_DBG("Load Bias parameters");
 //	ReadByteFram(BIAS_FRAM_ADDR,(uint8_t*)&fram_bias, 176/*(uint32_t)sizeof(fram_bias)*/);
 	base_addr=BIAS_FRAM_ADDR;
 	pfram=(uint8_t*)&ram_bias;
-	print_k("Bias Param base addrerss 0x%04lX\r\n",base_addr);
+	LOG_DBG("Bias Param base address 0x%04lX",base_addr);
 	while(base_addr<BIAS_FRAM_ADDR+sizeof(ram_bias))
 	{
 		ReadByteFram(base_addr,pfram, (uint32_t)1);
@@ -272,7 +278,7 @@ void LoadBiasParam(void)
 //	ReadByteFram(BIAS_FRAM_ADDR,(uint8_t*)&fram_bias, (uint32_t)sizeof(fram_bias));
 	if (ram_bias.start_marker!=0x1234567887654321 || ram_bias.end_marker!=0x8765432112345678)
 	{
-		LOG_DBG("Load default Bias parameters \r\n");
+		LOG_DBG("Load default Bias parameters");
 		ram_bias=default_bias_parameters;
 		SaveBiasParam();
 	}
@@ -284,7 +290,7 @@ void SaveBiasParam(void)
 	osStatus_t status;
 	status=osMutexAcquire(SPI3MutexHandle,osWaitForever);
 	config_for_save_SPI3();
-	LOG_DBG("Save Bias parameters \r\n");
+	LOG_DBG("Save Bias parameters");
 	WriteByteFram(BIAS_FRAM_ADDR,(uint8_t*)&ram_bias, sizeof(ram_bias));
 	osDelay(10);
 	config_for_dac_SPI3();

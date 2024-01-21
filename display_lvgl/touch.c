@@ -41,7 +41,7 @@ static void lvgl_touchscreen_read (lv_indev_drv_t  *indev, lv_indev_data_t *data
 		last_x = (((uint16_t)touch_data[5]<<8) | (uint16_t)touch_data[4] ) & 0x0FFF; // 12 bits of X coord
 		last_y = (((uint16_t)touch_data[7]<<8) | (uint16_t)touch_data[6] ) & 0x0FFF;
 		data->state = LV_INDEV_STATE_PRESSED;
-		//print_k("%u  %u\r\n",last_x,last_y);
+		//print_k("%u  %u",last_x,last_y);
 	}
 	else
 	{
