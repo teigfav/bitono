@@ -12,8 +12,7 @@ CustomEdh/TaskCLI/TaskCLI.o: ../CustomEdh/TaskCLI/TaskCLI.c \
  ../Middlewares/Third_Party/FreeRTOS/Source/CMSIS_RTOS_V2/cmsis_os2.h \
  ../CustomEdh/TaskCLI/TaskCLI.h ../CustomEdh/CLI/embedded_cli.h \
  ../CustomEdh/Utility/Util.h ../CustomEdh/Init/type.h \
- ../CustomEdh/FRAM/CY15B064Q.h ../CustomEdh/Task_Bias_Pwrctrl/Task_bias.h \
- ../CustomEdh/TaskSint/TaskSint.h \
+ ../CustomEdh/FRAM/CY15B064Q.h \
  ../Middlewares/Third_Party/LwIP/src/include/lwip/api.h \
  ../Middlewares/Third_Party/LwIP/src/include/lwip/opt.h \
  ../LWIP/Target/lwipopts.h ../Core/Inc/main.h \
@@ -105,10 +104,6 @@ CustomEdh/TaskCLI/TaskCLI.o: ../CustomEdh/TaskCLI/TaskCLI.c \
 ../CustomEdh/Init/type.h:
 
 ../CustomEdh/FRAM/CY15B064Q.h:
-
-../CustomEdh/Task_Bias_Pwrctrl/Task_bias.h:
-
-../CustomEdh/TaskSint/TaskSint.h:
 
 ../Middlewares/Third_Party/LwIP/src/include/lwip/api.h:
 

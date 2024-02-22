@@ -12,23 +12,24 @@
 #include "stdlib.h"
 #include "type.h"
 #include "CY15B064Q.h"
-#include "Task_bias.h"
-#include "TaskSint.h"
+
+
 #include "lwip/api.h"
 #include "lwip/sys.h"
 #include "string.h"
+#include <ctype.h>
 
 //#include "embedded_cli.h"
 #include "stm32h7xx_hal.h"
 
 osThreadId_t CLITaskHandle;
-extern osMessageQueueId_t QueueBiasHandle;
-extern osMessageQueueId_t QueueSintHandle;
+
+extern osMessageQueueId_t QueueMsgHandle;
 extern osMutexId_t SPI3MutexHandle;
 extern struct netconn *newconn;
 extern struct netconn *conn;
-char fw_version[];
-char hw_version[];
+extern char fw_version[];
+extern char hw_version[];
 char ETH_data[200]={0};
 char *pETH_data=&ETH_data[0];
 EmbeddedCli *cli;
@@ -57,24 +58,6 @@ void StartCLITask(void *argument)
 	config->historyBufferSize = CLI_HISTORY_SIZE;
 	config->maxBindingCount = CLI_BINDING_COUNT;
 	cli = embeddedCliNew(config);
-
-	  CliCommandBinding on_bias_write={
-	              "bias_write",
-	              "Set Bias : [Bias index] [bias type] [value] [max] [min]",
-	              true,
-	              NULL,
-	              onBiasWrite
-	      };
-	  embeddedCliAddBinding(cli,on_bias_write);
-
-	  CliCommandBinding on_bias_read={
-	              "bias_read",
-	              "Read Bias : [Bias index] ",
-	              true,
-	              NULL,
-	              onBiasRead
-	      };
-	  embeddedCliAddBinding(cli,on_bias_read);
 
 	  CliCommandBinding on_dump_fram={
 	              "fram_read",
@@ -112,15 +95,6 @@ void StartCLITask(void *argument)
 	      };
 	  embeddedCliAddBinding(cli,on_read_pwrctrl);
 
-	  CliCommandBinding on_set_pwrctrl={
-	              "pwr_set",
-	              "set power : [chain ] [power] [freq]",
-	              true,
-	              NULL,
-	              onSetPwr
-	      };
-	  embeddedCliAddBinding(cli,on_set_pwrctrl);
-
 	  CliCommandBinding on_save_pwr_table={
 	              "pwrctrl_save",
 	              "Save power control table",
@@ -139,51 +113,6 @@ void StartCLITask(void *argument)
 	      };
 	  embeddedCliAddBinding(cli, on_load_pwr_table );
 
-	  CliCommandBinding on_save_bias_table={
-	              "bias_save",
-	              "Save the bias configuration to FRAM",
-	              false,
-	              NULL,
-				  onSaveBias
-	      };
-	  embeddedCliAddBinding(cli, on_save_bias_table );
-
-	  CliCommandBinding on_save_sint={
-	              "sint_save",
-	              "Save the sint configuration to FRAM",
-	              false,
-	              NULL,
-				  onSaveSint
-	      };
-	  embeddedCliAddBinding(cli, on_save_sint );
-
-	  CliCommandBinding on_load_sint={
-	              "sint_load",
-	              "Load the sint configuration from FRAM",
-	              false,
-	              NULL,
-				  onLoadSint
-	      };
-	  embeddedCliAddBinding(cli, on_load_sint );
-
-	  CliCommandBinding on_set_sint={
-	              "sint_set",
-	              "set the sint freq and mode : <op:0-8> <mode:0-2> <sint:0-2> <value:Hz>",
-	              true,
-	              NULL,
-				  onSetSint
-	      };
-	  embeddedCliAddBinding(cli, on_set_sint );
-
-	  CliCommandBinding on_read_sint={
-	              "sint_read",
-	              "Read all sint parameters",
-	              false,
-	              NULL,
-				  onReadSint
-	      };
-	  embeddedCliAddBinding(cli, on_read_sint );
-
 	  CliCommandBinding on_dump_sdram={
 	              "sdram_read",
 	              "Read SDRAM : [offset] [lenght]",
@@ -193,6 +122,15 @@ void StartCLITask(void *argument)
 	      };
 	  embeddedCliAddBinding(cli,on_dump_sdram);
 
+	  CliCommandBinding on_en_drain={
+	              "en_drain",
+	              "en_drain : [ON/OFF]",
+	              true,
+	              NULL,
+	              onEnDrain
+	      };
+	  embeddedCliAddBinding(cli,on_en_drain);
+
 	  CliCommandBinding on_read_version={
 	              "version",
 	              "Read Hardware and Firmware Version",
@@ -201,6 +139,15 @@ void StartCLITask(void *argument)
 	              onReadVersion
 	      };
 	  embeddedCliAddBinding(cli,on_read_version);
+
+	  CliCommandBinding on_cmd={
+	              "cmd",
+	              "Send command: cmd <op code> <par1> <par2> <par3> <par4>",
+	              true,
+	              NULL,
+	              onCmd
+	      };
+	  embeddedCliAddBinding(cli,on_cmd);
 
 	cli->onCommand = onCommand;
 	cli->writeChar = writeChar;
@@ -250,117 +197,19 @@ void onCommand(EmbeddedCli *embeddedCli, CliCommand *command)
     }
 }
 
-void onBiasWrite(EmbeddedCli *cli, char *args, void *context)
-{
-	osStatus_t status;
-	struct bias msg;
-	double valore,max,min;
-	if(embeddedCliGetTokenCount(args)==5)
-	{
-		msg.op=write;
-		msg.index=atoi(embeddedCliGetToken(args,1));
-		valore=strtoul(embeddedCliGetToken(args,2),NULL,0);
-		msg.tipo=atoi(embeddedCliGetToken(args,3));
-		max=strtoul(embeddedCliGetToken(args,4),NULL,0);
-		min=strtoul(embeddedCliGetToken(args,5),NULL,0);
-
-		if(msg.index<10)  //solo i bias e non gli attenuatori
-		{
-			if(valore>=0 && min>=0 && max>=0 && valore<=max && valore>=min && valore<=0xFFF && min<=0xFFF && max<=0xFFF )
-			{
-				msg.valore=valore;
-				msg.max=max;
-				msg.min=min;
-				status=osMessageQueuePut(QueueBiasHandle,&msg,0,0);
-				if(status!=osOK)
-				{
-					print_k("Error: No queue access");
-				}
-			}
-			else
-			{
-				print_k("Error: Parameters out of range");
-			}
-
-		}
-		else if (msg.index==10)
-		{
-			if(valore>=0 && min>=0 && max>=0 && valore<64 && min<64 && max<64 && valore<=max && valore>=min)
-			{
-			msg.valore=valore;
-			msg.max=max;
-			msg.min=min;
-			status=osMessageQueuePut(QueueBiasHandle,&msg,0,0);
-			if(status!=osOK)
-				{
-				print_k("Error: No queue access");
-				}
-			}
-			else
-			{
-				print_k("Error: Parameters out of range 0-63");
-			}
-		}
-	}
-	else if(embeddedCliGetTokenCount(args)==2)
-	{
-		msg.op=setpower;
-		msg.index=atoi(embeddedCliGetToken(args,1));
-		valore=strtoul(embeddedCliGetToken(args,2),NULL,0);
-		msg.valore=valore;
-		msg.max=0;	//don't care
-		msg.min=0;	//don't care
-		status=osMessageQueuePut(QueueBiasHandle,&msg,0,0);
-		if(status!=osOK)
-			{
-			print_k("Error: No queue access");
-			}
-	}
-	else
-	{
-		print_k("Error: Wrong number of parameters");
-	}
-}
-
-void onBiasRead(EmbeddedCli *cli, char *args, void *context)
-{
-	osStatus_t status;
-	struct bias msg;
-	//print_k("T");
-	if(embeddedCliGetTokenCount(args)==1)
-	{
-		msg.op=read;
-		msg.index=atoi(embeddedCliGetToken(args,1));
-		if(msg.index<=MAX_BIAS_INDEX)
-		{
-//		print_k("P %u %u",msg.op,msg.index);
-		status=osMessageQueuePut(QueueBiasHandle,&msg,0,10);
-		  if(osMessageQueueGetCount( QueueBiasHandle ))
-			  //LOG_DBG("NP %u",osMessageQueueGetCount( QueueBiasHandle ));
-			if(status!=osOK)
-			{
-				print_k("Error: No queue access");
-			}
-		}
-	}
-	else
-	{
-		print_k("Error: Wrong number of parameters");
-	}
-}
 void onDumpFram(EmbeddedCli *cli, char *args, void *context)
 {
 	uint16_t offset=0;
 	uint32_t n_byte=0;
 	uint8_t vect[4]={0};
-	osStatus_t status;
+
 	if(embeddedCliGetTokenCount(args)==2)
 	{
 		offset=strtoul(embeddedCliGetToken(args,1),NULL,0);
 		n_byte=strtoul(embeddedCliGetToken(args,2),NULL,0);
 		if((offset+n_byte)<(8*1024))
 		{
-		status=osMutexAcquire(SPI3MutexHandle,osWaitForever);
+		osMutexAcquire(SPI3MutexHandle,osWaitForever);
 		config_for_save_SPI3();
 		for(uint32_t i=0;i<n_byte;i=i+4)
 		{
@@ -368,7 +217,7 @@ void onDumpFram(EmbeddedCli *cli, char *args, void *context)
 			print_k("%04X : %02X %02X %02X %02X",offset+(uint16_t)i,vect[0],vect[1],vect[2],vect[3]);
 		}
 		config_for_dac_SPI3();
-		status=osMutexRelease(SPI3MutexHandle);
+		osMutexRelease(SPI3MutexHandle);
 		}
 	}
 	else
@@ -454,25 +303,29 @@ void onReadPwrCtrl(EmbeddedCli *cli, char *args, void *context)
 
 }
 
-void onSetPwr(EmbeddedCli *cli, char *args, void *context)
+void onSavePwrTable(EmbeddedCli *cli, char *args, void *context)
 {
+	save_pwr_table();
+}
 
-	double power;
-	double freq;
-	if(embeddedCliGetTokenCount(args)==3)
+void onEnDrain(EmbeddedCli *cli, char *args, void *context)
+{
+	if(embeddedCliGetTokenCount(args)==1)
 	{
-		uint8_t chain;
-		chain=atoi(embeddedCliGetToken(args,1));
-		power=strtod(embeddedCliGetToken(args,2),NULL);
-		freq=strtod(embeddedCliGetToken(args,3),NULL);
-		if(chain<3)
-			{
-			set_pwr(chain,power,freq);
-			}
+		if(!strcmp(embeddedCliGetToken(args,1),"on"))
+		{
+			print_k("turn on");
+			HAL_GPIO_WritePin(EN_Drain_GPIO_Port,EN_Drain_Pin,GPIO_PIN_SET);
+		}
+		else if(!strcmp(embeddedCliGetToken(args,1),"off"))
+		{
+			print_k("turn off");
+			HAL_GPIO_WritePin(EN_Drain_GPIO_Port,EN_Drain_Pin,GPIO_PIN_RESET);
+		}
 		else
-			{
-			print_k("Error: Wrong parameters value");
-			}
+		{
+			print_k("command parameter must be on or off");
+		}
 	}
 	else
 	{
@@ -481,84 +334,16 @@ void onSetPwr(EmbeddedCli *cli, char *args, void *context)
 
 }
 
-void onSavePwrTable(EmbeddedCli *cli, char *args, void *context)
-{
-	save_pwr_table();
-}
-
 void onLoadTable(EmbeddedCli *cli, char *args, void *context)
 {
 	Load_pwr_table();
 }
 
-void onSaveBias(EmbeddedCli *cli, char *args, void *context)
-{
-	SaveBiasParam();
-}
-void onLoadSint(EmbeddedCli *cli, char *args, void *context)
-{
-	LoadSintParam();
-}
-
-void onSaveSint(EmbeddedCli *cli, char *args, void *context)
-{
-	SaveSintParam();
-}
-
-void onSetSint(EmbeddedCli *cli, char *args, void *context)
-{
-	struct sint_msg_t msg;
-	osStatus_t status;
-	if(embeddedCliGetTokenCount(args)>0)
-	{
-		msg.op=atoi(embeddedCliGetToken(args,1));
-		if(msg.op==write_reg && embeddedCliGetTokenCount(args)==4)
-		{
-			msg.source=remote;
-			msg.sint=atoi(embeddedCliGetToken(args,2));
-			msg.addr=(uint16_t)strtoul(embeddedCliGetToken(args,3),NULL,0);
-			msg.data=(uint8_t)strtoul(embeddedCliGetToken(args,4),NULL,0);
-			status=osMessageQueuePut(QueueSintHandle,&msg,0,0);
-		}
-		else if(msg.op!=write_reg && embeddedCliGetTokenCount(args)==4)
-		{
-			msg.source=remote;
-			msg.mode=atoi(embeddedCliGetToken(args,2));
-			msg.sint=atoi(embeddedCliGetToken(args,3));
-			msg.value=(uint64_t)strtod(embeddedCliGetToken(args,4),NULL);
-			status=osMessageQueuePut(QueueSintHandle,&msg,0,0);
-		}
-		else
-		{
-			print_k("Error: Wrong number of parameters");
-		}
-	}
-	if(status!=osOK)
-	{
-		print_k("Error: No queue access");
-	}
-}
-
-void onReadSint(EmbeddedCli *cli, char *args, void *context)
-{
-	struct sint_msg_t msg;
-	osStatus_t status;
-	msg.source=remote;
-	msg.op=read_sint;
-	msg.mode=indep; //don't care
-	msg.value=0; //don't care
-	status=osMessageQueuePut(QueueSintHandle,&msg,0,0);
-	if(status!=osOK)
-		{
-		print_k("Error: No queue access");
-		}
-}
 void onDumpsdram(EmbeddedCli *cli, char *args, void *context)
 {
 	uint32_t offset=0;
 	uint32_t n_byte=0;
 	uint8_t vect[4]={0};
-	osStatus_t status;
 	if(embeddedCliGetTokenCount(args)==2)
 	{
 		offset=strtoul(embeddedCliGetToken(args,1),NULL,0);
@@ -566,7 +351,7 @@ void onDumpsdram(EmbeddedCli *cli, char *args, void *context)
 
 		for(uint32_t i=0;i<n_byte;i=i+4)
 		{
-			memcpy(&vect[0],offset+i,4);
+			memcpy(&vect[0],(uint8_t*)(offset+i),4);
 			print_k("%04X : %02X %02X %02X %02X",offset+(uint32_t)i,vect[0],vect[1],vect[2],vect[3]);
 		}
 	}
@@ -580,3 +365,105 @@ void onReadVersion(EmbeddedCli *cli, char *args, void *context)
 	print_k("FW : %s",fw_version);
 	print_k("HW : %s",hw_version);
 }
+
+void onCmd(EmbeddedCli *cli, char *args, void *context)
+{
+	osStatus_t status;
+	struct msg_t msg;
+	msg.op=0;
+	msg.par1=0;
+	msg.par2=0;
+	msg.par3=0;
+	msg.par4=0;
+	if(embeddedCliGetTokenCount(args)>=1 && embeddedCliGetTokenCount(args)<6)
+		{
+		msg.op=(uint8_t)atoi(embeddedCliGetToken(args,1));
+		if(embeddedCliGetTokenCount(args)>1)
+			{
+			if(isdecimal(embeddedCliGetToken(args,2)))
+				{
+					msg.par1=strtod(embeddedCliGetToken(args,2),NULL);
+				}
+			else if(isHexadecimal(embeddedCliGetToken(args,2)))
+				{
+					msg.par1=strtol(embeddedCliGetToken(args,2),NULL,0);
+				}
+			}
+		if(embeddedCliGetTokenCount(args)>2)
+			{
+			if(isdecimal(embeddedCliGetToken(args,3)))
+				{
+					msg.par2=strtod(embeddedCliGetToken(args,3),NULL);
+				}
+			else if(isHexadecimal(embeddedCliGetToken(args,3)))
+				{
+					msg.par2=strtol(embeddedCliGetToken(args,3),NULL,0);
+				}
+			}
+		if(embeddedCliGetTokenCount(args)>3)
+			{
+			if(isdecimal(embeddedCliGetToken(args,4)))
+				{
+					msg.par3=strtod(embeddedCliGetToken(args,4),NULL);
+				}
+			else if(isHexadecimal(embeddedCliGetToken(args,4)))
+				{
+					msg.par3=strtol(embeddedCliGetToken(args,4),NULL,0);
+				}
+			}
+		if(embeddedCliGetTokenCount(args)>4)
+			{
+			if(isdecimal(embeddedCliGetToken(args,5)))
+				{
+					msg.par4=strtod(embeddedCliGetToken(args,5),NULL);
+				}
+			else if(isHexadecimal(embeddedCliGetToken(args,5)))
+				{
+					msg.par4=strtol(embeddedCliGetToken(args,5),NULL,0);
+				}
+			}
+		msg.source=remote;
+		LOG_DBG("message queue put");
+		status=osMessageQueuePut(QueueMsgHandle,&msg,0,0);
+		if(status!=osOK)
+			{
+			LOG_DBG("Error: No message queue access");
+			}
+	}
+}
+
+bool isHexadecimal(const char *s)
+{
+   int n = strlen(s);
+   char ch;
+
+   for (int i = 0; i < n; i++)
+   {
+	  ch=s[i];
+      if (!isxdigit(ch)) {
+    	  if (ch!='x' && ch!='X')
+    	        {
+    		  	  return false;
+    	        }
+      }
+   }
+   return true;
+}
+
+bool isdecimal(const char *s)
+{
+   int n = strlen(s);
+   char ch;
+   for (int i = 0; i < n; i++) {
+	  ch=s[i];
+      if (!isdigit(ch))
+      {
+    	  if (!ispunct(ch))
+    	        {
+    		  	  return false;
+    	        }
+      }
+   }
+   return true;
+}
+

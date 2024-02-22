@@ -94,6 +94,8 @@ void Error_Handler(void);
 #define LED1_GPIO_Port GPIOC
 #define CE2_Pin GPIO_PIN_0
 #define CE2_GPIO_Port GPIOA
+#define EN_Drain_Pin GPIO_PIN_4
+#define EN_Drain_GPIO_Port GPIOG
 /* USER CODE BEGIN Private defines */
 
 /* USER CODE END Private defines */

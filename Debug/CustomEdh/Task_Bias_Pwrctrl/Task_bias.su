@@ -1,4 +1,4 @@
 Task_bias.c:67:6:InitBiasTask	48	static
-Task_bias.c:88:6:StartBiasTask	80	static
+Task_bias.c:88:6:StartBiasTask	40	static
 Task_bias.c:258:6:LoadBiasParam	24	static
 Task_bias.c:288:6:SaveBiasParam	16	static

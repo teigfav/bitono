@@ -1,4 +1,4 @@
 TaskSint.c:40:6:InitSintTask	48	static
-TaskSint.c:54:6:StartSintTask	56	static
+TaskSint.c:54:6:StartSintTask	48	static
 TaskSint.c:273:6:SaveSintParam	16	static
 TaskSint.c:289:6:LoadSintParam	24	static

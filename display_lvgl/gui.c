@@ -16,15 +16,15 @@
 #include "gui.h"
 #include "gui_structures_def.h"
 #include "type.h"
-#include "TaskSint.h"
+#include "stdbool.h"
+
 #include "Util.h"
 
 
 extern osMutexId mutex_lvgl_id;
 extern struct fwd_ram_pwr_ctrl fwd_ram_pwr_ctrl;
-extern struct sint_fram_parameters sint_fram_parameters;
-extern osMessageQueueId_t QueueBiasHandle;
-extern osMessageQueueId_t QueueSintHandle;
+extern struct parameters parameters;
+extern osMessageQueueId_t QueueMsgHandle;
 
 lv_tast_ui tastiera_freq;
 lv_tast_ui tastiera_power;
@@ -48,6 +48,7 @@ uint8_t index_col=0;
 osStatus_t status;
 
 double P[3] = {15.2,-14.31,10.12};
+bool send_message=false;  //serve indicare che va inviato un messaggio in power page, se si preme il tasto ON/OFF si nvia il messaggio ma non serve inviare la potenza
 lv_obj_t* switch_f[3];
 lv_obj_t* switch_button[3];
 lv_obj_t* p_digit[3][5];  //formato dei dBm dd.dd il punto non rientra in questo vettore, sarà una label a parte così com il segno più o il segno meno
@@ -58,17 +59,20 @@ uint8_t power_on_off[3];
 
 void init_freq_gui (void)
 {
-	f[0]=sint_fram_parameters.sint_par.freq_1;
-	f[1]=sint_fram_parameters.sint_par.freq_2;
-	f[2]=sint_fram_parameters.sint_par.freq_3;
+	f[0]=parameters.sint_par.freq[0];
+	f[1]=parameters.sint_par.freq[1];
+	f[2]=parameters.sint_par.freq[2];
 	lv_event_send(tastiera_freq.but_dummy, LV_EVENT_PRESSED, NULL);
 }
 
 void init_power_gui (void)
 {
-	power_on_off[0]=sint_fram_parameters.sint_par.sint1_on_off;
-	power_on_off[1]=sint_fram_parameters.sint_par.sint2_on_off;
-	power_on_off[2]=sint_fram_parameters.sint_par.sint3_on_off;
+	power_on_off[0]=parameters.sint_par.sint_on_off[0];
+	power_on_off[1]=parameters.sint_par.sint_on_off[1];
+	power_on_off[2]=parameters.sint_par.sint_on_off[2];
+	P[0]=parameters.settings.power[0];
+	P[1]=parameters.settings.power[1];
+	P[2]=parameters.settings.power[2];
 	lv_event_send(tastiera_power.but_dummy, LV_EVENT_PRESSED, NULL);
 }
 
@@ -79,7 +83,7 @@ static void event_handler_threetone_page(lv_event_t* e)
     lv_obj_t* ta = lv_event_get_user_data(e);
     uint64_t num_tmp = 0;
     uint64_t freq_tmp = 0;
-    struct sint_msg_t msg;
+    struct msg_t msg;
     char* s;
     double freq;
     LV_LOG_USER("threetonehandler code %d\n\r",code);
@@ -224,12 +228,12 @@ static void event_handler_threetone_page(lv_event_t* e)
 			num_tmp=num_tmp/10;
 			lv_label_set_text_fmt(f_digit[index_raw][i], "%u",(uint8_t)mod);
 		}
-		msg.op=write;
-		msg.mode=indep;
-		msg.sint=index_raw;
-		msg.value=f[index_raw];
+		msg.op=0;
+		msg.par1=index_raw;
+		msg.par2=f[index_raw];
+		msg.par3=0;
 		msg.source=gui;
-		status=osMessageQueuePut(QueueSintHandle,&msg,0,0);
+		status=osMessageQueuePut(QueueMsgHandle,&msg,0,0);
 		if(status!=osOK)
 		{
 			print_k("Error: No queue access");
@@ -248,7 +252,7 @@ static void event_handler_powers_page(lv_event_t* e)
     double power;
     char buffer[7];
     uint32_t cursor_position;
-    struct sint_msg_t msg;
+    struct msg_t msg;
     LV_LOG_USER("powershandler");
     if(code==LV_EVENT_VALUE_CHANGED)  //evento generato dalla tastiera
     {
@@ -334,6 +338,7 @@ static void event_handler_powers_page(lv_event_t* e)
 			if (power<=fwd_ram_pwr_ctrl.fwd_pwr_ctrl[index_raw].pmax && power>=fwd_ram_pwr_ctrl.fwd_pwr_ctrl[index_raw].pmin)
 			{
 				P[index_raw]=power;
+				send_message=true;
 			}
 			else
 			{
@@ -356,6 +361,7 @@ static void event_handler_powers_page(lv_event_t* e)
 			if (power<=fwd_ram_pwr_ctrl.fwd_pwr_ctrl[index_raw].pmax && power>=fwd_ram_pwr_ctrl.fwd_pwr_ctrl[index_raw].pmin)
 			{
 				P[index_raw]=power;
+				send_message=true;
 			}
 			else
 			{
@@ -378,6 +384,7 @@ static void event_handler_powers_page(lv_event_t* e)
 			lv_textarea_set_cursor_pos(tastiera_power.ta, cursor_position-1);
 			}
 
+
 		}
 		else if(target==tastiera_power.but_dbm)
 		{
@@ -385,6 +392,7 @@ static void event_handler_powers_page(lv_event_t* e)
 			if (power<=fwd_ram_pwr_ctrl.fwd_pwr_ctrl[index_raw].pmax && power>=fwd_ram_pwr_ctrl.fwd_pwr_ctrl[index_raw].pmin)
 			{
 				P[index_raw]=power;
+				send_message=true;
 			}
 			else
 			{
@@ -393,23 +401,23 @@ static void event_handler_powers_page(lv_event_t* e)
 		}
 		else if(target==switch_button[0])
 		{
+			msg.op=sint_en;
 			if(lv_obj_has_state(switch_button[0], LV_STATE_CHECKED))
 			{
 			lv_label_set_text(label_switch_1_ON[0], "OFF");
 			power_on_off[0]=s_OFF;
-			msg.op=off_f;
 			}
 			else
 			{
 				lv_label_set_text(label_switch_1_ON[0], "ON");
-				msg.op=on_f;
 				power_on_off[0]=s_ON;
 			}
-			msg.mode=indep;
-			msg.sint=Sint1;
-			msg.value=0;
+			msg.par1=Sint1;
+			msg.par2=power_on_off[0];
+			msg.par3=0;
+			msg.par4=0;
 			msg.source=gui;
-			status=osMessageQueuePut(QueueSintHandle,&msg,0,0);
+			status=osMessageQueuePut(QueueMsgHandle,&msg,0,0);
 			if(status!=osOK)
 			{
 				print_k("Error: No queue access");
@@ -417,23 +425,23 @@ static void event_handler_powers_page(lv_event_t* e)
 		}
 		else if(target==switch_button[1])
 		{
+			msg.op=sint_en;
 			if(lv_obj_has_state(switch_button[1], LV_STATE_CHECKED))
 			{
 			lv_label_set_text(label_switch_1_ON[1], "OFF");
 			power_on_off[1]=s_OFF;
-			msg.op=off_f;
 			}
 			else
 			{
 				lv_label_set_text(label_switch_1_ON[1], "ON");
 				power_on_off[1]=s_ON;
-				msg.op=on_f;
 			}
-			msg.mode=indep;
-			msg.sint=Sint2;
-			msg.value=0;
+			msg.par1=Sint2;
+			msg.par2=power_on_off[1];
+			msg.par3=0;
+			msg.par4=0;
 			msg.source=gui;
-			status=osMessageQueuePut(QueueSintHandle,&msg,0,0);
+			status=osMessageQueuePut(QueueMsgHandle,&msg,0,0);
 			if(status!=osOK)
 			{
 				print_k("Error: No queue access");
@@ -441,23 +449,23 @@ static void event_handler_powers_page(lv_event_t* e)
 		}
 		else if(target==switch_button[2])
 		{
+			msg.op=sint_en;
 			if(lv_obj_has_state(switch_button[2], LV_STATE_CHECKED))
 			{
 			lv_label_set_text(label_switch_1_ON[2], "OFF");
 			power_on_off[2]=s_OFF;
-			msg.op=off_f;
 			}
 			else
 			{
 				lv_label_set_text(label_switch_1_ON[2], "ON");
 				power_on_off[2]=s_ON;
-				msg.op=on_f;
 			}
-			msg.mode=indep;
-			msg.sint=Sint3;
-			msg.value=0;
+			msg.par1=Sint3;
+			msg.par2=power_on_off[2];
+			msg.par3=0;
+			msg.par4=0;
 			msg.source=gui;
-			status=osMessageQueuePut(QueueSintHandle,&msg,0,0);
+			status=osMessageQueuePut(QueueMsgHandle,&msg,0,0);
 			if(status!=osOK)
 			{
 				print_k("Error: No queue access");
@@ -491,6 +499,20 @@ static void event_handler_powers_page(lv_event_t* e)
 		{
 		lv_label_set_text_fmt(p_digit[index_raw][i], "%c",buffer[5-i]);
 		}
+		if (send_message)
+			{
+			msg.op=set_power;
+			msg.par1=index_raw;
+			msg.par2=P[index_raw];
+			msg.par3=0;
+			msg.source=gui;
+			status=osMessageQueuePut(QueueMsgHandle,&msg,0,0);
+			if(status!=osOK)
+				{
+					print_k("Error: No queue access");
+				}
+			send_message=false;
+			}
     }
     LV_LOG_USER("riga=%d  colonna=%d\n\r",index_raw,index_col);
     lv_obj_set_style_border_width(p_digit[index_raw][index_col], 2, LV_PART_MAIN);
@@ -867,7 +889,7 @@ void gui_define(void)
 
 	//---------------------Create threetonepage-----------------------------
 	osMutexWait(mutex_lvgl_id, osWaitForever);
-	lv_obj_t* threetone_page = lv_menu_page_create(menuDemo, (char*)"                         Two tones + OL");
+	lv_obj_t* threetone_page = lv_menu_page_create(menuDemo, (char*)"                         Two tones + LO");
 	//lv_obj_set_scrollbar_mode(threetone_page, LV_SCROLLBAR_MODE_OFF); //altrimenti si vede una riga in basso con colore strano
 	lv_obj_clear_flag(threetone_page, LV_OBJ_FLAG_SCROLLABLE);
 

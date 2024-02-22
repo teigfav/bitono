@@ -1,8 +1,8 @@
 lv_color.h:600:26:lv_color_hex	24	static
 lv_disp.h:182:26:lv_scr_act	8	static
-gui.c:59:6:init_freq_gui	8	static
-gui.c:67:6:init_power_gui	8	static
-gui.c:75:13:event_handler_threetone_page	160	static
-gui.c:242:13:event_handler_powers_page	120	static
-gui.c:500:6:gen_tastiera	32	static
-gui.c:839:6:gui_define	176	static
+gui.c:60:6:init_freq_gui	8	static
+gui.c:68:6:init_power_gui	8	static
+gui.c:79:13:event_handler_threetone_page	184	static
+gui.c:246:13:event_handler_powers_page	144	static
+gui.c:522:6:gen_tastiera	32	static
+gui.c:861:6:gui_define	176	static

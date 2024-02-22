@@ -7,10 +7,10 @@
 
 #include "stdio.h"
 #include "TaskTest.h"
-#include "Task_bias.h"
-#include "TaskGFX.h"
+
+#include "Taskctrl.h"
 #include "TaskCLI.h"
-#include "TaskSint.h"
+//#include "TaskSint.h"
 #include "ER-TPC050A2-2_GSL1680F_H.h"
 #include "ad5592r.h"
 #include "main.h"
@@ -29,11 +29,10 @@ void Initialization(void)
 	tft_init();
 	gui_define();
 	lvgl_touchscreen_init();
-	InitBiasTask();
-	InitTestTask();
+//	InitBiasTask();
+//	InitTestTask();
 	InitCLITask();
-	//InitGFXTask();
-	InitSintTask();
+	InitctrlTask();
 	InitlvglTask();
 
 

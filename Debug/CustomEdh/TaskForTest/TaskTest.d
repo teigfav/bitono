@@ -54,7 +54,8 @@ CustomEdh/TaskForTest/TaskTest.o: ../CustomEdh/TaskForTest/TaskTest.c \
  ../Drivers/STM32H7xx_HAL_Driver/Inc/stm32h7xx_hal_tim_ex.h \
  ../Drivers/STM32H7xx_HAL_Driver/Inc/stm32h7xx_hal_uart.h \
  ../Drivers/STM32H7xx_HAL_Driver/Inc/stm32h7xx_hal_uart_ex.h \
- ../CustomEdh/Utility/Util.h
+ ../CustomEdh/Utility/Util.h ../CustomEdh/Init/type.h \
+ ../CustomEdh/Taskctrl/Taskctrl.h
 
 ../Middlewares/Third_Party/FreeRTOS/Source/CMSIS_RTOS_V2/cmsis_os.h:
 
@@ -167,3 +168,7 @@ CustomEdh/TaskForTest/TaskTest.o: ../CustomEdh/TaskForTest/TaskTest.c \
 ../Drivers/STM32H7xx_HAL_Driver/Inc/stm32h7xx_hal_uart_ex.h:
 
 ../CustomEdh/Utility/Util.h:
+
+../CustomEdh/Init/type.h:
+
+../CustomEdh/Taskctrl/Taskctrl.h:

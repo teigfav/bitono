@@ -8,7 +8,7 @@
 #ifndef TASKFORTEST_TASKTEST_H_
 #define TASKFORTEST_TASKTEST_H_
 
-#define TestStackSize 1024
+#define TestStackSize 4096
 
 void InitTestTask(void);
 

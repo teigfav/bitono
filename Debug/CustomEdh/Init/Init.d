@@ -1,8 +1,7 @@
 CustomEdh/Init/Init.o: ../CustomEdh/Init/Init.c \
- ../CustomEdh/TaskForTest/TaskTest.h \
- ../CustomEdh/Task_Bias_Pwrctrl/Task_bias.h \
- ../CustomEdh/TaskGFX/TaskGFX.h ../CustomEdh/TaskCLI/TaskCLI.h \
- ../CustomEdh/CLI/embedded_cli.h ../CustomEdh/TaskSint/TaskSint.h \
+ ../CustomEdh/TaskForTest/TaskTest.h ../CustomEdh/Taskctrl/Taskctrl.h \
+ ../CustomEdh/Init/type.h ../CustomEdh/TaskCLI/TaskCLI.h \
+ ../CustomEdh/CLI/embedded_cli.h \
  ../CustomEdh/GSL1680F/ER-TPC050A2-2_GSL1680F_H.h \
  ../Drivers/STM32H7xx_HAL_Driver/Inc/stm32h7xx_hal.h \
  ../Core/Inc/stm32h7xx_hal_conf.h \
@@ -46,8 +45,7 @@ CustomEdh/Init/Init.o: ../CustomEdh/Init/Init.c \
  ../Drivers/STM32H7xx_HAL_Driver/Inc/stm32h7xx_hal_tim_ex.h \
  ../Drivers/STM32H7xx_HAL_Driver/Inc/stm32h7xx_hal_uart.h \
  ../Drivers/STM32H7xx_HAL_Driver/Inc/stm32h7xx_hal_uart_ex.h \
- ../CustomEdh/AD5592R/ad5592r.h ../CustomEdh/Init/type.h \
- ../Core/Inc/main.h \
+ ../CustomEdh/AD5592R/ad5592r.h ../Core/Inc/main.h \
  ../Middlewares/Third_Party/FreeRTOS/Source/CMSIS_RTOS_V2/cmsis_os.h \
  ../Middlewares/Third_Party/FreeRTOS/Source/include/FreeRTOS.h \
  ../Core/Inc/FreeRTOSConfig.h \
@@ -75,15 +73,13 @@ CustomEdh/Init/Init.o: ../CustomEdh/Init/Init.c \
 
 ../CustomEdh/TaskForTest/TaskTest.h:
 
-../CustomEdh/Task_Bias_Pwrctrl/Task_bias.h:
+../CustomEdh/Taskctrl/Taskctrl.h:
 
-../CustomEdh/TaskGFX/TaskGFX.h:
+../CustomEdh/Init/type.h:
 
 ../CustomEdh/TaskCLI/TaskCLI.h:
 
 ../CustomEdh/CLI/embedded_cli.h:
-
-../CustomEdh/TaskSint/TaskSint.h:
 
 ../CustomEdh/GSL1680F/ER-TPC050A2-2_GSL1680F_H.h:
 
@@ -172,8 +168,6 @@ CustomEdh/Init/Init.o: ../CustomEdh/Init/Init.c \
 ../Drivers/STM32H7xx_HAL_Driver/Inc/stm32h7xx_hal_uart_ex.h:
 
 ../CustomEdh/AD5592R/ad5592r.h:
-
-../CustomEdh/Init/type.h:
 
 ../Core/Inc/main.h:
 

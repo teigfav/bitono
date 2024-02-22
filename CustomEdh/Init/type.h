@@ -28,6 +28,11 @@
 #define NUM_PWRCTRL 3
 
 #define BIAS_FRAM_ADDR 0
+#define PARAM_FRAM_ADDR 0
+
+#define MAX_SWEEP_STEP 1e9
+#define MAX_DELTA_TONE 1e9
+#define MAX_SWEEP_POWER_STEP 20
 
 typedef enum {
 	s_OFF,
@@ -40,22 +45,13 @@ typedef enum  {
 	IC31	//Vdet_2, Id_PA_2, Idx2_mult_2, Idx3_mult_2, Id_amp_mult_2, Vgx2_mult_2, Vgx3_mult_2, Vgamp_mult_2
 }dac_t;
 
-typedef enum {
-	set_f=0,		//setta la freuenza
-	on_f,			//abilita sint
-	off_f,			//disabilita sint
-	set_f1_max,		//in caso di sweep questo è il valore max di f1, il valore min è impostato con set_f1
-	set_delta_f,	//con due toni questo fissa il delta
-	set_sweep_time,	//setta lo sweep time, se servirà.
-	set_mode,		//imposta la modalità operativa
-	read_sint,		//legge i dati in ram del sint
-	write_reg		//scrive i registri singoli dei sint
-} sint_op_t ;
 
 typedef enum {
 	indep,							//tre toni tutti indipendenti
 	tone1_track_tone2,				//due TONI RF agganciati in sweep
-	sweepsingle						//tono uno in sweep
+	sweepsingle,						//tono uno in sweep
+	sweeppower,
+	end_sint_mode									//serve solo per fare un check se un valore apparterrà a questo enum, deve sempre essere l'ultimo
 } sint_mode_t ;
 
 typedef enum {
@@ -63,8 +59,7 @@ typedef enum {
 	gui				//messaggio scritto in coda da gui
 } source_t ;
 
-//l'idea è che l'unico sweep utile sia quello del singolo tono, supponiamo la catena numero 1. In questo caso i limiti di sweep saranno i parametri freq1 e f1_sweep_max
-//quando messo in tracking freq1 indica il tono 1 mentre freq2 indicherà il delta del tono 2 dal tono 1. Vedere come far sweeppare il delta.
+// da cancellare
 typedef struct {
 	uint64_t freq_1;
 	uint64_t freq_2;
@@ -78,21 +73,6 @@ typedef struct {
 	sint_mode_t modo;
 } signal_t;
 
-struct sint_msg_t{
-	sint_mode_t mode;
-	uint64_t value;
-	sint_op_t op;
-	uint16_t addr;
-	uint8_t data;
-	uint8_t sint;
-	source_t source;
-};
-// tutto da rivedere.......
-struct sint_fram_parameters{
-	uint64_t start_marker;
-	signal_t sint_par;
-	uint64_t end_marker;
-}__attribute__((__packed__));
 
 enum operation
 {
@@ -105,43 +85,16 @@ enum biastype
 {
 	forward=0,
 	hard_closed_loop,
-	firm_closed_loop
+	firm_closed_loop,
+	end_bias_type
 };
-
-struct bias
-{
-	uint8_t index;
-	uint8_t op;
-	uint8_t tipo;
-	uint32_t valore;
-	uint32_t min;
-	uint32_t max;
-};
-
-//	index 0 -> bias_PA_1;
-//	index 1 -> bias_PA_2;
-//	index 2 -> x2_1;
-//	index 3 -> x3_1;
-//	index 4 -> amp_mult_1;
-//	index 5 -> x2_2;
-//	index 6 -> x3_2;
-//	index 7 -> amp_mult_2;
-//	index 8 -> att_1;
-//	index 9 -> att_2;
-//  index 10 -> attenuatore variabile della catena di OL non moltiplicata
-
-struct bias_parameters
-{
-	uint64_t start_marker;
-	struct bias polarizzazione[MAX_BIAS_INDEX];
-	uint64_t end_marker;
-}__attribute__((__packed__));
 
 enum Sint_number
 {
 	Sint1=0,
 	Sint2,
-	Sint3
+	Sint3,
+	end_Sint
 };
 
 enum {
@@ -187,5 +140,94 @@ struct fwd_ram_pwr_ctrl {
 	uint64_t end_marker;
 }__attribute__((__packed__));
 
+
+typedef enum {
+	set_freq,
+	sint_en,
+	set_fmin,
+	set_fmax,
+	set_delta_tone,
+	set_swp_time,
+	set_freq_mode,
+	get_struct,
+	set_sint_reg,
+	set_pol_value,
+	set_type_min_max_pol,
+	get_pol_struct,
+	set_power,
+	set_pmin,
+	set_pmax,
+	set_pow_mode,
+	get_struct_power,
+	save_parameters,
+	load_parameters,
+	set_sweep_power
+} opto_code_t ;
+
+struct msg_t{
+	opto_code_t op;
+	double par1;
+	double par2;
+	double par3;
+	double par4;
+	source_t source;
+};
+
+
+typedef enum {
+	no_control,					//nessuna variazione della polarizzazione, si usa il valore settatosui polarizzatori settato manualmente con comando
+	auto_control,				//la polarizzazione varia a seconda della potenza impostata e dalla frequenza
+	end_power_mode							//serve solo per fare un check se un valore apparterrà a questo enum, deve sempre essere l'ultimo
+} power_mode_t ;
+
+
+//	index 0 -> bias_PA_1;
+//	index 1 -> bias_PA_2;
+//	index 2 -> x2_1;
+//	index 3 -> x3_1;
+//	index 4 -> amp_mult_1;
+//	index 5 -> x2_2;
+//	index 6 -> x3_2;
+//	index 7 -> amp_mult_2;
+//	index 8 -> att_1;
+//	index 9 -> att_2;
+//  index 10 -> attenuatore variabile della catena di OL non moltiplicata
+typedef struct
+{
+	uint8_t index;
+	uint8_t op;
+	uint8_t tipo;
+	uint32_t valore;
+	uint32_t min;
+	uint32_t max;
+} bias_power_t;
+
+typedef struct
+{
+	double power[3];
+	double sweep_pmin;
+	double sweep_pmax;
+	double power_sweep_step;
+	power_mode_t p_mode;
+} par_instant_t;
+
+typedef struct {
+	uint64_t freq[3];
+	uint64_t deltatone;
+	uint64_t f1_sweep_min;
+	uint64_t f1_sweep_max;
+	uint64_t sweep_step;
+	uint8_t sint_on_off[3];
+	sint_mode_t modo;
+} sint_t;
+
+struct parameters
+{
+	uint64_t start_marker;
+	bias_power_t polarizzazione[MAX_BIAS_INDEX];
+	sint_t sint_par;
+	par_instant_t settings;
+	uint64_t end_marker;
+}__attribute__((__packed__));
 
 #endif /* INIT_TYPE_H_ */

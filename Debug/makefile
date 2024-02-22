@@ -140,9 +140,7 @@ RM := rm -rf
 -include Drivers/BSP/Components/lan8742/subdir.mk
 -include CustomEdh/Utility/subdir.mk
 -include CustomEdh/Tasklvgl/subdir.mk
--include CustomEdh/Task_Bias_Pwrctrl/subdir.mk
--include CustomEdh/TaskSint/subdir.mk
--include CustomEdh/TaskGFX/subdir.mk
+-include CustomEdh/Taskctrl/subdir.mk
 -include CustomEdh/TaskForTest/subdir.mk
 -include CustomEdh/TaskCLI/subdir.mk
 -include CustomEdh/Init/subdir.mk

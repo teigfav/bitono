@@ -22,6 +22,8 @@
 uint8_t debounce=0;
 struct State coordinate;
 
+//LOCATION_PRAGMA("ExtFlashSection")
+//static struct fw_data GSLX680_FW[] __attribute__((section("ExtFlashSection"))) = {
 static struct fw_data GSLX680_FW[] = {
 		{0xf0,0x2},
 		{0x00,0x00000000},

@@ -866,7 +866,10 @@ static void MX_GPIO_Init(void)
   HAL_GPIO_WritePin(GPIOE, CS1_Pin|CS2_Pin|V1_switch_Pin, GPIO_PIN_RESET);
 
   /*Configure GPIO pin Output Level */
-  HAL_GPIO_WritePin(GPIOG, FRAM_CS_Pin|LCD_BL_CTRL_Pin|DtoACS3_Pin, GPIO_PIN_RESET);
+  HAL_GPIO_WritePin(GPIOG, LCD_BL_CTRL_Pin|DtoACS3_Pin|EN_Drain_Pin, GPIO_PIN_RESET);
+
+  /*Configure GPIO pin Output Level */
+  HAL_GPIO_WritePin(GPIOG, FRAM_CS_Pin, GPIO_PIN_SET);
 
   /*Configure GPIO pin Output Level */
   HAL_GPIO_WritePin(GPIOH, DtoACS2_Pin|CS3_Pin, GPIO_PIN_RESET);
@@ -898,7 +901,14 @@ static void MX_GPIO_Init(void)
   HAL_GPIO_Init(GPIOE, &GPIO_InitStruct);
 
   /*Configure GPIO pins : FRAM_CS_Pin LCD_BL_CTRL_Pin DtoACS3_Pin */
-  GPIO_InitStruct.Pin = FRAM_CS_Pin|LCD_BL_CTRL_Pin|DtoACS3_Pin;
+  GPIO_InitStruct.Pin = LCD_BL_CTRL_Pin|DtoACS3_Pin;
+  GPIO_InitStruct.Mode = GPIO_MODE_OUTPUT_PP;
+  GPIO_InitStruct.Pull = GPIO_NOPULL;
+  GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_LOW;
+  HAL_GPIO_Init(GPIOG, &GPIO_InitStruct);
+
+  /*Configure GPIO pins : FRAM_CS_Pin LCD_BL_CTRL_Pin DtoACS3_Pin */
+  GPIO_InitStruct.Pin = FRAM_CS_Pin;
   GPIO_InitStruct.Mode = GPIO_MODE_OUTPUT_PP;
   GPIO_InitStruct.Pull = GPIO_NOPULL;
   GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_LOW;
@@ -931,6 +941,13 @@ static void MX_GPIO_Init(void)
   GPIO_InitStruct.Pull = GPIO_NOPULL;
   GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_LOW;
   HAL_GPIO_Init(GPIOA, &GPIO_InitStruct);
+
+  /*Configure GPIO pin : EN_Drain_Pin */
+  GPIO_InitStruct.Pin = EN_Drain_Pin;
+  GPIO_InitStruct.Mode = GPIO_MODE_OUTPUT_PP;
+  GPIO_InitStruct.Pull = GPIO_PULLDOWN;
+  GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_LOW;
+  HAL_GPIO_Init(EN_Drain_GPIO_Port, &GPIO_InitStruct);
 
   /*Configure GPIO pin : TOUCH_INT_Pin */
   GPIO_InitStruct.Pin = TOUCH_INT_Pin;

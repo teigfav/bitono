@@ -50,6 +50,7 @@ MEMORY
   RAM_D2  (xrw)    : ORIGIN = 0x30000000,   LENGTH = 32K
   RAM_D3  (xrw)    : ORIGIN = 0x38000000,   LENGTH = 16K
   SDRAM    (xrw)    : ORIGIN = 0x70000000,   LENGTH = 16384K
+  OSPI	     (xrw)    : ORIGIN = 0x90000000,   LENGTH = 64M
 }
 
 /* Define output sections */
@@ -172,4 +173,11 @@ SECTIONS
   }
 
   .ARM.attributes 0 : { *(.ARM.attributes) }
+    
+    ExtFlashSection :
+  {
+    *(ExtFlashSection ExtFlashSection.*)
+    *(.gnu.linkonce.r.*)
+    . = ALIGN(0x4);
+  } >OSPI
 }

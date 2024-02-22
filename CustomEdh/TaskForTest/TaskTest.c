@@ -7,8 +7,11 @@
 #include "cmsis_os.h"
 #include "TaskTest.h"
 #include "stdio.h"
+#include "string.h"
 #include "ER-TPC050A2-2_GSL1680F_H.h"
 #include "Util.h"
+#include "type.h"
+#include "Taskctrl.h"
 osThreadId_t TestTaskHandle;
 
 // prototype declaration
@@ -36,7 +39,8 @@ const osThreadAttr_t TestTask_attributes = {
 void StartTestTask(void *argument)
 {
   /* USER CODE BEGIN 5 */
-	//uint8_t read_buf[4] = {0};
+//	extern const struct parameters default_parameters;
+//	extern struct parameters parameters;
   /* Infinite loop */
   for(;;)
   {
@@ -44,7 +48,16 @@ void StartTestTask(void *argument)
     //gsl_ts_read(0xB0, read_buf, 4);
 	 // dataread();
     //LOG_DBG("data read %02X %02X %02X %02X",read_buf[0],read_buf[1],read_buf[2],read_buf[3]);
-    osDelay(10);
+//	  if(memcmp(&default_parameters,&parameters,sizeof(struct parameters))!=0)
+//	  {
+//		  print_k("wrong");
+//	  }
+//	  else
+//	  {
+//		  print_k("correct");
+//	  }
+	 // Load_parameters();
+    osDelay(1000);
   }
   /* USER CODE END 5 */
 }

@@ -23,6 +23,7 @@ void save_pwr_table(void);
 void Load_pwr_table(void);
 void set_pwr(uint8_t chain,double power,double freq);
 uint16_t interpolation(double xp,double x0, double x1, uint16_t y0,uint16_t y1);
+void set_pwr_tot(uint8_t chain,double power,double freq,uint32_t *att,uint32_t*pa);
 
 
 #endif /* UTILITY_UTIL_H_ */

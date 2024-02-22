@@ -19,10 +19,10 @@ void ReadByteFram(uint16_t offset,uint8_t * data, uint32_t num_bytes)
 	//print_k("Read data FRAM %p",data);
 	if(offset+num_bytes<=FRAM_SIZE)
 	{
-	HAL_GPIO_WritePin(FRAM_CS_GPIO_Port,FRAM_CS_Pin,GPIO_PIN_SET);
-	osDelay(1);
+//	HAL_GPIO_WritePin(FRAM_CS_GPIO_Port,FRAM_CS_Pin,GPIO_PIN_SET);
+//	osDelay(3);
 	HAL_GPIO_WritePin(FRAM_CS_GPIO_Port,FRAM_CS_Pin,GPIO_PIN_RESET);
-	//osDelay(5);
+	//osDelay(2);
 	FLASH_buffer[0]=FRAM_CMD_READ;
 	tmp_offset=(offset & 0xFF00)>>8;
 	FLASH_buffer[1]=(uint8_t)tmp_offset;
@@ -30,7 +30,7 @@ void ReadByteFram(uint16_t offset,uint8_t * data, uint32_t num_bytes)
 	FLASH_buffer[2]=(uint8_t)tmp_offset;
 	HAL_SPI_Transmit(&CY5B064Q_SPI_PORT, FLASH_buffer, 3, HAL_MAX_DELAY);
 	HAL_SPI_Receive(&CY5B064Q_SPI_PORT, data, num_bytes, HAL_MAX_DELAY);
-	//osDelay(5);
+	//osDelay(2);
 	HAL_GPIO_WritePin(FRAM_CS_GPIO_Port,FRAM_CS_Pin,GPIO_PIN_SET);
 	//status=osMutexRelease(SPI3MutexHandle);
 	}

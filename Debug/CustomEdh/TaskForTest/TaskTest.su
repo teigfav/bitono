@@ -1,2 +1,2 @@
-TaskTest.c:17:6:InitTestTask	48	static
-TaskTest.c:36:6:StartTestTask	16	static
+TaskTest.c:20:6:InitTestTask	48	static
+TaskTest.c:39:6:StartTestTask	16	static

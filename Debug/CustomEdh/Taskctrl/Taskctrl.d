@@ -1,4 +1,4 @@
-CustomEdh/TaskSint/TaskSint.o: ../CustomEdh/TaskSint/TaskSint.c \
+CustomEdh/Taskctrl/Taskctrl.o: ../CustomEdh/Taskctrl/Taskctrl.c \
  ../Middlewares/Third_Party/FreeRTOS/Source/CMSIS_RTOS_V2/cmsis_os.h \
  ../Middlewares/Third_Party/FreeRTOS/Source/include/FreeRTOS.h \
  ../Core/Inc/FreeRTOSConfig.h \
@@ -10,8 +10,8 @@ CustomEdh/TaskSint/TaskSint.o: ../CustomEdh/TaskSint/TaskSint.c \
  ../Middlewares/Third_Party/FreeRTOS/Source/include/task.h \
  ../Middlewares/Third_Party/FreeRTOS/Source/include/list.h \
  ../Middlewares/Third_Party/FreeRTOS/Source/CMSIS_RTOS_V2/cmsis_os2.h \
- ../CustomEdh/TaskSint/TaskSint.h ../CustomEdh/Utility/Util.h \
- ../CustomEdh/ADF4372/adf4372.h \
+ ../CustomEdh/Taskctrl/Taskctrl.h ../CustomEdh/Init/type.h \
+ ../CustomEdh/GSL1680F/ER-TPC050A2-2_GSL1680F_H.h \
  ../Drivers/STM32H7xx_HAL_Driver/Inc/stm32h7xx_hal.h \
  ../Core/Inc/stm32h7xx_hal_conf.h \
  ../Drivers/STM32H7xx_HAL_Driver/Inc/stm32h7xx_hal_rcc.h \
@@ -54,8 +54,9 @@ CustomEdh/TaskSint/TaskSint.o: ../CustomEdh/TaskSint/TaskSint.c \
  ../Drivers/STM32H7xx_HAL_Driver/Inc/stm32h7xx_hal_tim_ex.h \
  ../Drivers/STM32H7xx_HAL_Driver/Inc/stm32h7xx_hal_uart.h \
  ../Drivers/STM32H7xx_HAL_Driver/Inc/stm32h7xx_hal_uart_ex.h \
- ../CustomEdh/Init/type.h ../Core/Inc/main.h \
- ../CustomEdh/FRAM/CY15B064Q.h ../display_lvgl/gui.h
+ ../CustomEdh/Utility/Util.h ../CustomEdh/FRAM/CY15B064Q.h \
+ ../Core/Inc/main.h ../CustomEdh/ADF4372/adf4372.h \
+ ../CustomEdh/AD5592R/ad5592r.h ../display_lvgl/gui.h
 
 ../Middlewares/Third_Party/FreeRTOS/Source/CMSIS_RTOS_V2/cmsis_os.h:
 
@@ -79,11 +80,11 @@ CustomEdh/TaskSint/TaskSint.o: ../CustomEdh/TaskSint/TaskSint.c \
 
 ../Middlewares/Third_Party/FreeRTOS/Source/CMSIS_RTOS_V2/cmsis_os2.h:
 
-../CustomEdh/TaskSint/TaskSint.h:
+../CustomEdh/Taskctrl/Taskctrl.h:
 
-../CustomEdh/Utility/Util.h:
+../CustomEdh/Init/type.h:
 
-../CustomEdh/ADF4372/adf4372.h:
+../CustomEdh/GSL1680F/ER-TPC050A2-2_GSL1680F_H.h:
 
 ../Drivers/STM32H7xx_HAL_Driver/Inc/stm32h7xx_hal.h:
 
@@ -169,10 +170,14 @@ CustomEdh/TaskSint/TaskSint.o: ../CustomEdh/TaskSint/TaskSint.c \
 
 ../Drivers/STM32H7xx_HAL_Driver/Inc/stm32h7xx_hal_uart_ex.h:
 
-../CustomEdh/Init/type.h:
+../CustomEdh/Utility/Util.h:
+
+../CustomEdh/FRAM/CY15B064Q.h:
 
 ../Core/Inc/main.h:
 
-../CustomEdh/FRAM/CY15B064Q.h:
+../CustomEdh/ADF4372/adf4372.h:
+
+../CustomEdh/AD5592R/ad5592r.h:
 
 ../display_lvgl/gui.h:

@@ -43,9 +43,7 @@ CustomEdh/Image_Test \
 CustomEdh/Init \
 CustomEdh/TaskCLI \
 CustomEdh/TaskForTest \
-CustomEdh/TaskGFX \
-CustomEdh/TaskSint \
-CustomEdh/Task_Bias_Pwrctrl \
+CustomEdh/Taskctrl \
 CustomEdh/Tasklvgl \
 CustomEdh/Utility \
 Drivers/BSP/Components/lan8742 \

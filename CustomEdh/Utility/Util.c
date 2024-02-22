@@ -26,7 +26,6 @@
 #define VREFDAC 2.5
 
 extern SPI_HandleTypeDef hspi3;
-extern osMessageQueueId_t QueueBiasHandle;
 extern osMutexId_t SPI3MutexHandle;
 struct fwd_ram_pwr_ctrl fwd_ram_pwr_ctrl;
 extern struct netconn *newconn;
@@ -49,7 +48,7 @@ void LOG_DBG(char *format, ...) {
    sec=(time_ms-(h*3600000)-(min*60000))/1000;
    ms=(time_ms-(h*3600000)-(min*60000)-sec*1000);
 
-   printf("[%ld:%ld:%ld:%.3ld] ",h,min,sec,ms);   //con printf non esce mai sulla rete
+//   printf("[%ld:%ld:%ld:%.3ld] ",h,min,sec,ms);   //con printf non esce mai sulla rete
    va_start(args, format);
 //   if(osMutexAcquire(PrintMutexHandle,osWaitForever)==osOK)
 //      {
@@ -247,15 +246,13 @@ void read_pwr_table(uint8_t type,uint8_t chain)
 
 /**
   * @brief  restituisce il valore da impostare nele DAC per avre una certa potenza. La potenza verrà interpolata tra due valori vicini
-  * @param  type : indica se si vuole leggere un dato della tabella on uno dei due limiti upper o lower
   * @param  chain : indica a quale catena ci si riferisce se 0,1,2
   * @param  power : potenza che si vuole impostare
+  * @param  freq : frequenza di lavoro
   * @retval
   */
-void set_pwr(uint8_t chain,double power,double freq)
+void set_pwr_tot(uint8_t chain,double power,double freq,uint32_t *att,uint32_t*pa)
 {
-	osStatus_t status;
-	struct bias msg;
 	uint16_t res_0=0;
 	uint16_t res_1=0;
 	uint16_t res_2=0;
@@ -290,7 +287,7 @@ void set_pwr(uint8_t chain,double power,double freq)
 	f2=fmin+(ftmp+1)*freq_step;
 	}
 
-	LOG_DBG("freq=%lf  f1=%lf  f2=%lf  freq_start_index=%d   freq_stop_index=%d", freq,f1,f2,freq_start_index,freq_stop_index);
+	//LOG_DBG("freq=%lf  f1=%lf  f2=%lf  freq_start_index=%d   freq_stop_index=%d", freq,f1,f2,freq_start_index,freq_stop_index);
 
 	// --------------calcolo indici potenza--------------
 
@@ -355,43 +352,10 @@ void set_pwr(uint8_t chain,double power,double freq)
 			res_PA=interpolation(freq,f1,f2,res_1,res_3);	//interpola tra le due frequenze
 		}
 		}
-	LOG_DBG("Power=%.2f p1=%.2f p2=%.2f start_index=%d stop_index=%d threshold_index=%d pmin_index=%d",power,p1,p2,start_index,stop_index,threshold_index,pmin_index);
-	LOG_DBG("res_0=0X%04X res_1=0X%04X res_2=0X%04X res_3=0X%04X res_att=0X%04X res_PA=0X%04X",res_0,res_1,res_2,res_3,res_att,res_PA);
-	msg.op=setpower;
-	msg.tipo=0;
-	msg.min=0; //don't care
-	msg.max=0; //don't care
-	switch(chain)
-	{
-	case 0:
-		msg.index=8;
-		msg.valore=res_att;
-		status=osMessageQueuePut(QueueBiasHandle,&msg,0,0);	//messaggio per attenuatore variabile
-		msg.index=0;
-		msg.valore=res_PA;
-		status=osMessageQueuePut(QueueBiasHandle,&msg,0,0);	//messaggio per depolarizzazione PA
-		break;
-	case 1:
-		msg.index=9;
-		msg.valore=res_att;
-		status=osMessageQueuePut(QueueBiasHandle,&msg,0,0);	//messaggio per attenuatore variabile
-		msg.index=1;
-		msg.valore=res_PA;
-		status=osMessageQueuePut(QueueBiasHandle,&msg,0,0);	//messaggio per depolarizzazione PA
-		break;
-	case 2:
-		msg.index=10;
-		msg.valore=res_att;
-		status=osMessageQueuePut(QueueBiasHandle,&msg,0,0);	//messaggio per attenuatore variabile
-		break;
-	default:
-		break;
-	}
-
-		if(status!=osOK)
-		{
-			print_k("Error: No queue access");
-		}
+	//LOG_DBG("Power=%.2f p1=%.2f p2=%.2f start_index=%d stop_index=%d threshold_index=%d pmin_index=%d",power,p1,p2,start_index,stop_index,threshold_index,pmin_index);
+	//LOG_DBG("res_0=0X%04X res_1=0X%04X res_2=0X%04X res_3=0X%04X res_att=0X%04X res_PA=0X%04X",res_0,res_1,res_2,res_3,res_att,res_PA);
+	*att=res_att;
+	*pa=res_PA;
 	}
 	else
 	{
@@ -496,11 +460,10 @@ return res;
 
 void save_pwr_table(void)
 {
-	osStatus_t status;
-	status=osMutexAcquire(SPI3MutexHandle,osWaitForever);
+	osMutexAcquire(SPI3MutexHandle,osWaitForever);
 	config_for_save_SPI3();
 	uint32_t base_addr=0;
-	base_addr=BIAS_FRAM_ADDR+sizeof(struct bias_parameters);
+	base_addr=BIAS_FRAM_ADDR+sizeof(struct parameters);
 	LOG_DBG("Save Pwr table");
 	fwd_ram_pwr_ctrl.start_marker=0x1234567887654321;
 	fwd_ram_pwr_ctrl.end_marker=0x8765432112345678;
@@ -508,7 +471,7 @@ void save_pwr_table(void)
 	WriteByteFram(base_addr,(uint8_t*)&fwd_ram_pwr_ctrl, sizeof(fwd_ram_pwr_ctrl));
 	osDelay(10);
 	config_for_dac_SPI3();
-	status=osMutexRelease(SPI3MutexHandle);
+	osMutexRelease(SPI3MutexHandle);
 }
 
 void Load_pwr_table(void)
@@ -516,24 +479,24 @@ void Load_pwr_table(void)
 	uint32_t base_addr=0;
 	uint32_t paddr=0;
 	uint8_t* pfram;
-	osStatus_t status;
-	status=osMutexAcquire(SPI3MutexHandle,osWaitForever);
+	osMutexAcquire(SPI3MutexHandle,osWaitForever);
 	config_for_save_SPI3();
-	LOG_DBG("Load Pwr Table");
+	LOG_DBG("Loading Pwr Table");
+	osDelay(10);
 //	base_addr=PWR_TABLE_FRAM_ADDR;
-	base_addr=BIAS_FRAM_ADDR+sizeof(struct bias_parameters);
+	base_addr=BIAS_FRAM_ADDR+sizeof(struct parameters);
 	paddr=base_addr;
-	LOG_DBG("Pwr Param table base addrerss 0x%04lX",base_addr);
+	LOG_DBG("Pwr Param table base address 0x%04lX",base_addr);
 	pfram=(uint8_t*)&fwd_ram_pwr_ctrl;
 	while(paddr<base_addr+sizeof(fwd_ram_pwr_ctrl))
 	{
 		ReadByteFram(paddr,pfram, (uint32_t)1);
-		//print_k("address %lX byte=%02X \r\n",base_addr,*pfram);
 		paddr++;
 		pfram++;
 	}
+	osDelay(10);
 	config_for_dac_SPI3();
-	status=osMutexRelease(SPI3MutexHandle);
+	osMutexRelease(SPI3MutexHandle);
 //	ReadByteFram(BIAS_FRAM_ADDR,(uint8_t*)&fram_bias, (uint32_t)sizeof(fram_bias));
 	if (fwd_ram_pwr_ctrl.start_marker!=0x1234567887654321 || fwd_ram_pwr_ctrl.end_marker!=0x8765432112345678)
 	{
@@ -566,6 +529,7 @@ void Load_pwr_table(void)
 			}
 		save_pwr_table();
 	}
+	LOG_DBG("Pwr Table loaded");
 }
 
 uint16_t interpolation(double xp,double x0, double x1, uint16_t y0,uint16_t y1)
