@@ -17,7 +17,7 @@
 #include "gui_structures_def.h"
 #include "type.h"
 #include "stdbool.h"
-
+#include <ctype.h>
 #include "Util.h"
 
 
@@ -28,6 +28,8 @@ extern osMessageQueueId_t QueueMsgHandle;
 
 lv_tast_ui tastiera_freq;
 lv_tast_ui tastiera_power;
+lv_tast_ui tastiera_tracking;
+lv_tast_ui tastiera_fre_sweep;
 //lv_obj_t* but_up;
 
 typedef enum  {
@@ -43,9 +45,17 @@ typedef enum  {
 
 uint64_t f[3] = {71000000000,72000000000,13000000000};
 lv_obj_t* f_digit[3][11];
+
+uint64_t f_track[3] = {71000000000,100000000,13000000000};
+lv_obj_t* f_digit_tracking[3][11];
+
+uint64_t f_sweep[3]={71000000000,82000000000,1000000000};	//conterrà fmin,fmax,fstep
+lv_obj_t* f_digit_fre_sweep[3][11];
+
 uint8_t index_raw=0;
 uint8_t index_col=0;
 osStatus_t status;
+bool pre_dot=true;  //resta a true fintanto che si tratta di cifre precedenti la prima cifra diversa da zero poi v a false serve per non scrivere a display zeri davanti alla prima cifra utile
 
 double P[3] = {15.2,-14.31,10.12};
 bool send_message=false;  //serve indicare che va inviato un messaggio in power page, se si preme il tasto ON/OFF si nvia il messaggio ma non serve inviare la potenza
@@ -74,6 +84,22 @@ void init_power_gui (void)
 	P[1]=parameters.settings.power[1];
 	P[2]=parameters.settings.power[2];
 	lv_event_send(tastiera_power.but_dummy, LV_EVENT_PRESSED, NULL);
+}
+
+void init_tracking_gui (void)
+{
+	f_track[0]=parameters.sint_par.freq[0];
+	f_track[1]=parameters.sint_par.deltatone;
+	f_track[2]=parameters.sint_par.freq[2];
+	lv_event_send(tastiera_tracking.but_dummy, LV_EVENT_PRESSED, NULL);
+}
+
+void init_freq_sweep_gui (void)
+{
+	f_sweep[0]=parameters.sint_par.f1_sweep_min;
+	f_sweep[1]=parameters.sint_par.f1_sweep_max;
+	f_sweep[2]=parameters.sint_par.sweep_step;
+	lv_event_send(tastiera_fre_sweep.but_dummy, LV_EVENT_PRESSED, NULL);
 }
 
 static void event_handler_threetone_page(lv_event_t* e)
@@ -519,6 +545,468 @@ static void event_handler_powers_page(lv_event_t* e)
 
 }
 
+static void event_handler_tracking_page(lv_event_t* e)
+{
+    lv_event_code_t code = lv_event_get_code(e);
+    lv_obj_t* target = lv_event_get_target(e);
+    lv_obj_t* ta = lv_event_get_user_data(e);
+    uint64_t num_tmp = 0;
+    uint64_t freq_tmp = 0;
+    struct msg_t msg;
+    char* s;
+    double freq;
+    LV_LOG_USER("trackinghandler code %d\n\r",code);
+    if(code==LV_EVENT_VALUE_CHANGED)  //evento generato dalla tastiera
+    {
+    	const char* txt = lv_btnmatrix_get_btn_text(target, lv_btnmatrix_get_selected_btn(target));
+        if (strcmp(txt, LV_SYMBOL_BACKSPACE) == 0)
+        	{
+        	lv_textarea_del_char(tastiera_tracking.ta);
+        	}
+        else if (strcmp(txt, ".") == 0)  //serve per verificare se nella stringa c'è già un punto e in caso non ne fa mettere un altro
+    		{
+        	s=strchr(lv_textarea_get_text(tastiera_tracking.ta),'.');
+        	if(s==NULL)
+        		{
+        		lv_textarea_add_text(tastiera_tracking.ta, txt);
+        		}
+    		}
+        else
+        	{
+        	lv_textarea_add_text(tastiera_tracking.ta, txt);
+        	}
+    	LV_LOG_USER("tastiera_tracking\n\r");
+    }
+    else if (code==LV_EVENT_PRESSED)   //evento generato dalla selezione del digit o o dai pulsanti (non quelli numerici della tastiera)
+    {
+    	for(int j=0;j<3;j++)	//cerca il digit che è stato premuto
+    	{
+			for(int i=0;i<11;i++)
+			{
+				lv_obj_set_style_border_width(f_digit_tracking[j][i], 0, LV_PART_MAIN);
+				if(target==f_digit_tracking[j][i])
+				{
+					index_raw=j;
+					index_col=i;
+				}
+
+			}
+    	}
+        if(target==tastiera_tracking.but_left && index_col<11)
+			{
+				index_col=index_col+1;
+			}
+        else if(target==tastiera_tracking.but_right && index_col>0)
+			{
+				index_col=index_col-1;
+			}
+		else if(target==tastiera_tracking.but_up)
+			{
+				freq=f_track[index_raw];
+				freq=freq+(uint64_t)pow(10,index_col);
+				if(index_raw==0 || index_raw==2)  //se si sta spostando la freq del tono o quella di LO che ha min e max nella tabella pwr_ctrl
+					{
+					if (freq<=fwd_ram_pwr_ctrl.fwd_pwr_ctrl[index_raw].fmax && freq>=fwd_ram_pwr_ctrl.fwd_pwr_ctrl[index_raw].fmin)
+						{
+							f_track[index_raw]=freq;
+						}
+					else
+						{
+							lv_obj_t * mbox1 = lv_msgbox_create(NULL, "Warning", "Frequency out of range.", NULL, true);
+						}
+					}
+				else
+					{
+					if (freq>0 && freq<MAX_DELTA_TONE)
+						{
+							f_track[index_raw]=freq;
+						}
+					else
+						{
+							lv_obj_t * mbox1 = lv_msgbox_create(NULL, "Warning", "Delta tone out of range.", NULL, true);
+						}
+				}
+
+			}
+		else if(target==tastiera_tracking.but_down)
+			{
+				freq=f_track[index_raw];
+				freq=freq-(uint64_t)pow(10,index_col);
+				if(index_raw==0 || index_raw==2)  //se si sta spostando la freq del tono o quella di LO che ha min e max nella tabella pwr_ctrl
+					{
+					if (freq<=fwd_ram_pwr_ctrl.fwd_pwr_ctrl[index_raw].fmax && freq>=fwd_ram_pwr_ctrl.fwd_pwr_ctrl[index_raw].fmin)
+						{
+							f_track[index_raw]=freq;
+						}
+					else
+						{
+							lv_obj_t * mbox1 = lv_msgbox_create(NULL, "Warning", "Frequency out of range.", NULL, true);
+						}
+					}
+				else
+					{
+					if (freq>0 && freq<MAX_DELTA_TONE)
+						{
+							f_track[index_raw]=freq;
+						}
+					else
+						{
+							lv_obj_t * mbox1 = lv_msgbox_create(NULL, "Warning", "Delta tone out of range.", NULL, true);
+						}
+					}
+
+			}
+		else if(target==tastiera_tracking.but_GHz)
+			{
+			freq=(uint64_t)(strtod(lv_textarea_get_text(tastiera_tracking.ta),NULL)*1e9);
+				if(index_raw==0 || index_raw==2)  //se si sta spostando la freq del tono o quella di LO che ha min e max nella tabella pwr_ctrl
+					{
+					if (freq<=fwd_ram_pwr_ctrl.fwd_pwr_ctrl[index_raw].fmax && freq>=fwd_ram_pwr_ctrl.fwd_pwr_ctrl[index_raw].fmin)
+						{
+							f_track[index_raw]=freq;
+						}
+					else
+						{
+							lv_obj_t * mbox1 = lv_msgbox_create(NULL, "Warning", "Frequency out of range.", NULL, true);
+						}
+					}
+				else
+					{
+					if (freq>0 && freq<MAX_DELTA_TONE)
+						{
+							f_track[index_raw]=freq;
+						}
+					else
+						{
+							lv_obj_t * mbox1 = lv_msgbox_create(NULL, "Warning", "Delta tone out of range.", NULL, true);
+						}
+					}
+
+			}
+		else if(target==tastiera_tracking.but_MHz)
+			{
+			freq=(uint64_t)(strtod(lv_textarea_get_text(tastiera_tracking.ta),NULL)*1e6);
+				if(index_raw==0 || index_raw==2)  //se si sta spostando la freq del tono o quella di LO che ha min e max nella tabella pwr_ctrl
+					{
+					if (freq<=fwd_ram_pwr_ctrl.fwd_pwr_ctrl[index_raw].fmax && freq>=fwd_ram_pwr_ctrl.fwd_pwr_ctrl[index_raw].fmin)
+						{
+							f_track[index_raw]=freq;
+						}
+					else
+						{
+							lv_obj_t * mbox1 = lv_msgbox_create(NULL, "Warning", "Frequency out of range.", NULL, true);
+						}
+					}
+				else
+					{
+					if (freq>0 && freq<MAX_DELTA_TONE)
+						{
+							f_track[index_raw]=freq;
+						}
+					else
+						{
+							lv_obj_t * mbox1 = lv_msgbox_create(NULL, "Warning", "Delta tone out of range.", NULL, true);
+						}
+					}
+
+			}
+		else if(target==tastiera_tracking.but_KHz)
+			{
+			freq=(uint64_t)(strtod(lv_textarea_get_text(tastiera_tracking.ta),NULL)*1e3);
+				if(index_raw==0 || index_raw==2)  //se si sta spostando la freq del tono o quella di LO che ha min e max nella tabella pwr_ctrl
+					{
+					if (freq<=fwd_ram_pwr_ctrl.fwd_pwr_ctrl[index_raw].fmax && freq>=fwd_ram_pwr_ctrl.fwd_pwr_ctrl[index_raw].fmin)
+						{
+							f_track[index_raw]=freq;
+						}
+					else
+						{
+							lv_obj_t * mbox1 = lv_msgbox_create(NULL, "Warning", "Frequency out of range.", NULL, true);
+						}
+					}
+				else
+					{
+					if (freq>0 && freq<MAX_DELTA_TONE)
+						{
+							f_track[index_raw]=freq;
+						}
+					else
+						{
+							lv_obj_t * mbox1 = lv_msgbox_create(NULL, "Warning", "Delta tone out of range.", NULL, true);
+						}
+					}
+			}
+		else if(target==tastiera_tracking.but_Hz)
+			{
+			freq=(uint64_t)(strtod(lv_textarea_get_text(tastiera_tracking.ta),NULL)*1);
+				if(index_raw==0 || index_raw==2)  //se si sta spostando la freq del tono o quella di LO che ha min e max nella tabella pwr_ctrl
+					{
+					if (freq<=fwd_ram_pwr_ctrl.fwd_pwr_ctrl[index_raw].fmax && freq>=fwd_ram_pwr_ctrl.fwd_pwr_ctrl[index_raw].fmin)
+						{
+							f_track[index_raw]=freq;
+						}
+					else
+						{
+							lv_obj_t * mbox1 = lv_msgbox_create(NULL, "Warning", "Frequency out of range.", NULL, true);
+						}
+					}
+				else
+					{
+					if (freq>0 && freq<MAX_DELTA_TONE)
+						{
+							f_track[index_raw]=freq;
+						}
+					else
+						{
+							lv_obj_t * mbox1 = lv_msgbox_create(NULL, "Warning", "Delta tone out of range.", NULL, true);
+						}
+					}
+			}
+		else if(target==tastiera_tracking.but_dummy)  //serve solo per aggiornare le frequenze conun evento generato manualmente in init_freq_gui()
+			{
+				for(int j=0;j<3;j++)
+				{
+					num_tmp=f_track[j];
+					for (int i = 0;i<11;i++)
+					{
+						int mod = num_tmp % 10;  //split last digit from number
+						num_tmp=num_tmp/10;
+						lv_label_set_text_fmt(f_digit_tracking[j][i], "%u",(uint8_t)mod);
+					}
+				}
+			}
+        num_tmp=f_track[index_raw];
+		for (int i = 0;i<11;i++)
+			{
+				int mod = num_tmp % 10;  //split last digit from number
+				num_tmp=num_tmp/10;
+				lv_label_set_text_fmt(f_digit_tracking[index_raw][i], "%u",(uint8_t)mod);
+			}
+		if(index_raw==0 || index_raw==2)
+		{
+			msg.op=0;
+			msg.par1=index_raw;
+			msg.par2=f_track[index_raw];
+		}
+		else
+		{
+			msg.op=4;
+			msg.par1=f_track[index_raw];
+		}
+		msg.par3=0;
+		msg.source=gui;
+		status=osMessageQueuePut(QueueMsgHandle,&msg,0,0);
+		if(status!=osOK)
+		{
+			print_k("Error: No queue access");
+		}
+
+    }
+    lv_obj_set_style_border_width(f_digit_tracking[index_raw][index_col], 2, LV_PART_MAIN);
+}
+
+static void event_handler_fre_sweep_page(lv_event_t* e)
+{
+    lv_event_code_t code = lv_event_get_code(e);
+    lv_obj_t* target = lv_event_get_target(e);
+    lv_obj_t* ta = lv_event_get_user_data(e);
+    uint64_t num_tmp = 0;
+    uint64_t freq_tmp = 0;
+    struct msg_t msg;
+    char* s;
+    double freq;
+    LV_LOG_USER("freq sweep code %d\n\r",code);
+    if(code==LV_EVENT_VALUE_CHANGED)  //evento generato dalla tastiera
+    {
+    	const char* txt = lv_btnmatrix_get_btn_text(target, lv_btnmatrix_get_selected_btn(target));
+        if (strcmp(txt, LV_SYMBOL_BACKSPACE) == 0)
+        	{
+        	lv_textarea_del_char(tastiera_fre_sweep.ta);
+        	}
+        else if (strcmp(txt, ".") == 0)  //serve per verificare se nella stringa c'è già un punto e in caso non ne fa mettere un altro
+    		{
+        	s=strchr(lv_textarea_get_text(tastiera_fre_sweep.ta),'.');
+        	if(s==NULL)
+        		{
+        		lv_textarea_add_text(tastiera_fre_sweep.ta, txt);
+        		}
+    		}
+        else
+        	{
+        	lv_textarea_add_text(tastiera_fre_sweep.ta, txt);
+        	}
+    	LV_LOG_USER("tastiera_freq_sweep\n\r");
+    }
+    else if (code==LV_EVENT_PRESSED)   //evento generato dalla selezione del digit o o dai pulsanti (non quelli numerici della tastiera)
+    {
+    	for(int j=0;j<3;j++)
+    	{
+			for(int i=0;i<11;i++)
+			{
+				lv_obj_set_style_border_width(f_digit_fre_sweep[j][i], 0, LV_PART_MAIN);
+				if(target==f_digit_fre_sweep[j][i])
+				{
+					index_raw=j;
+					index_col=i;
+				}
+
+			}
+    	}
+        if(target==tastiera_fre_sweep.but_left && index_col<11)
+        {
+        	index_col=index_col+1;
+        }
+        else if(target==tastiera_fre_sweep.but_right && index_col>0)
+		{
+			index_col=index_col-1;
+		}
+        else if(target==tastiera_fre_sweep.but_up)
+		{
+			freq=f_sweep[index_raw];
+			freq=freq+(uint64_t)pow(10,index_col);
+			if(index_raw==0 || index_raw==1)
+				{
+					if (freq<=fwd_ram_pwr_ctrl.fwd_pwr_ctrl[0].fmax && freq>=fwd_ram_pwr_ctrl.fwd_pwr_ctrl[0].fmin)  //indice 0 perchè vale solo per tono 1 lo sweep
+					{
+						f_sweep[index_raw]=freq;
+					}
+					else
+					{
+						lv_obj_t * mbox1 = lv_msgbox_create(NULL, "Warning", "Frequency out of range.", NULL, true);
+					}
+				}
+			else
+				{
+					if(freq>0 && freq<MAX_SWEEP_STEP && freq < (f_sweep[1]-f_sweep[0]))
+					{
+						f_sweep[index_raw]=freq;
+					}
+					else
+					{
+						lv_obj_t * mbox1 = lv_msgbox_create(NULL, "Warning", "Frequency step out of range.", NULL, true);
+					}
+				}
+
+			//f[index_raw]=f[index_raw]+(uint64_t)pow(10,index_col);
+		}
+		else if(target==tastiera_fre_sweep.but_down)
+		{
+			freq=f_sweep[index_raw];
+			freq=freq-(uint64_t)pow(10,index_col);
+			if(index_raw==0 || index_raw==1)
+				{
+					if (freq<=fwd_ram_pwr_ctrl.fwd_pwr_ctrl[0].fmax && freq>=fwd_ram_pwr_ctrl.fwd_pwr_ctrl[0].fmin)
+					{
+						f_sweep[index_raw]=freq;
+					}
+					else
+					{
+						lv_obj_t * mbox1 = lv_msgbox_create(NULL, "Warning", "Frequency out of range.", NULL, true);
+					}
+				}
+			else
+			{
+				if(freq>0 && freq<MAX_SWEEP_STEP && freq < (f_sweep[1]-f_sweep[0]))
+				{
+					f_sweep[index_raw]=freq;
+				}
+				else
+				{
+					lv_obj_t * mbox1 = lv_msgbox_create(NULL, "Warning", "Frequency step out of range.", NULL, true);
+				}
+			}
+		}
+		else if(target==tastiera_fre_sweep.but_GHz ||target==tastiera_fre_sweep.but_MHz||target==tastiera_fre_sweep.but_KHz||target==tastiera_fre_sweep.but_Hz)
+			{
+				if(target==tastiera_fre_sweep.but_GHz)
+				{
+					freq=(uint64_t)(strtod(lv_textarea_get_text(tastiera_fre_sweep.ta),NULL)*1e9);
+				}
+				else if(target==tastiera_fre_sweep.but_MHz)
+				{
+					freq=(uint64_t)(strtod(lv_textarea_get_text(tastiera_fre_sweep.ta),NULL)*1e6);
+				}
+				else if(target==tastiera_fre_sweep.but_KHz)
+				{
+					freq=(uint64_t)(strtod(lv_textarea_get_text(tastiera_fre_sweep.ta),NULL)*1e3);
+				}
+				else if(target==tastiera_fre_sweep.but_Hz)
+				{
+					freq=(uint64_t)(strtod(lv_textarea_get_text(tastiera_fre_sweep.ta),NULL)*1);
+				}
+				if(index_raw==0 || index_raw==2)  //se si sta spostando la freq del tono o quella di LO che ha min e max nella tabella pwr_ctrl
+					{
+					if (freq<=fwd_ram_pwr_ctrl.fwd_pwr_ctrl[0].fmax && freq>=fwd_ram_pwr_ctrl.fwd_pwr_ctrl[0].fmin)
+						{
+						f_sweep[index_raw]=freq;
+						}
+					else
+						{
+							lv_obj_t * mbox1 = lv_msgbox_create(NULL, "Warning", "Frequency out of range.", NULL, true);
+						}
+					}
+				else
+					{
+					if (freq>0 && freq<MAX_SWEEP_STEP && freq < (f_sweep[1]-f_sweep[0]))
+						{
+						f_sweep[index_raw]=freq;
+						}
+					else
+						{
+							lv_obj_t * mbox1 = lv_msgbox_create(NULL, "Warning", "Delta tone out of range.", NULL, true);
+						}
+					}
+			}
+		else if(target==tastiera_fre_sweep.but_dummy)  //serve solo per aggiornare le frequenze conun evento generato manualmente in init_freq_gui()
+			{
+				for(int j=0;j<3;j++)
+				{
+					num_tmp=f_sweep[j];
+					for (int i = 0;i<11;i++)
+					{
+						int mod = num_tmp % 10;  //split last digit from number
+						num_tmp=num_tmp/10;
+						lv_label_set_text_fmt(f_digit_fre_sweep[j][i], "%u",(uint8_t)mod);
+					}
+				}
+			}
+        num_tmp=f_sweep[index_raw];
+		for (int i = 0;i<11;i++)
+			{
+				int mod = num_tmp % 10;  //split last digit from number
+				num_tmp=num_tmp/10;
+				lv_label_set_text_fmt(f_digit_fre_sweep[index_raw][i], "%u",(uint8_t)mod);
+			}
+		if(index_raw==0)
+		{
+			msg.op=2;
+			msg.par1=f_sweep[index_raw];
+			msg.par2=0;
+		}
+		else if(index_raw==1)
+		{
+			msg.op=3;
+			msg.par1=f_sweep[index_raw];
+			msg.par2=0;
+		}
+		else
+		{
+			msg.op=5;
+			msg.par1=f_sweep[index_raw];
+			msg.par2=0;
+		}
+		msg.par3=0;
+		msg.par4=0;
+		msg.source=gui;
+		status=osMessageQueuePut(QueueMsgHandle,&msg,0,0);
+		if(status!=osOK)
+		{
+			print_k("Error: No queue access");
+		}
+    }
+    lv_obj_set_style_border_width(f_digit_fre_sweep[index_raw][index_col], 2, LV_PART_MAIN);
+}
+
 void gen_tastiera (lv_tast_ui *ui,lv_obj_t* parent, lv_event_cb_t func_cb)
 {
 	//tastiera
@@ -870,6 +1358,18 @@ void gui_define(void)
 	lv_obj_t* label_f1_end;
 	lv_obj_t* label_f2_end;
 	lv_obj_t* label_f3_end;
+	lv_obj_t* label_f1_tracking;
+	lv_obj_t* label_f2_tracking;
+	lv_obj_t* label_f3_tracking;
+	lv_obj_t* label_f1_end_tracking;
+	lv_obj_t* label_f2_end_tracking;
+	lv_obj_t* label_f3_end_tracking;
+	lv_obj_t* label_fre_min;
+	lv_obj_t* label_fre_max;
+	lv_obj_t* label_fre_step;
+	lv_obj_t* label_fre_min_end;
+	lv_obj_t* label_fre_max_end;
+	lv_obj_t* label_fre_step_end;
 	uint64_t num_tmp = 0;
 	lv_obj_t* label_P[3];
 	lv_obj_t* label_PdBm[3];
@@ -927,7 +1427,7 @@ void gui_define(void)
 
 	label_f3 = lv_label_create(threetone_page);
 	lv_obj_set_parent(label_f3, threetone_page);
-	lv_label_set_text(label_f3, "  LO");
+	lv_label_set_text(label_f3, "LO");
 	lv_obj_add_flag(label_f3, LV_OBJ_FLAG_IGNORE_LAYOUT);
 	lv_obj_set_pos(label_f3, 50, 75);
 	lv_obj_add_style(label_f3, &style_text_fixed, 0);
@@ -1058,15 +1558,161 @@ void gui_define(void)
 	lv_obj_set_pos(label_PdBm[2], 280, 75);
 	lv_obj_add_style(label_PdBm[2], &style_text_fixed, 0);
 
+    //----------------------Create Tracking page---------------------------------
+    lv_obj_t* tracking_page = lv_menu_page_create(menuDemo, (char*)"                          Tracking");
+	lv_obj_clear_flag(tracking_page, LV_OBJ_FLAG_SCROLLABLE);
+
+	gen_tastiera(&tastiera_tracking,tracking_page,event_handler_tracking_page);
+
+	label_f1_tracking = lv_label_create(tracking_page);
+	lv_obj_set_parent(label_f1_tracking, tracking_page);
+	lv_label_set_text(label_f1_tracking, "Tone 1");
+	lv_obj_add_flag(label_f1_tracking, LV_OBJ_FLAG_IGNORE_LAYOUT);
+	lv_obj_set_pos(label_f1_tracking, 50, 25);
+	lv_obj_add_style(label_f1_tracking, &style_text_fixed, 0);
+//
+	label_f1_end_tracking = lv_label_create(tracking_page);
+	lv_obj_set_parent(label_f1_end_tracking, tracking_page);
+	lv_label_set_text(label_f1_end_tracking, "Hz");
+	lv_obj_add_flag(label_f1_end_tracking, LV_OBJ_FLAG_IGNORE_LAYOUT);
+	lv_obj_set_pos(label_f1_end_tracking, 290, 25);
+	lv_obj_add_style(label_f1_end_tracking, &style_text_fixed, 0);
+//
+//
+	label_f2_tracking = lv_label_create(tracking_page);
+	lv_obj_set_parent(label_f2_tracking, tracking_page);
+	lv_label_set_text(label_f2_tracking, "Delta");
+	lv_obj_add_flag(label_f2_tracking, LV_OBJ_FLAG_IGNORE_LAYOUT);
+	lv_obj_set_pos(label_f2_tracking, 50, 50);
+	lv_obj_add_style(label_f2_tracking, &style_text_fixed, 0);
+//
+	label_f2_end_tracking = lv_label_create(tracking_page);
+	lv_obj_set_parent(label_f2_end_tracking, tracking_page);
+	lv_label_set_text(label_f2_end_tracking, "Hz");
+	lv_obj_add_flag(label_f2_end_tracking, LV_OBJ_FLAG_IGNORE_LAYOUT);
+	lv_obj_set_pos(label_f2_end_tracking, 290, 50);
+	lv_obj_add_style(label_f2_end_tracking, &style_text_fixed, 0);
+//
+//
+	label_f3_tracking = lv_label_create(tracking_page);
+	lv_obj_set_parent(label_f3_tracking, tracking_page);
+	lv_label_set_text(label_f3_tracking, "LO");
+	lv_obj_add_flag(label_f3_tracking, LV_OBJ_FLAG_IGNORE_LAYOUT);
+	lv_obj_set_pos(label_f3_tracking, 50, 75);
+	lv_obj_add_style(label_f3_tracking, &style_text_fixed, 0);
+//
+	label_f3_end_tracking = lv_label_create(tracking_page);
+	lv_obj_set_parent(label_f3_end_tracking, tracking_page);
+	lv_label_set_text(label_f3_end_tracking, "Hz");
+	lv_obj_add_flag(label_f3_end_tracking, LV_OBJ_FLAG_IGNORE_LAYOUT);
+	lv_obj_set_pos(label_f3_end_tracking, 290, 75);
+	lv_obj_add_style(label_f3_end_tracking, &style_text_fixed, 0);
+
+	for (int j=0;j<3;j++)
+	{
+		pre_dot=true;
+		num_tmp=f_track[j];
+		for (int i = 0;i<11;i++)
+		{
+			int mod = num_tmp % 10;  //split last digit from number
+			num_tmp=num_tmp/10;
+//			if(num_tmp>=0 && pre_dot==true)
+//				{
+				f_digit_tracking[j][i] = lv_label_create(tracking_page);
+				lv_obj_set_parent(f_digit_tracking[j][i], tracking_page);
+				lv_label_set_text_fmt(f_digit_tracking[j][i], "%u",(uint8_t)mod);
+				lv_obj_add_flag(f_digit_tracking[j][i], LV_OBJ_FLAG_IGNORE_LAYOUT);
+				lv_obj_set_pos(f_digit_tracking[j][i], 270-i*15, 25+j*25);
+				lv_obj_set_style_bg_color(f_digit_tracking[j][i], my_bg_color, LV_PART_MAIN);
+				lv_obj_add_style(f_digit_tracking[j][i], &style_text_fixed, 0);
+				lv_obj_add_flag(f_digit_tracking[j][i], LV_OBJ_FLAG_CLICKABLE);
+				lv_obj_add_event_cb(f_digit_tracking[j][i], event_handler_tracking_page, LV_EVENT_PRESSED, NULL);
+				lv_obj_set_style_bg_color(f_digit_tracking[j][i], lv_color_hex(0xFEFEFE), LV_PART_MAIN);
+//				if(num_tmp==0)
+//					{
+//						pre_dot=false;
+//					}
+//				}
+		}
+	}
+
 
     //----------------------Create Freq_sweep page---------------------------------
-    lv_obj_t* freq_sweep_page = lv_menu_page_create(menuDemo, (char*)"Freq Sweep");
+    lv_obj_t* freq_sweep_page = lv_menu_page_create(menuDemo, (char*)"                          Freq Sweep");
+	lv_obj_clear_flag(freq_sweep_page, LV_OBJ_FLAG_SCROLLABLE);
+	gen_tastiera(&tastiera_fre_sweep,freq_sweep_page,event_handler_fre_sweep_page);
+
+	label_fre_min = lv_label_create(freq_sweep_page);
+	lv_obj_set_parent(label_fre_min, freq_sweep_page);
+	lv_label_set_text(label_fre_min, "f start");
+	lv_obj_add_flag(label_fre_min, LV_OBJ_FLAG_IGNORE_LAYOUT);
+	lv_obj_set_pos(label_fre_min, 50, 25);
+	lv_obj_add_style(label_fre_min, &style_text_fixed, 0);
+
+	label_fre_min_end = lv_label_create(freq_sweep_page);
+	lv_obj_set_parent(label_fre_min_end, freq_sweep_page);
+	lv_label_set_text(label_fre_min_end, "Hz");
+	lv_obj_add_flag(label_fre_min_end, LV_OBJ_FLAG_IGNORE_LAYOUT);
+	lv_obj_set_pos(label_fre_min_end, 290, 25);
+	lv_obj_add_style(label_fre_min_end, &style_text_fixed, 0);
+
+
+	label_fre_max = lv_label_create(freq_sweep_page);
+	lv_obj_set_parent(label_fre_max, freq_sweep_page);
+	lv_label_set_text(label_fre_max, "f stop");
+	lv_obj_add_flag(label_fre_max, LV_OBJ_FLAG_IGNORE_LAYOUT);
+	lv_obj_set_pos(label_fre_max, 50, 50);
+	lv_obj_add_style(label_fre_max, &style_text_fixed, 0);
+
+	label_fre_max_end = lv_label_create(freq_sweep_page);
+	lv_obj_set_parent(label_fre_max_end, freq_sweep_page);
+	lv_label_set_text(label_fre_max_end, "Hz");
+	lv_obj_add_flag(label_fre_max_end, LV_OBJ_FLAG_IGNORE_LAYOUT);
+	lv_obj_set_pos(label_fre_max_end, 290, 50);
+	lv_obj_add_style(label_fre_max_end, &style_text_fixed, 0);
+
+
+	label_fre_step = lv_label_create(freq_sweep_page);
+	lv_obj_set_parent(label_fre_step, freq_sweep_page);
+	lv_label_set_text(label_fre_step, "f step");
+	lv_obj_add_flag(label_fre_step, LV_OBJ_FLAG_IGNORE_LAYOUT);
+	lv_obj_set_pos(label_fre_step, 50, 75);
+	lv_obj_add_style(label_fre_step, &style_text_fixed, 0);
+
+	label_fre_step_end = lv_label_create(freq_sweep_page);
+	lv_obj_set_parent(label_fre_step_end, freq_sweep_page);
+	lv_label_set_text(label_fre_step_end, "Hz");
+	lv_obj_add_flag(label_fre_step_end, LV_OBJ_FLAG_IGNORE_LAYOUT);
+	lv_obj_set_pos(label_fre_step_end, 290, 75);
+	lv_obj_add_style(label_fre_step_end, &style_text_fixed, 0);
+
+	for (int j=0;j<3;j++)
+	{
+		num_tmp=f_sweep[j];
+		for (int i = 0;i<11;i++)
+		{
+			int mod = num_tmp % 10;  //split last digit from number
+			num_tmp=num_tmp/10;
+			f_digit_fre_sweep[j][i] = lv_label_create(freq_sweep_page);
+			lv_obj_set_parent(f_digit_fre_sweep[j][i], freq_sweep_page);
+			lv_label_set_text_fmt(f_digit_fre_sweep[j][i], "%u",(uint8_t)mod);
+			lv_obj_add_flag(f_digit_fre_sweep[j][i], LV_OBJ_FLAG_IGNORE_LAYOUT);
+			lv_obj_set_pos(f_digit_fre_sweep[j][i], 270-i*15, 25+j*25);
+			lv_obj_set_style_bg_color(f_digit_fre_sweep[j][i], my_bg_color, LV_PART_MAIN);
+			lv_obj_add_style(f_digit_fre_sweep[j][i], &style_text_fixed, 0);
+			lv_obj_add_flag(f_digit_fre_sweep[j][i], LV_OBJ_FLAG_CLICKABLE);
+			lv_obj_add_event_cb(f_digit_fre_sweep[j][i], event_handler_fre_sweep_page, LV_EVENT_PRESSED, NULL);
+			lv_obj_set_style_bg_color(f_digit_fre_sweep[j][i], lv_color_hex(0xFEFEFE), LV_PART_MAIN);
+		}
+	}
+
+
     //----------------------Create Power_sweep page---------------------------------
-    lv_obj_t* power_sweep_page = lv_menu_page_create(menuDemo, (char*)"Power Sweep");
+    lv_obj_t* power_sweep_page = lv_menu_page_create(menuDemo, (char*)"                          Power Sweep");
     //----------------------Create Settings page---------------------------------
-    lv_obj_t* setting_page = lv_menu_page_create(menuDemo, (char*)"Settings");
+    lv_obj_t* setting_page = lv_menu_page_create(menuDemo, (char*)"                          Settings");
     //----------------------Create Informations page---------------------------------
-    lv_obj_t* info_page = lv_menu_page_create(menuDemo, (char*)"Informations");
+    lv_obj_t* info_page = lv_menu_page_create(menuDemo, (char*)"                        Informations");
 
 
 		 /*create menu page*/
@@ -1082,6 +1728,11 @@ void gui_define(void)
 		 label = lv_label_create(cont);
 		 lv_label_set_text(label, "Set Powers");
 		 lv_menu_set_load_page_event(menuDemo, cont, power_page);
+
+		 cont = lv_menu_cont_create(menu_page);
+		 label = lv_label_create(cont);
+		 lv_label_set_text(label, "Tracking");
+		 lv_menu_set_load_page_event(menuDemo, cont, tracking_page);
 
 		 cont = lv_menu_cont_create(menu_page);
 		 label = lv_label_create(cont);

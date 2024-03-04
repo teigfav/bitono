@@ -47,7 +47,7 @@
 
 /*1: use custom malloc/free, 0: use the built-in `lv_mem_alloc()` and `lv_mem_free()`*/
 #define LV_MEM_CUSTOM      0
-#if LV_MEM_CUSTOM == 0
+#if LV_MEM_CUSTOM == 4096
 /*Size of the memory available for `lv_mem_alloc()` in bytes (>= 2kB)*/
 /*[bytes]*/
 
@@ -60,7 +60,7 @@
     #endif
 
 #else       /*LV_MEM_CUSTOM*/
-#  define LV_MEM_SIZE    (40U * 1024U)
+#  define LV_MEM_SIZE    (40U * 2048U)
 #  define LV_MEM_CUSTOM_INCLUDE <stdlib.h>   /*Header for the dynamic memory function*/
 #  define LV_MEM_CUSTOM_ALLOC     malloc
 #  define LV_MEM_CUSTOM_FREE      free
