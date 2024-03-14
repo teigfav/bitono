@@ -139,7 +139,7 @@ SECTIONS
 
   /* Uninitialized data section */
   . = ALIGN(4);
-  .bss :
+  .bss (NOLOAD) :
   {
     /* This is used by the startup in order to initialize the .bss section */
     _sbss = .;         /* define a global symbol at bss start */
@@ -147,6 +147,8 @@ SECTIONS
     *(.bss)
     *(.bss*)
     *(COMMON)
+    . = ALIGN(32);
+    *(.RxArraySection)
 
     . = ALIGN(4);
     _ebss = .;         /* define a global symbol at bss end */
@@ -164,6 +166,18 @@ SECTIONS
     . = ALIGN(8);
   } >RAM_D1
 
+   .lwip_sec (NOLOAD) : {
+    . = ABSOLUTE(0x30000000);
+    *(.RxDecripSection) 
+    
+    . = ABSOLUTE(0x30000100);
+    *(.TxDecripSection)
+    
+ 
+  } >RAM_D2 
+
+
+
   /* Remove information from the standard libraries */
   /DISCARD/ :
   {
@@ -180,4 +194,14 @@ SECTIONS
     *(.gnu.linkonce.r.*)
     . = ALIGN(0x4);
   } >OSPI
+  
+    .sdram_section :
+  {
+    . = ALIGN(4);
+    __SDARAM_START__ = .;
+    *(.sdram)
+    *(.sdram*)
+    . = ALIGN(4);
+    __SDRAM_END__ = .;
+  } >SDRAM
 }

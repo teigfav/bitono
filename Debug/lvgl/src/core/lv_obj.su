@@ -24,7 +24,6 @@ lv_obj_style_gen.h:505:24:lv_obj_get_style_opa	24	static
 lv_obj_style_gen.h:559:24:lv_obj_get_style_layout	24	static
 lv_obj.c:93:6:lv_is_initialized	4	static
 lv_obj.c:98:6:lv_init	32	static
-lv_obj.c:197:6:lv_deinit	8	static
 lv_obj.c:213:12:lv_obj_create	24	static
 lv_obj.c:229:6:lv_obj_add_flag	48	static
 lv_obj.c:266:6:lv_obj_clear_flag	40	static

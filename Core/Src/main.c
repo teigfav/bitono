@@ -80,8 +80,9 @@ const osThreadAttr_t defaultTask_attributes = {
 
 extern uint8_t debounce;
 char car;
-char fw_version[]="EDH-xxxxxxxxxxxxxx.00.00.001"; //build.major.minor
-char hw_version[]="CTRL_Bitono.00.00.001   RF_Board_bitono.00.00.001"; //build.major.minor
+char fw_version[]="EDH-xxxxxxxxxxxxxx.00.00.001"; //major.minor.build
+char hw_ctrl_version[]="CTRL_Bitono.00.00.001"; //major.minor.build
+char hw_rf_version[]="RF_Board_bitono.00.00.001"; //major.minor.build
 /* USER CODE END PV */
 
 /* Private function prototypes -----------------------------------------------*/

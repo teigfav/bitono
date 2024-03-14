@@ -55,6 +55,14 @@ osThreadAttr_t attributes;
 
 /* USER CODE BEGIN 2 */
 
+/* ETH_CODE: workaround to call LOCK_TCPIP_CORE after tcpip_init in MX_LWIP_Init
+ * This is to keep the code after MX code re-generation */
+static inline void tcpip_init_wrap(tcpip_init_done_fn tcpip_init_done, void *arg){
+	tcpip_init(tcpip_init_done, arg);
+	LOCK_TCPIP_CORE();
+}
+#define tcpip_init tcpip_init_wrap
+
 /* USER CODE END 2 */
 
 /**
@@ -117,7 +125,7 @@ void MX_LWIP_Init(void)
 /* USER CODE END H7_OS_THREAD_NEW_CMSIS_RTOS_V2 */
 
 /* USER CODE BEGIN 3 */
-
+  UNLOCK_TCPIP_CORE();
 /* USER CODE END 3 */
 }
 
@@ -138,11 +146,13 @@ static void ethernet_link_status_updated(struct netif *netif)
   if (netif_is_up(netif))
   {
 /* USER CODE BEGIN 5 */
+	  printf("link is up\r\n");
 /* USER CODE END 5 */
   }
   else /* netif is down */
   {
 /* USER CODE BEGIN 6 */
+	  printf("link is down\r\n");
 /* USER CODE END 6 */
   }
 }

@@ -25,11 +25,15 @@ extern osMutexId mutex_lvgl_id;
 extern struct fwd_ram_pwr_ctrl fwd_ram_pwr_ctrl;
 extern struct parameters parameters;
 extern osMessageQueueId_t QueueMsgHandle;
+extern char fw_version[];
+extern char hw_rf_version[];
+extern char hw_ctrl_version[];
 
 lv_tast_ui tastiera_freq;
 lv_tast_ui tastiera_power;
 lv_tast_ui tastiera_tracking;
 lv_tast_ui tastiera_fre_sweep;
+lv_tast_ui tastiera_pow_sweep;
 //lv_obj_t* but_up;
 
 typedef enum  {
@@ -67,6 +71,39 @@ lv_obj_t* label_sign[3];
 lv_obj_t* label_switch_1_ON[3];
 uint8_t power_on_off[3];
 
+double P_sweep[3]={0,10,2};  //indicano pmin,pmax e step nel menu sweep potenza
+lv_obj_t* p_digit_pwr_sweep[3][5];  //formato dei dBm dd.dd il punto non rientra in questo vettore, sarà una label a parte così com il segno più o il segno meno
+lv_obj_t* label_sweep_sign[3];
+
+//definizione degli oggetti del menu
+lv_obj_t* menu_label_1;
+lv_obj_t* menu_cont_1;
+lv_obj_t* menu_label_2;
+lv_obj_t* menu_cont_2;
+lv_obj_t* menu_label_3;
+lv_obj_t* menu_cont_3;
+lv_obj_t* menu_label_4;
+lv_obj_t* menu_cont_4;
+lv_obj_t* menu_label_5;
+lv_obj_t* menu_cont_5;
+lv_obj_t* menu_label_6;
+lv_obj_t* menu_cont_6;
+lv_obj_t* menu_label_7;
+lv_obj_t* menu_cont_7;
+
+
+//char buf[110256] __attribute__ ((section(".sdram")));
+
+void init_freq_mode (void)
+{
+
+}
+
+void init_power_mode(void)
+{
+
+}
+
 void init_freq_gui (void)
 {
 	f[0]=parameters.sint_par.freq[0];
@@ -100,6 +137,47 @@ void init_freq_sweep_gui (void)
 	f_sweep[1]=parameters.sint_par.f1_sweep_max;
 	f_sweep[2]=parameters.sint_par.sweep_step;
 	lv_event_send(tastiera_fre_sweep.but_dummy, LV_EVENT_PRESSED, NULL);
+}
+
+void init_power_sweep_gui (void)
+{
+	P_sweep[0]=parameters.settings.sweep_pmin;
+	P_sweep[1]=parameters.settings.sweep_pmax;
+	P_sweep[2]=parameters.settings.power_sweep_step;
+	lv_event_send(tastiera_pow_sweep.but_dummy, LV_EVENT_PRESSED, NULL);
+}
+
+static void back_event_handler(lv_event_t* e)
+{
+	struct msg_t msg;
+    lv_event_code_t code = lv_event_get_code(e);
+    lv_obj_t* target = lv_event_get_target(e);
+    if(target==menu_cont_1)
+    {
+    	msg.op=set_freq_mode;
+    	msg.par1=0;
+    }
+    else if(target==menu_cont_3)
+    {
+    	msg.op=set_freq_mode;
+    	msg.par1=1;
+    }
+    else if(target==menu_cont_4)
+    {
+    	msg.op=set_freq_mode;
+    	msg.par1=2;
+    }
+    else if(target==menu_cont_5)
+    {
+    	msg.op=set_freq_mode;
+    	msg.par1=3;
+    }
+	msg.source=gui;
+	status=osMessageQueuePut(QueueMsgHandle,&msg,0,0);
+	if(status!=osOK)
+	{
+		print_k("Error: No queue access");
+	}
 }
 
 static void event_handler_threetone_page(lv_event_t* e)
@@ -1007,6 +1085,251 @@ static void event_handler_fre_sweep_page(lv_event_t* e)
     lv_obj_set_style_border_width(f_digit_fre_sweep[index_raw][index_col], 2, LV_PART_MAIN);
 }
 
+static void event_handler_pow_sweep_page(lv_event_t* e)
+{
+    lv_event_code_t code = lv_event_get_code(e);
+    lv_obj_t* target = lv_event_get_target(e);
+    lv_obj_t* ta = lv_event_get_user_data(e);
+    const char* s;
+    double power;
+    char buffer[7];
+    uint32_t cursor_position;
+    struct msg_t msg;
+    LV_LOG_USER("power sweep handler");
+    if(code==LV_EVENT_VALUE_CHANGED)  //evento generato dalla tastiera
+    {
+    	const char* txt = lv_btnmatrix_get_btn_text(target, lv_btnmatrix_get_selected_btn(target));
+        if (strcmp(txt, LV_SYMBOL_BACKSPACE) == 0)
+        	{
+        	lv_textarea_del_char(tastiera_pow_sweep.ta);
+        	}
+        else if (strcmp(txt, ".") == 0)  //serve per verificare se nella stringa c'è già un punto e in caso non ne fa mettere un altro
+    		{
+        	s=strchr(lv_textarea_get_text(tastiera_pow_sweep.ta),'.');
+        	if(s==NULL)
+        		{
+        		lv_textarea_add_text(tastiera_pow_sweep.ta, txt);
+        		}
+    		}
+        else if(strchr(lv_textarea_get_text(tastiera_pow_sweep.ta), '-') != NULL && strlen(lv_textarea_get_text(tastiera_pow_sweep.ta))>5)
+        {
+        	LV_LOG_USER("p");
+        }
+        else if(strchr(lv_textarea_get_text(tastiera_pow_sweep.ta), '-') == NULL && strlen(lv_textarea_get_text(tastiera_pow_sweep.ta))>4)
+        {
+        	LV_LOG_USER("p");
+        }
+        else
+        	{
+        	lv_textarea_add_text(tastiera_pow_sweep.ta, txt);
+        	}
+    	LV_LOG_USER("tastiera_power\n\r");
+    }
+    else if (code==LV_EVENT_PRESSED)   //evento generato dalla selezione del digit o o dai pulsanti (non quelli numerici della tastiera)
+    {
+    	for(int j=0;j<3;j++)
+    	    	{
+    				for(int i=0;i<5;i++)
+    				{
+    					if(target != p_digit_pwr_sweep[j][2])  //serve per non poter selezionare il punto
+    					{
+    					lv_obj_set_style_border_width(p_digit_pwr_sweep[j][i], 0, LV_PART_MAIN);
+    					if(target==p_digit_pwr_sweep[j][i])
+    					{
+    						index_raw=j;
+    						index_col=i;
+    					}
+    					}
+
+    				}
+    	    	}
+        if(target==tastiera_pow_sweep.but_left && index_col<4)
+        {
+        	if(index_col==1)  //per saltare il punto
+        	{
+        		index_col=index_col+2;
+        	}
+        	else
+        	{
+        		index_col=index_col+1;
+        	}
+
+        }
+        else if(target==tastiera_pow_sweep.but_right && index_col>0)
+		{
+        	if(index_col==3)  //per saltare il punto
+			{
+				index_col=index_col-2;
+			}
+			else
+			{
+				index_col=index_col-1;
+			}
+		}
+		else if(target==tastiera_pow_sweep.but_up)
+		{
+			power=P_sweep[index_raw];
+			if(index_col<2)
+			{
+				power=power+(uint64_t)pow(10,index_col)*0.01;
+			}
+			else if( index_col>2)
+			{
+				power=power+(uint64_t)pow(10,(index_col-1))*0.01;
+			}
+			if(index_raw==0 || index_raw==1)
+				{
+					if (power<=fwd_ram_pwr_ctrl.fwd_pwr_ctrl[0].pmax && power>=fwd_ram_pwr_ctrl.fwd_pwr_ctrl[0].pmin )
+					{
+						P_sweep[index_raw]=power;
+						send_message=true;
+					}
+					else
+					{
+						lv_obj_t * mbox1 = lv_msgbox_create(NULL, "Warning", "Power out of range.", NULL, true);
+					}
+				}
+			else
+				{
+					if (power>=0 && power<= MAX_SWEEP_POWER_STEP && power<(P_sweep[1]-P_sweep[0]))
+					{
+						P_sweep[index_raw]=power;
+						send_message=true;
+					}
+					else
+					{
+						lv_obj_t * mbox1 = lv_msgbox_create(NULL, "Warning", "Step Power out of range.", NULL, true);
+					}
+				}
+		}
+		else if(target==tastiera_pow_sweep.but_down)
+		{
+			power=P_sweep[index_raw];
+			if(index_col<2)
+			{
+				power=power-(uint64_t)pow(10,index_col)*0.01;
+			}
+			else if( index_col>2)
+			{
+				power=power-(uint64_t)pow(10,(index_col-1))*0.01;
+			}
+			if(index_raw==0 || index_raw==1)
+				{
+					if (power<=fwd_ram_pwr_ctrl.fwd_pwr_ctrl[0].pmax && power>=fwd_ram_pwr_ctrl.fwd_pwr_ctrl[0].pmin )
+					{
+						P_sweep[index_raw]=power;
+						send_message=true;
+					}
+					else
+					{
+						lv_obj_t * mbox1 = lv_msgbox_create(NULL, "Warning", "Power out of range.", NULL, true);
+					}
+				}
+			else
+				{
+					if (power>=0 && power<= MAX_SWEEP_POWER_STEP && power<(P_sweep[1]-P_sweep[0]))
+					{
+						P_sweep[index_raw]=power;
+						send_message=true;
+					}
+					else
+					{
+						lv_obj_t * mbox1 = lv_msgbox_create(NULL, "Warning", "Step Power out of range.", NULL, true);
+					}
+				}
+		}
+		else if(target==tastiera_pow_sweep.but_pm && (index_raw==0 || index_raw==1))  //tasto +/-
+		{
+			s=lv_textarea_get_text(tastiera_pow_sweep.ta);
+			cursor_position=lv_textarea_get_cursor_pos(tastiera_pow_sweep.ta);
+			lv_textarea_set_cursor_pos(tastiera_pow_sweep.ta, 0);
+			if(*s!='-')
+			{
+			lv_textarea_add_char(tastiera_pow_sweep.ta, '-');
+			lv_textarea_set_cursor_pos(tastiera_pow_sweep.ta, cursor_position+1);
+			}
+			else
+			{
+			lv_textarea_del_char_forward(tastiera_pow_sweep.ta);
+			lv_textarea_set_cursor_pos(tastiera_pow_sweep.ta, cursor_position-1);
+			}
+		}
+		else if(target==tastiera_pow_sweep.but_dbm)
+		{
+			power=(atof(lv_textarea_get_text(tastiera_pow_sweep.ta)));
+			if(index_raw==0 || index_raw==1)
+				{
+					if (power<=fwd_ram_pwr_ctrl.fwd_pwr_ctrl[0].pmax && power>=fwd_ram_pwr_ctrl.fwd_pwr_ctrl[0].pmin)
+					{
+						P_sweep[index_raw]=power;
+						send_message=true;
+					}
+					else
+					{
+						lv_obj_t * mbox1 = lv_msgbox_create(NULL, "Warning", "Power out of range.", NULL, true);
+					}
+				}
+			else
+				{
+					if (power<=MAX_SWEEP_POWER_STEP && power>0)
+					{
+						P_sweep[index_raw]=power;
+						send_message=true;
+					}
+					else
+					{
+						lv_obj_t * mbox1 = lv_msgbox_create(NULL, "Warning", "Step out of range.", NULL, true);
+					}
+				}
+		}
+		else if(target==tastiera_pow_sweep.but_dummy)  //serve solo per aggiornare potenza e switch conun evento generato manualmente in init_power_gui()
+		{
+			for (int j = 0;j<3;j++)
+			{
+				snprintf(buffer, 7, "%+06.2lf\n", (double)P_sweep[j]);
+				for (int i = 0;i<5;i++)
+				{
+					lv_label_set_text_fmt(p_digit_pwr_sweep[j][i], "%c",buffer[5-i]);
+				}
+
+			}
+		}
+		snprintf(buffer, 7, "%+06.2lf\n", (double)P_sweep[index_raw]);
+		lv_label_set_text_fmt(label_sweep_sign[index_raw], "%c",buffer[0]);
+		for (int i = 0;i<5;i++)
+		{
+		lv_label_set_text_fmt(p_digit_pwr_sweep[index_raw][i], "%c",buffer[5-i]);
+		}
+		if (send_message)
+			{
+			if(index_raw==0)
+			{
+				msg.op=set_pmin;
+			}
+			else if(index_raw==1)
+			{
+				msg.op=set_pmax;
+			}
+			else
+			{
+				msg.op=set_sweep_power_step;
+			}
+				msg.par1=P_sweep[index_raw];
+				msg.par2=0;
+				msg.par3=0;
+				msg.source=gui;
+				status=osMessageQueuePut(QueueMsgHandle,&msg,0,0);
+				if(status!=osOK)
+					{
+						print_k("Error: No queue access");
+					}
+				send_message=false;
+			}
+    }
+    LV_LOG_USER("riga=%d  colonna=%d\n\r",index_raw,index_col);
+    lv_obj_set_style_border_width(p_digit_pwr_sweep[index_raw][index_col], 2, LV_PART_MAIN);
+}
+
 void gen_tastiera (lv_tast_ui *ui,lv_obj_t* parent, lv_event_cb_t func_cb)
 {
 	//tastiera
@@ -1350,8 +1673,6 @@ void gui_define(void)
 {
 
 	lv_obj_t* act_scr = lv_scr_act();
-	lv_obj_t* label;
-	lv_obj_t* cont;
 	lv_obj_t* label_f1;
 	lv_obj_t* label_f2;
 	lv_obj_t* label_f3;
@@ -1375,7 +1696,15 @@ void gui_define(void)
 	lv_obj_t* label_PdBm[3];
 	lv_obj_t* label_dot[3];
 	lv_obj_t* label_equal[3];
+	lv_obj_t* label_sweep_P[3];
+	lv_obj_t* label_sweep_PdBm[3];
+	lv_obj_t* label_sweep_dot[3];
+	lv_obj_t* label_sweep_equal[3];
+	lv_obj_t* label_rev_fw;
+	lv_obj_t* label_rev_ctrl_hw;
+	lv_obj_t* label_rev_rf_hw;
 	char buffer[7];
+	char buffer_info[30];
 
 
 	//Write codes menuDemo
@@ -1709,52 +2038,163 @@ void gui_define(void)
 
     //----------------------Create Power_sweep page---------------------------------
     lv_obj_t* power_sweep_page = lv_menu_page_create(menuDemo, (char*)"                          Power Sweep");
+    lv_obj_clear_flag(power_sweep_page, LV_OBJ_FLAG_SCROLLABLE);
+    gen_tastiera(&tastiera_pow_sweep,power_sweep_page,event_handler_pow_sweep_page);
+
+	for (int j = 0;j<3;j++)
+	{
+
+		label_sweep_equal[j]=lv_label_create(power_sweep_page);
+		lv_obj_add_flag(label_sweep_equal[j], LV_OBJ_FLAG_IGNORE_LAYOUT);
+		lv_label_set_text(label_sweep_equal[j], "=");
+		lv_obj_set_pos(label_sweep_equal[j], 174, 15+j*30);
+
+		label_sweep_sign[j]=lv_label_create(power_sweep_page);
+		lv_obj_add_flag(label_sweep_sign[j], LV_OBJ_FLAG_IGNORE_LAYOUT);
+		lv_obj_set_pos(label_sweep_sign[j], 188, 13+j*30);
+		lv_obj_add_style(label_sweep_sign[j], &style_text_fixed, 0);
+
+		snprintf(buffer, 7, "%+06.2lf\n", (double)P_sweep[j]);
+
+		lv_label_set_text_fmt(label_sweep_sign[j], "%c",buffer[0]);
+
+		for (int i = 0;i<5;i++)
+		{
+			p_digit_pwr_sweep[j][i] = lv_label_create(power_sweep_page);
+			lv_label_set_text_fmt(p_digit_pwr_sweep[j][i], "%c",buffer[5-i]);
+			lv_obj_set_parent(p_digit_pwr_sweep[j][i], power_sweep_page);
+			lv_obj_add_flag(p_digit_pwr_sweep[j][i], LV_OBJ_FLAG_IGNORE_LAYOUT);
+			lv_obj_set_pos(p_digit_pwr_sweep[j][i], 262-i*15, 15+j*30);
+			lv_obj_set_style_bg_color(p_digit_pwr_sweep[j][i], my_bg_color, LV_PART_MAIN);
+			lv_obj_add_style(p_digit_pwr_sweep[j][i], &style_text_fixed, 0);
+			lv_obj_add_flag(p_digit_pwr_sweep[j][i], LV_OBJ_FLAG_CLICKABLE);
+			lv_obj_add_event_cb(p_digit_pwr_sweep[j][i], event_handler_pow_sweep_page, LV_EVENT_PRESSED, NULL);
+			lv_obj_set_style_bg_color(p_digit_pwr_sweep[j][i], lv_color_hex(0xFEFEFE), LV_PART_MAIN);
+		}
+
+	}
+
+	label_sweep_P[0]=lv_label_create(power_sweep_page);
+	lv_obj_add_flag(label_sweep_P[0], LV_OBJ_FLAG_IGNORE_LAYOUT);
+	lv_label_set_text(label_sweep_P[0], "P start");
+	lv_obj_set_pos(label_sweep_P[0], 110, 15);
+	lv_obj_add_style(label_sweep_P[0], &style_text_fixed, 0);
+
+	label_sweep_P[1]=lv_label_create(power_sweep_page);
+	lv_obj_add_flag(label_sweep_P[1], LV_OBJ_FLAG_IGNORE_LAYOUT);
+	lv_label_set_text(label_sweep_P[1], "P stop");
+	lv_obj_set_pos(label_sweep_P[1], 110, 45);
+	lv_obj_add_style(label_sweep_P[1], &style_text_fixed, 0);
+
+	label_sweep_P[2]=lv_label_create(power_sweep_page);
+	lv_obj_add_flag(label_sweep_P[2], LV_OBJ_FLAG_IGNORE_LAYOUT);
+	lv_label_set_text(label_sweep_P[2], "P step");
+	lv_obj_set_pos(label_sweep_P[2], 110, 75);
+	lv_obj_add_style(label_sweep_P[2], &style_text_fixed, 0);
+
+	label_sweep_PdBm[0]=lv_label_create(power_sweep_page);
+	lv_obj_add_flag(label_sweep_PdBm[0], LV_OBJ_FLAG_IGNORE_LAYOUT);
+	lv_label_set_text(label_sweep_PdBm[0], "dBm");
+	lv_obj_set_pos(label_sweep_PdBm[0], 280, 15);
+	lv_obj_add_style(label_sweep_PdBm[0], &style_text_fixed, 0);
+
+	label_sweep_PdBm[1]=lv_label_create(power_sweep_page);
+	lv_obj_add_flag(label_sweep_PdBm[1], LV_OBJ_FLAG_IGNORE_LAYOUT);
+	lv_label_set_text(label_sweep_PdBm[1], "dBm");
+	lv_obj_set_pos(label_sweep_PdBm[1], 280, 45);
+	lv_obj_add_style(label_sweep_PdBm[1], &style_text_fixed, 0);
+
+	label_sweep_PdBm[2]=lv_label_create(power_sweep_page);
+	lv_obj_add_flag(label_sweep_PdBm[2], LV_OBJ_FLAG_IGNORE_LAYOUT);
+	lv_label_set_text(label_sweep_PdBm[2], "dB");
+	lv_obj_set_pos(label_sweep_PdBm[2], 280, 75);
+	lv_obj_add_style(label_sweep_PdBm[2], &style_text_fixed, 0);
+
+
+
+
+
+
+
+
+
     //----------------------Create Settings page---------------------------------
     lv_obj_t* setting_page = lv_menu_page_create(menuDemo, (char*)"                          Settings");
     //----------------------Create Informations page---------------------------------
     lv_obj_t* info_page = lv_menu_page_create(menuDemo, (char*)"                        Informations");
+    label_rev_fw = lv_label_create(info_page);
+	lv_obj_set_parent(label_rev_fw, info_page);
+	lv_obj_add_flag(label_rev_fw, LV_OBJ_FLAG_IGNORE_LAYOUT);
+	lv_obj_set_pos(label_rev_fw, 20, 25);
+	lv_obj_add_style(label_rev_fw, &style_text_fixed, 0);
+	lv_obj_set_style_text_font(label_rev_fw, &lv_font_montserrat_12, LV_PART_MAIN);
+	lv_label_set_text_fmt(label_rev_fw, "FW revision : %s",fw_version);
+
+	label_rev_ctrl_hw = lv_label_create(info_page);
+	lv_obj_set_parent(label_rev_ctrl_hw, info_page);
+	lv_obj_add_flag(label_rev_ctrl_hw, LV_OBJ_FLAG_IGNORE_LAYOUT);
+	lv_obj_set_pos(label_rev_ctrl_hw, 20, 50);
+	lv_obj_add_style(label_rev_ctrl_hw, &style_text_fixed, 0);
+	lv_obj_set_style_text_font(label_rev_ctrl_hw, &lv_font_montserrat_12, LV_PART_MAIN);
+	lv_label_set_text_fmt(label_rev_ctrl_hw, "HW ctrl : %s",hw_ctrl_version);
+
+
+	label_rev_rf_hw = lv_label_create(info_page);
+	lv_obj_set_parent(label_rev_rf_hw, info_page);
+	lv_obj_add_flag(label_rev_rf_hw, LV_OBJ_FLAG_IGNORE_LAYOUT);
+	lv_obj_set_pos(label_rev_rf_hw, 20, 75);
+	lv_obj_add_style(label_rev_rf_hw, &style_text_fixed, 0);
+	lv_obj_set_style_text_font(label_rev_rf_hw, &lv_font_montserrat_12, LV_PART_MAIN);
+	lv_label_set_text_fmt(label_rev_rf_hw, "HW RF : %s",hw_rf_version);
+
 
 
 		 /*create menu page*/
 		 lv_obj_t* menu_page = lv_menu_page_create(menuDemo, (char*)"      Menu");
 
-		 cont = lv_menu_cont_create(menu_page);
-		 label = lv_label_create(cont);
-		 lv_label_set_text(label, "Three Tones");
-		 lv_menu_set_load_page_event(menuDemo, cont, threetone_page);
+		 menu_cont_1 = lv_menu_cont_create(menu_page);
+		 menu_label_1 = lv_label_create(menu_cont_1);
+		 lv_label_set_text(menu_label_1, "Three Tones");
+		 lv_menu_set_load_page_event(menuDemo, menu_cont_1, threetone_page);
+		 lv_obj_add_event_cb(menu_cont_1, back_event_handler, LV_EVENT_CLICKED, NULL);
 
 
-		 cont = lv_menu_cont_create(menu_page);
-		 label = lv_label_create(cont);
-		 lv_label_set_text(label, "Set Powers");
-		 lv_menu_set_load_page_event(menuDemo, cont, power_page);
+		 menu_cont_2 = lv_menu_cont_create(menu_page);
+		 menu_label_2 = lv_label_create(menu_cont_2);
+		 lv_label_set_text(menu_label_2, "Set Powers");
+		 lv_menu_set_load_page_event(menuDemo, menu_cont_2, power_page);
 
-		 cont = lv_menu_cont_create(menu_page);
-		 label = lv_label_create(cont);
-		 lv_label_set_text(label, "Tracking");
-		 lv_menu_set_load_page_event(menuDemo, cont, tracking_page);
+		 menu_cont_3 = lv_menu_cont_create(menu_page);
+		 menu_label_3 = lv_label_create(menu_cont_3);
+		 lv_label_set_text(menu_label_3, "Tracking");
+		 lv_menu_set_load_page_event(menuDemo, menu_cont_3, tracking_page);
+		 lv_obj_add_event_cb(menu_cont_3, back_event_handler, LV_EVENT_CLICKED, NULL);
 
-		 cont = lv_menu_cont_create(menu_page);
-		 label = lv_label_create(cont);
-		 lv_label_set_text(label, "Freq Sweep");
-		 lv_menu_set_load_page_event(menuDemo, cont, freq_sweep_page);
+		 menu_cont_4 = lv_menu_cont_create(menu_page);
+		 menu_label_4 = lv_label_create(menu_cont_4);
+		 lv_label_set_text(menu_label_4, "Freq Sweep");
+		 lv_menu_set_load_page_event(menuDemo, menu_cont_4, freq_sweep_page);
+		 lv_obj_add_event_cb(menu_cont_4, back_event_handler, LV_EVENT_CLICKED, NULL);
 
-		 cont = lv_menu_cont_create(menu_page);
-		 label = lv_label_create(cont);
-		 lv_label_set_text(label, "Power Sweep");
-		 lv_menu_set_load_page_event(menuDemo, cont, power_sweep_page);
 
-		 cont = lv_menu_cont_create(menu_page);
-		 label = lv_label_create(cont);
-		 lv_label_set_text(label, "Settings");
-		 lv_menu_set_load_page_event(menuDemo, cont, setting_page);
+		 menu_cont_5 = lv_menu_cont_create(menu_page);
+		 menu_label_5 = lv_label_create(menu_cont_5);
+		 lv_label_set_text(menu_label_5, "Power Sweep");
+		 lv_menu_set_load_page_event(menuDemo, menu_cont_5, power_sweep_page);
+		 lv_obj_add_event_cb(menu_cont_5, back_event_handler, LV_EVENT_CLICKED, NULL);
 
-		 cont = lv_menu_cont_create(menu_page);
-		 label = lv_label_create(cont);
-		 lv_label_set_text(label, "Info");
-		 lv_menu_set_load_page_event(menuDemo, cont, info_page);
+		 menu_cont_6 = lv_menu_cont_create(menu_page);
+		 menu_label_6 = lv_label_create(menu_cont_6);
+		 lv_label_set_text(menu_label_6, "Settings");
+		 lv_menu_set_load_page_event(menuDemo, menu_cont_6, setting_page);
+
+		 menu_cont_7 = lv_menu_cont_create(menu_page);
+		 menu_label_7 = lv_label_create(menu_cont_7);
+		 lv_label_set_text(menu_label_7, "Info");
+		 lv_menu_set_load_page_event(menuDemo, menu_cont_7, info_page);
 
 		 lv_menu_set_sidebar_page(menuDemo, menu_page);
+
 		 //lv_obj_set_style_max_width(lv_menu_get_cur_sidebar_page(menuDemo), 40, LV_STATE_DEFAULT);
 		 //lv_menu_set_page(menuDemo, menu_page);
 

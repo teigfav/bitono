@@ -13,5 +13,10 @@ void gui_define(void);
 void gui_start(void);
 void init_freq_gui (void);
 void init_power_gui (void);
+void init_tracking_gui (void);
+void init_freq_sweep_gui (void);
+void init_power_sweep_gui (void);
+void init_power_mode(void);
+void init_freq_mode (void);
 
 #endif /* GUI_H_ */

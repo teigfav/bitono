@@ -29,7 +29,8 @@ extern osMutexId_t SPI3MutexHandle;
 extern struct netconn *newconn;
 extern struct netconn *conn;
 extern char fw_version[];
-extern char hw_version[];
+extern char hw_rf_version[];
+extern char hw_ctrl_version[];
 char ETH_data[200]={0};
 char *pETH_data=&ETH_data[0];
 EmbeddedCli *cli;
@@ -121,6 +122,15 @@ void StartCLITask(void *argument)
 	              onDumpsdram
 	      };
 	  embeddedCliAddBinding(cli,on_dump_sdram);
+
+	  CliCommandBinding on_write_sdram={
+	              "sdram_write",
+	              "Read SDRAM : [offset] [lenght] [value]",
+	              true,
+	              NULL,
+	              onWritesdram
+	      };
+	  embeddedCliAddBinding(cli,on_write_sdram);
 
 	  CliCommandBinding on_en_drain={
 	              "en_drain",
@@ -360,10 +370,34 @@ void onDumpsdram(EmbeddedCli *cli, char *args, void *context)
 		print_k("Error: Wrong number of parameters");
 	}
 }
+
+void onWritesdram(EmbeddedCli *cli, char *args, void *context)
+{
+	uint32_t offset=0;
+	uint32_t n_byte=0;
+	uint8_t value=0;
+	if(embeddedCliGetTokenCount(args)==3)
+	{
+		offset=strtoul(embeddedCliGetToken(args,1),NULL,0);
+		n_byte=strtoul(embeddedCliGetToken(args,2),NULL,0);
+		value=(uint8_t)strtoul(embeddedCliGetToken(args,3),NULL,0);
+		for(uint32_t i=0;i<n_byte;i=i+1)
+		{
+			memcpy((uint8_t*)offset,&value,1);
+			offset++;
+		}
+	}
+	else
+	{
+		print_k("Error: Wrong number of parameters");
+	}
+}
+
 void onReadVersion(EmbeddedCli *cli, char *args, void *context)
 {
 	print_k("FW : %s",fw_version);
-	print_k("HW : %s",hw_version);
+	print_k("CTRL HW : %s",hw_ctrl_version);
+	print_k("RF HW : %s",hw_rf_version);
 }
 
 void onCmd(EmbeddedCli *cli, char *args, void *context)

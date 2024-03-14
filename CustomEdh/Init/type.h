@@ -161,7 +161,7 @@ typedef enum {
 	get_struct_power,
 	save_parameters,
 	load_parameters,
-	set_sweep_power
+	set_sweep_power_step
 } opto_code_t ;
 
 struct msg_t{

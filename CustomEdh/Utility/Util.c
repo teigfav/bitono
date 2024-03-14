@@ -78,6 +78,7 @@ void print_k(char *format, ...) {
    	   if (newconn!=NULL)
    	   {
    	   netconn_write(newconn, msg_ETH, len, NETCONN_COPY);  //serve per scrivere su tcpip
+   	   netconn_write(newconn, "\n", 1, NETCONN_COPY);  //serve per scrivere su tcpip
    	   }
    	  // vprintf(format, args);
    	   embeddedCliPrint(cli, msg_ETH);

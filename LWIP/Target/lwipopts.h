@@ -109,6 +109,17 @@
 #define CHECKSUM_CHECK_TCP 0
 /*----- Value in opt.h for CHECKSUM_CHECK_ICMP6: 1 -----*/
 #define CHECKSUM_CHECK_ICMP6 0
+ /*----- Default Value for LWIP_DBG_TYPES_ON: LWIP_DBG_ON ---*/
+#define LWIP_DBG_TYPES_ON LWIP_DBG_OFF
+/*----- Default Value for NETIF_DEBUG: LWIP_DBG_OFF ---*/
+#define NETIF_DEBUG LWIP_DBG_ON
+/*----- Default Value for ICMP_DEBUG: LWIP_DBG_OFF ---*/
+#define ICMP_DEBUG LWIP_DBG_ON
+/*----- Default Value for IGMP_DEBUG: LWIP_DBG_OFF ---*/
+#define IGMP_DEBUG LWIP_DBG_ON
+/*----- Default Value for INET_DEBUG: LWIP_DBG_OFF ---*/
+#define INET_DEBUG LWIP_DBG_ON
+
 /*-----------------------------------------------------------------------------*/
 /* USER CODE BEGIN 1 */
 

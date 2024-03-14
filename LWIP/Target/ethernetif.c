@@ -41,7 +41,7 @@
 #define TIME_WAITING_FOR_INPUT ( portMAX_DELAY )
 /* USER CODE BEGIN OS_THREAD_STACK_SIZE_WITH_RTOS */
 /* Stack size of the interface thread */
-#define INTERFACE_THREAD_STACK_SIZE ( 350 )
+#define INTERFACE_THREAD_STACK_SIZE ( 1024 )
 /* USER CODE END OS_THREAD_STACK_SIZE_WITH_RTOS */
 /* Network interface name */
 #define IFNAME0 's'
@@ -184,6 +184,15 @@ void HAL_ETH_MspInit(ETH_HandleTypeDef* ethHandle)
     GPIO_InitStruct.Alternate = GPIO_AF11_ETH;
     HAL_GPIO_Init(GPIOA, &GPIO_InitStruct);
 
+//    GPIO_InitStruct.Pin = RMII_RX_ER_Pin;
+//    GPIO_InitStruct.Mode = GPIO_MODE_AF_PP;
+//    GPIO_InitStruct.Pull = GPIO_NOPULL;
+//    GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_LOW;
+//    GPIO_InitStruct.Alternate = GPIO_AF11_ETH;
+//    HAL_GPIO_Init(RMII_RX_ER_GPIO_Port, &GPIO_InitStruct);
+
+
+
     /* Peripheral interrupt init */
     HAL_NVIC_SetPriority(ETH_IRQn, 5, 0);
     HAL_NVIC_EnableIRQ(ETH_IRQn);
@@ -218,9 +227,12 @@ void HAL_ETH_MspDeInit(ETH_HandleTypeDef* ethHandle)
     */
     HAL_GPIO_DeInit(GPIOC, GPIO_PIN_1|GPIO_PIN_5|GPIO_PIN_4);
 
+
     HAL_GPIO_DeInit(GPIOB, GPIO_PIN_13|GPIO_PIN_12|GPIO_PIN_11);
 
+
     HAL_GPIO_DeInit(GPIOA, GPIO_PIN_7|GPIO_PIN_1|GPIO_PIN_2);
+
 
     /* Peripheral interrupt Deinit*/
     HAL_NVIC_DisableIRQ(ETH_IRQn);

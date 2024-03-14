@@ -209,7 +209,7 @@ void StartctrlTask(void *argument)
 				case load_parameters:
 					Load_parameters();
 					break;
-				case set_sweep_power:
+				case set_sweep_power_step:
 					Set_Sweep_Power(messaggio.par1,messaggio.source);
 					break;
 				default:
@@ -382,6 +382,7 @@ void Set_Sweep_Pmin(double power,source_t source)
 	if (power<=fwd_ram_pwr_ctrl.fwd_pwr_ctrl[index].pmax && power>=fwd_ram_pwr_ctrl.fwd_pwr_ctrl[index].pmin)
 	{
 	parameters.settings.sweep_pmin=power;
+	if(source!=gui) init_power_sweep_gui(); //serve per evitare che si alluppi con la gui che manda il messaggio e questo aggiorna le freq nella gui etc...
 	}
 	else
 	{
@@ -395,6 +396,7 @@ void Set_Sweep_Pmax(double power,source_t source)
 	if (power<=fwd_ram_pwr_ctrl.fwd_pwr_ctrl[index].pmax && power>=fwd_ram_pwr_ctrl.fwd_pwr_ctrl[index].pmin)
 	{
 	parameters.settings.sweep_pmax=power;
+	if(source!=gui) init_power_sweep_gui(); //serve per evitare che si alluppi con la gui che manda il messaggio e questo aggiorna le freq nella gui etc...
 	}
 	else
 	{
@@ -409,7 +411,7 @@ void Set_Power_Mode(double power_mode,source_t source)
 		  {
 			  LOG_DBG("Set sint mode %u",modo);
 			  parameters.settings.p_mode=modo;
-			  if(source!=gui) init_freq_gui(); //serve per evitare che si alluppi con la gui che manda il messaggio e questo aggiorna le freq nella gui etc...
+			  if(source!=gui) init_power_mode(); //serve per evitare che si alluppi con la gui che manda il messaggio e questo aggiorna le freq nella gui etc...
 		  }
 		  else
 		  {
@@ -566,7 +568,7 @@ void Get_Pol_Struct(double pol_index,source_t source)
 	{
 		LOG_DBG("wrong bias index");
 	}
-	print_k("done");
+//	print_k("done");
 }
 
 void Set_Freq_Mode(double f_mode,source_t source)
@@ -598,8 +600,7 @@ void Set_Freq_Mode(double f_mode,source_t source)
 
 			  if(source!=gui)
 				  {
-				  init_freq_gui(); //serve per evitare che si alluppi con la gui che manda il messaggio e questo aggiorna le freq nella gui etc...
-				  init_power_gui();
+				  init_freq_mode(); //serve per evitare che si alluppi con la gui che manda il messaggio e questo aggiorna le freq nella gui etc...
 				  }
 		  }
 		  else
@@ -636,7 +637,7 @@ void Set_Sweep_Time(double s_time,source_t source)
 		  {
 			  LOG_DBG("Set sweep step");
 			  parameters.sint_par.sweep_step=frequ;
-			  if(source!=gui) init_freq_gui(); //serve per evitare che si alluppi con la gui che manda il messaggio e questo aggiorna le freq nella gui etc...
+			  if(source!=gui) init_freq_sweep_gui(); //serve per evitare che si alluppi con la gui che manda il messaggio e questo aggiorna le freq nella gui etc...
 		  }
 		  else
 		  {
@@ -654,7 +655,7 @@ void Set_Sweep_Power(double s_power,source_t source)
 		  {
 			  LOG_DBG("Set power sweep step");
 			  parameters.settings.power_sweep_step=s_power;
-			  if(source!=gui) init_power_gui(); //serve per evitare che si alluppi con la gui che manda il messaggio e questo aggiorna le freq nella gui etc...
+			  if(source!=gui) init_power_sweep_gui(); //serve per evitare che si alluppi con la gui che manda il messaggio e questo aggiorna le freq nella gui etc...
 		  }
 		  else
 		  {
@@ -672,7 +673,7 @@ void Set_Delta_Tone(double dtone,source_t source)
 		  {
 			  LOG_DBG("Set delta tone");
 			  parameters.sint_par.deltatone=frequ;
-			  if(source!=gui) init_freq_gui(); //serve per evitare che si alluppi con la gui che manda il messaggio e questo aggiorna le freq nella gui etc...
+			  if(source!=gui) init_tracking_gui(); //serve per evitare che si alluppi con la gui che manda il messaggio e questo aggiorna le freq nella gui etc...
 			  freq_update=true;
 		  }
 		  else
@@ -690,7 +691,7 @@ void Set_Sweep_Fmax(double fmax,source_t source)
 		  {
 			  LOG_DBG("Set fmax");
 			  parameters.sint_par.f1_sweep_max=frequ;
-			  if(source!=gui) init_freq_gui(); //serve per evitare che si alluppi con la gui che manda il messaggio e questo aggiorna le freq nella gui etc...
+			  if(source!=gui) init_freq_sweep_gui(); //serve per evitare che si alluppi con la gui che manda il messaggio e questo aggiorna le freq nella gui etc...
 		  }
 		  else
 		  {
@@ -705,7 +706,7 @@ void Set_Sweep_Fmin(double fmin,source_t source)
 		  {
 			  LOG_DBG("Set fmin");
 			  parameters.sint_par.f1_sweep_min=frequ;
-			  if(source!=gui) init_freq_gui(); //serve per evitare che si alluppi con la gui che manda il messaggio e questo aggiorna le freq nella gui etc...
+			  if(source!=gui) init_freq_sweep_gui(); //serve per evitare che si alluppi con la gui che manda il messaggio e questo aggiorna le freq nella gui etc...
 		  }
 		  else
 		  {
@@ -824,7 +825,7 @@ void Get_Struct_Power(source_t source)
 	  print_k("Power min for sweep=%.2f",(double)parameters.settings.sweep_pmin);
 	  print_k("Power max for sweep=%.2f",(double)parameters.settings.sweep_pmax);
 	  print_k("Power sweep step=%.2f",(double)parameters.settings.power_sweep_step);
-	  print_k("done");
+//	  print_k("done");
 }
 
 void Load_parameters(void)
