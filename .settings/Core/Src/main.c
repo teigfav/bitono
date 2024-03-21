@@ -31,6 +31,7 @@
 #include "ER-TPC050A2-2_GSL1680F_H.h"
 #include "embedded_cli.h"
 #include "ETH_server.h"
+#include "ETH_DHCP.h"
 
 
 /* USER CODE END Includes */
@@ -987,6 +988,7 @@ void StartDefaultTask(void *argument)
     LOCK_TCPIP_CORE();
     tcpserver_init();
     UNLOCK_TCPIP_CORE();
+    DHCP_init();
   /* Infinite loop */
   for(;;)
   {

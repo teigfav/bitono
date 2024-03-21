@@ -31,6 +31,7 @@
 #include "ER-TPC050A2-2_GSL1680F_H.h"
 #include "embedded_cli.h"
 #include "ETH_server.h"
+#include "ETH_DHCP.h"
 
 
 /* USER CODE END Includes */
@@ -1003,6 +1004,7 @@ void HAL_UART_RxCpltCallback(UART_HandleTypeDef *huart)
 void StartDefaultTask(void *argument)
 {
   /* init code for LWIP */
+
   MX_LWIP_Init();
   /* USER CODE BEGIN 5 */
     LOCK_TCPIP_CORE();

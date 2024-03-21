@@ -12,6 +12,9 @@
 #include "lwip/sys.h"
 #include "string.h"
 #include "embedded_cli.h"
+#if LWIP_DHCP
+#include "lwip/dhcp.h"
+#endif
 static void tcp_thread(void *arg);
 
 struct netconn *conn, *newconn;

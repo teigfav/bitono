@@ -122,7 +122,9 @@
 
 /*-----------------------------------------------------------------------------*/
 /* USER CODE BEGIN 1 */
-
+#define LWIP_IPV4 1
+#define LWIP_DHCP 1
+#define LWIP_UDP 1
 /* USER CODE END 1 */
 
 #ifdef __cplusplus

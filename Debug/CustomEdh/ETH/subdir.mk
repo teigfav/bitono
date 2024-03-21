@@ -5,12 +5,15 @@
 
 # Add inputs and outputs from these tool invocations to the build variables 
 C_SRCS += \
+../CustomEdh/ETH/ETH_DHCP.c \
 ../CustomEdh/ETH/ETH_server.c 
 
 C_DEPS += \
+./CustomEdh/ETH/ETH_DHCP.d \
 ./CustomEdh/ETH/ETH_server.d 
 
 OBJS += \
+./CustomEdh/ETH/ETH_DHCP.o \
 ./CustomEdh/ETH/ETH_server.o 
 
 
@@ -21,7 +24,7 @@ CustomEdh/ETH/%.o: ../CustomEdh/ETH/%.c CustomEdh/ETH/subdir.mk
 clean: clean-CustomEdh-2f-ETH
 
 clean-CustomEdh-2f-ETH:
-	-$(RM) ./CustomEdh/ETH/ETH_server.d ./CustomEdh/ETH/ETH_server.o
+	-$(RM) ./CustomEdh/ETH/ETH_DHCP.d ./CustomEdh/ETH/ETH_DHCP.o ./CustomEdh/ETH/ETH_server.d ./CustomEdh/ETH/ETH_server.o
 
 .PHONY: clean-CustomEdh-2f-ETH
 

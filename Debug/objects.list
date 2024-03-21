@@ -11,6 +11,7 @@
 "./CustomEdh/ADF4372/adf4372.o"
 "./CustomEdh/ADF4372/no_os_util.o"
 "./CustomEdh/CLI/embedded_cli.o"
+"./CustomEdh/ETH/ETH_DHCP.o"
 "./CustomEdh/ETH/ETH_server.o"
 "./CustomEdh/ExtFlash/mx25lm51245g.o"
 "./CustomEdh/ExtFlash/stm32h735g_discovery_ospi.o"

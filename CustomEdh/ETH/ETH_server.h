@@ -10,4 +10,16 @@
 
 void tcpserver_init(void);
 
+/* Exported types ------------------------------------------------------------*/
+/* Exported constants --------------------------------------------------------*/
+/* DHCP process states */
+
+
+/* Exported macro ------------------------------------------------------------*/
+/* Exported functions ------------------------------------------------------- */
+
+#if LWIP_DHCP
+void DHCP_Thread(void* argument);
+#endif
+
 #endif /* INC_ETH_SERVER_H_ */

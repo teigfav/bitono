@@ -69,7 +69,22 @@ CustomEdh/ETH/ETH_server.o: ../CustomEdh/ETH/ETH_server.c \
  ../Middlewares/Third_Party/LwIP/src/include/lwip/def.h \
  ../Middlewares/Third_Party/LwIP/src/include/lwip/sys.h \
  ../Middlewares/Third_Party/LwIP/system/arch/sys_arch.h \
- ../CustomEdh/CLI/embedded_cli.h
+ ../CustomEdh/CLI/embedded_cli.h \
+ ../Middlewares/Third_Party/LwIP/src/include/lwip/dhcp.h \
+ ../Middlewares/Third_Party/LwIP/src/include/lwip/netif.h \
+ ../Middlewares/Third_Party/LwIP/src/include/lwip/stats.h \
+ ../Middlewares/Third_Party/LwIP/src/include/lwip/mem.h \
+ ../Middlewares/Third_Party/LwIP/src/include/lwip/memp.h \
+ ../Middlewares/Third_Party/LwIP/src/include/lwip/priv/memp_std.h \
+ ../Middlewares/Third_Party/LwIP/src/include/lwip/priv/memp_priv.h \
+ ../Middlewares/Third_Party/LwIP/src/include/lwip/priv/mem_priv.h \
+ ../Middlewares/Third_Party/LwIP/src/include/lwip/udp.h \
+ ../Middlewares/Third_Party/LwIP/src/include/lwip/ip.h \
+ ../Middlewares/Third_Party/LwIP/src/include/lwip/ip4.h \
+ ../Middlewares/Third_Party/LwIP/src/include/lwip/prot/ip4.h \
+ ../Middlewares/Third_Party/LwIP/src/include/lwip/ip6.h \
+ ../Middlewares/Third_Party/LwIP/src/include/lwip/prot/ip.h \
+ ../Middlewares/Third_Party/LwIP/src/include/lwip/prot/udp.h
 
 ../LWIP/Target/lwipopts.h:
 
@@ -214,3 +229,33 @@ CustomEdh/ETH/ETH_server.o: ../CustomEdh/ETH/ETH_server.c \
 ../Middlewares/Third_Party/LwIP/system/arch/sys_arch.h:
 
 ../CustomEdh/CLI/embedded_cli.h:
+
+../Middlewares/Third_Party/LwIP/src/include/lwip/dhcp.h:
+
+../Middlewares/Third_Party/LwIP/src/include/lwip/netif.h:
+
+../Middlewares/Third_Party/LwIP/src/include/lwip/stats.h:
+
+../Middlewares/Third_Party/LwIP/src/include/lwip/mem.h:
+
+../Middlewares/Third_Party/LwIP/src/include/lwip/memp.h:
+
+../Middlewares/Third_Party/LwIP/src/include/lwip/priv/memp_std.h:
+
+../Middlewares/Third_Party/LwIP/src/include/lwip/priv/memp_priv.h:
+
+../Middlewares/Third_Party/LwIP/src/include/lwip/priv/mem_priv.h:
+
+../Middlewares/Third_Party/LwIP/src/include/lwip/udp.h:
+
+../Middlewares/Third_Party/LwIP/src/include/lwip/ip.h:
+
+../Middlewares/Third_Party/LwIP/src/include/lwip/ip4.h:
+
+../Middlewares/Third_Party/LwIP/src/include/lwip/prot/ip4.h:
+
+../Middlewares/Third_Party/LwIP/src/include/lwip/ip6.h:
+
+../Middlewares/Third_Party/LwIP/src/include/lwip/prot/ip.h:
+
+../Middlewares/Third_Party/LwIP/src/include/lwip/prot/udp.h:
